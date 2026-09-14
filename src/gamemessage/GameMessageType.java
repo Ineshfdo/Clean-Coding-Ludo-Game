@@ -14,5 +14,6 @@ public enum GameMessageType {
     TURN_STARTED,
     TURN_ROLLED,
     NO_PIECE_MOVABLE,
-    PIECE_MOVED
+    PIECE_MOVED,
+    PIECE_ENTERED_BOARD
 }

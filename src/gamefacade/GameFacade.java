@@ -1,7 +1,6 @@
 package gamefacade;
 
 import command.Command;
-import command.MoveCommand;
 import dice.Dice;
 import dice.SixSidedDice;
 import gamemessage.GameMessage;
@@ -18,10 +17,12 @@ import ludoboard.PlayerColor;
 import numbergenerator.SeededRandomNumberGenerator;
 import player.BluePlayer;
 import player.GreenPlayer;
-import player.Piece;
 import player.Player;
 import player.RedPlayer;
 import player.YellowPlayer;
+import rule.BaseExitRule;
+import rule.MovementRule;
+import rule.TurnRule;
 
 // Facade: Main only ever calls startGame(). Game logic here only
 // publishes GameMessages; ConsoleGameObserver decides the wording
@@ -29,6 +30,11 @@ import player.YellowPlayer;
 public final class GameFacade {
 
     private static final int TEST_ROUND_COUNT = 20;
+
+    // Chain of Responsibility: a 6 lets a Base piece enter the board
+    // (Rule 2); otherwise an already-entered piece moves forward
+    // (Rule 1). Both rules are stateless, so one chain is reused.
+    private static final TurnRule TURN_RULE_CHAIN = buildTurnRuleChain();
 
     private GameFacade() {
     }
@@ -57,7 +63,6 @@ public final class GameFacade {
         Player firstPlayer = determineFirstPlayer(tossOrder, dice, messages);
         List<Player> turnOrder = buildTurnOrder(firstPlayer.getColor(), players, board);
 
-        
         for (int roundNumber = 1; roundNumber <= TEST_ROUND_COUNT; roundNumber++) {
             messages.publish(GameMessage.roundStarted(roundNumber));
             for (Player player : turnOrder) {
@@ -107,7 +112,8 @@ public final class GameFacade {
         }
     }
 
-    // Play clockwise around the board starting from a given color - the toss's fixed start, or later the winner's.
+    // Rule 3: play proceeds clockwise around the board starting from
+    // a given color - the toss's fixed start, or later the winner's.
     private static List<Player> buildTurnOrder(
             PlayerColor startingColor, List<Player> players, Board board) {
         List<Player> turnOrder = new ArrayList<>();
@@ -128,7 +134,15 @@ public final class GameFacade {
                 .orElseThrow();
     }
 
-    // Rule 1: observe the dice face value, then move a piece that  many cells - represented as a MoveCommand so an invoker only needs to know it holds a legal Command.
+    private static TurnRule buildTurnRuleChain() {
+        TurnRule baseExitRule = new BaseExitRule();
+        TurnRule movementRule = new MovementRule();
+        baseExitRule.setNext(movementRule);
+        return baseExitRule;
+    }
+
+    // Ask the rule chain (Rule 2 then Rule 1) for the one legal
+    // Command this roll produces, if any, and run it.
     private static void playTurn(
             Player player, Dice dice, Board board, GameMessagePublisher messages) {
         messages.publish(GameMessage.turnStarted(player.getColor()));
@@ -136,20 +150,11 @@ public final class GameFacade {
         int rollValue = dice.roll();
         messages.publish(GameMessage.turnRolled(player.getColor(), rollValue));
 
-        Optional<Piece> movablePiece = findMovablePiece(player);
-        if (movablePiece.isPresent()) {
-            Piece piece = movablePiece.get();
-            Command moveCommand = new MoveCommand(player, piece, rollValue, board);
-            moveCommand.execute();
-            messages.publish(GameMessage.pieceMoved(piece.toString(), piece.getTrackPosition()));
+        Optional<Command> command = TURN_RULE_CHAIN.handle(player, rollValue, board);
+        if (command.isPresent()) {
+            command.get().execute(messages);
         } else {
             messages.publish(GameMessage.noPieceMovable());
         }
-    }
-
-    private static Optional<Piece> findMovablePiece(Player player) {
-        return player.getPieces().stream()
-                .filter(piece -> !piece.isAtBase())
-                .findFirst();
     }
 }

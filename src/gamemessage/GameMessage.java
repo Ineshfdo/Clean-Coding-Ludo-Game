@@ -61,6 +61,11 @@ public final class GameMessage {
         return new GameMessage(GameMessageType.PIECE_MOVED, null, 0, 0, newPosition, pieceLabel);
     }
 
+    public static GameMessage pieceEnteredBoard(String pieceLabel, int newPosition) {
+        return new GameMessage(
+                GameMessageType.PIECE_ENTERED_BOARD, null, 0, 0, newPosition, pieceLabel);
+    }
+
     public GameMessageType getType() {
         return type;
     }

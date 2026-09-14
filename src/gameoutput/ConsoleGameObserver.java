@@ -35,6 +35,10 @@ public final class ConsoleGameObserver implements GameMessageObserver {
             case PIECE_MOVED ->
                     "  -> Moved " + message.getPieceLabel() + " to cell "
                             + message.getNewPosition() + ".";
+            case PIECE_ENTERED_BOARD ->
+                    "  -> " + message.getPieceLabel()
+                            + " left Base and entered the board at cell "
+                            + message.getNewPosition() + ".";
         };
     }
 }
