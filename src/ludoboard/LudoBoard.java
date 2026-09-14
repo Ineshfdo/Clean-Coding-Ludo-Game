@@ -59,6 +59,12 @@ public final class LudoBoard implements Board {
     }
 
     @Override
+    public int getPositionAfterMovingBackward(int currentPosition, int steps) {
+        return ((currentPosition - steps) % STANDARD_CELL_COUNT + STANDARD_CELL_COUNT)
+                % STANDARD_CELL_COUNT;
+    }
+
+    @Override
     public int getForwardDistance(int fromPosition, int toPosition) {
         return ((toPosition - fromPosition) % STANDARD_CELL_COUNT + STANDARD_CELL_COUNT)
                 % STANDARD_CELL_COUNT;

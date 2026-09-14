@@ -7,8 +7,7 @@ import command.Command;
 import player.Piece;
 import player.Player;
 
-// Chain of Responsibility: each rule checks whether the piece that
-// just moved captures an opponent, else defers onward.
+// Chain of Responsibility: each rule checks if the moved piece captures an opponent, else defers.
 public abstract class CaptureRule {
 
     private CaptureRule nextRule;

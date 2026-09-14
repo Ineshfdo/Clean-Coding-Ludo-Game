@@ -2,24 +2,23 @@ package rule;
 
 import java.util.List;
 
+import direction.MovementDirectionStrategy;
 import ludoboard.Board;
 import ludoboard.PlayerColor;
 import player.Piece;
 import player.Player;
 
-// T-3: two or more same-color pieces sharing a cell form a
-// blockade. No opponent may cross or land on it - movement is
-// capped at the cell immediately before the first blockade found.
+// T-3: 2+ same-color pieces sharing a cell block opponents; movement is capped just before it.
 public final class OpponentBlockadeRule extends BlockadeRule {
 
     private static final int BLOCKADE_PIECE_COUNT = 2;
 
     @Override
     protected int restrict(
-            PlayerColor moverColor, int fromPosition, int requestedSteps,
-            Board board, List<Player> allPlayers) {
+            PlayerColor moverColor, int fromPosition, int requestedSteps, Board board,
+            List<Player> allPlayers, MovementDirectionStrategy direction) {
         for (int stepOffset = 1; stepOffset <= requestedSteps; stepOffset++) {
-            int cellPosition = board.getPositionAfterMoving(fromPosition, stepOffset);
+            int cellPosition = direction.nextPosition(fromPosition, stepOffset, board);
             if (isOpponentBlockade(moverColor, cellPosition, allPlayers)) {
                 return stepOffset - 1;
             }

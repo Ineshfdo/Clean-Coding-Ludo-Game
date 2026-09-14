@@ -1,9 +1,9 @@
 package player;
 
+import direction.MovementDirectionStrategy;
 import ludoboard.PlayerColor;
 
-// Rule 6: a piece travels Base -> track -> its own
-// HomeStraight -> Home, where it finishes and stops moving.
+// Rule 6: a piece travels Base -> track -> HomeStraight -> Home, then stops.
 public final class Piece {
 
     private final PlayerColor color;
@@ -12,6 +12,8 @@ public final class Piece {
     private PieceLocation location;
     private int trackPosition;
     private int homeStraightIndex;
+    private MovementDirectionStrategy movementDirectionStrategy;
+    private int approachPassCount;
 
     Piece(PlayerColor color, int pieceNumber) {
         this.color = color;
@@ -49,9 +51,28 @@ public final class Piece {
         return homeStraightIndex;
     }
 
+    // T-1: set once at Base -> X by coin toss; drives this piece's path.
+    public MovementDirectionStrategy getMovementDirectionStrategy() {
+        return movementDirectionStrategy;
+    }
+
+    // T-1: how many times this piece has passed its own Approach cell so far.
+    public int getApproachPassCount() {
+        return approachPassCount;
+    }
+
     void leaveBase(int entryCellPosition) {
         this.location = PieceLocation.TRACK;
         this.trackPosition = entryCellPosition;
+        this.approachPassCount = 0;
+    }
+
+    void assignMovementDirection(MovementDirectionStrategy movementDirectionStrategy) {
+        this.movementDirectionStrategy = movementDirectionStrategy;
+    }
+
+    void recordApproachPass() {
+        approachPassCount++;
     }
 
     void moveTo(int newTrackPosition) {

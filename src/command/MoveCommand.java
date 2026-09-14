@@ -1,8 +1,10 @@
 package command;
 
+import direction.MovementDirectionStrategy;
 import gamemessage.GameMessage;
 import gamemessage.GameMessagePublisher;
 import ludoboard.Board;
+import player.HomeStraightEntryRule;
 import player.Piece;
 import player.Player;
 
@@ -14,21 +16,27 @@ public final class MoveCommand implements Command {
     private final Piece piece;
     private final int effectiveDiceValue;
     private final Board board;
+    private final HomeStraightEntryRule homeStraightEntryRule;
+    private final MovementDirectionStrategy travelDirection;
 
-    public MoveCommand(Player player, Piece piece, int effectiveDiceValue, Board board) {
+    public MoveCommand(
+            Player player, Piece piece, int effectiveDiceValue, Board board,
+            HomeStraightEntryRule homeStraightEntryRule, MovementDirectionStrategy travelDirection) {
         this.player = player;
         this.piece = piece;
         this.effectiveDiceValue = effectiveDiceValue;
         this.board = board;
+        this.homeStraightEntryRule = homeStraightEntryRule;
+        this.travelDirection = travelDirection;
     }
 
     @Override
     public void execute(GameMessagePublisher messages) {
-        player.moveForward(piece, effectiveDiceValue, board);
+        player.moveForward(piece, effectiveDiceValue, board, homeStraightEntryRule, travelDirection);
         messages.publish(describeOutcome());
     }
 
-    // The same move can land the piece back on the track, onto its HomeStraight, or send it Home - each needs its own announcement.
+    // The move may land back on the track, onto HomeStraight, or send it Home.
     private GameMessage describeOutcome() {
         if (piece.isHome()) {
             return GameMessage.pieceReachedHome(piece.toString());

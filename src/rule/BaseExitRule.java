@@ -3,6 +3,7 @@ package rule;
 import java.util.List;
 import java.util.Optional;
 
+import coin.CoinToss;
 import command.Command;
 import command.EnterBoardCommand;
 import ludoboard.Board;
@@ -14,6 +15,12 @@ public final class BaseExitRule implements TurnRule {
 
     private static final int BASE_EXIT_ROLL_VALUE = 6;
 
+    private final CoinToss coinToss;
+
+    public BaseExitRule(CoinToss coinToss) {
+        this.coinToss = coinToss;
+    }
+
     @Override
     public Optional<Command> resolve(
             Player player, int rollValue, Board board, List<Player> allPlayers) {
@@ -21,7 +28,7 @@ public final class BaseExitRule implements TurnRule {
             return Optional.empty();
         }
         return findBasePiece(player)
-                .map(piece -> new EnterBoardCommand(player, piece, board));
+                .map(piece -> new EnterBoardCommand(player, piece, board, coinToss));
     }
 
     private static Optional<Piece> findBasePiece(Player player) {

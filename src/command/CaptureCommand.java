@@ -5,8 +5,7 @@ import gamemessage.GameMessagePublisher;
 import player.Piece;
 import player.Player;
 
-// Rule 7 as a command: sends a captured opponent piece back to
-// Base and credits the capturing player.
+// Rule 7 as a command: sends a captured piece to Base and credits the capturer.
 public final class CaptureCommand implements Command {
 
     private final Player capturingPlayer;

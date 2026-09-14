@@ -1,5 +1,7 @@
 package gamefacade;
 
+import coin.CoinToss;
+import coin.SeededCoinToss;
 import dice.Dice;
 import dice.SixSidedDice;
 import gamemessage.GameMessage;
@@ -13,8 +15,10 @@ import ludoboard.Board;
 import ludoboard.LudoBoard;
 import ludoboard.PlayerColor;
 import numbergenerator.SeededRandomNumberGenerator;
+import player.ApproachPassCountRule;
 import player.BluePlayer;
 import player.GreenPlayer;
+import player.HomeStraightEntryRule;
 import player.Player;
 import player.RedPlayer;
 import player.YellowPlayer;
@@ -46,8 +50,7 @@ public final class GameFacade {
     }
 
     public static void startGame(long seed) {
-        // Built before the observer, which needs the live roster and
-        // board references to render the board-state report.
+        // Built before the observer, which needs the roster and board for reports.
         List<Player> players = buildPlayers();
         Board board = LudoBoard.getInstance();
 
@@ -146,7 +149,11 @@ public final class GameFacade {
 
     private static TurnProcessor buildTurnProcessor() {
         BlockadeRule blockadeRule = new OpponentBlockadeRule();
-        List<TurnRule> turnRules = List.of(new BaseExitRule(), new MovementRule(blockadeRule));
+        HomeStraightEntryRule homeStraightEntryRule = new ApproachPassCountRule();
+        CoinToss coinToss = SeededCoinToss.getInstance();
+        List<TurnRule> turnRules = List.of(
+                new BaseExitRule(coinToss),
+                new MovementRule(blockadeRule, homeStraightEntryRule));
         PlayerStrategy strategy = new PreferEnteringBoardStrategy();
         RollValidityRule rollValidityRule = new ConsecutiveSixVoidRule();
         CaptureRule captureRule = new OpponentCaptureRule();

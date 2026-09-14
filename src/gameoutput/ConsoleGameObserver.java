@@ -5,16 +5,16 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import direction.MovementDirectionStrategy;
 import gamemessage.GameMessage;
 import gamemessage.GameMessageObserver;
 import ludoboard.Board;
 import ludoboard.PlayerColor;
+import player.BlockTravelDirection;
 import player.Piece;
 import player.Player;
 
-// Observer: turns a GameMessage into the actual command-line text.
-// Holds the roster and board only to render the board-state report -
-// game logic never tells this class what to say.
+// Observer: turns a GameMessage into console text. Holds roster/board only to render reports.
 public final class ConsoleGameObserver implements GameMessageObserver {
 
     private static final int BLOCKADE_PIECE_COUNT = 2;
@@ -62,6 +62,10 @@ public final class ConsoleGameObserver implements GameMessageObserver {
                     "  -> " + message.getPieceLabel()
                             + " left Base and entered the board at (X) position cell "
                             + message.getNewPosition() + ".";
+            case PIECE_DIRECTION_ASSIGNED ->
+                    "  -> Coin toss for " + message.getPieceLabel() + ": "
+                            + message.getCoinTossResultLabel() + " - it will move "
+                            + message.getMovementDirectionLabel() + ".";
             case PIECE_ENTERED_HOME_STRAIGHT ->
                     "  -> " + message.getPieceLabel() + " entered its HomeStraight at "
                             + message.getHomeStraightCellLabel() + ".";
@@ -106,8 +110,7 @@ public final class ConsoleGameObserver implements GameMessageObserver {
         return row.toString();
     }
 
-    // T-3: two or more same-color pieces sharing a track cell form a
-    // block, shown as one grouped segment instead of separate pieces.
+    // T-3: same-color pieces sharing a track cell form a block, shown as one segment.
     private List<String> buildPieceSegments(Player player) {
         List<Piece> pieces = player.getPieces();
         List<String> segments = new ArrayList<>();
@@ -145,17 +148,30 @@ public final class ConsoleGameObserver implements GameMessageObserver {
         return group;
     }
 
+    // T-1: shows the block's shared travel direction, alongside each member's own direction.
     private String describeBlock(List<Piece> blockedPieces, int captureCount) {
         StringBuilder block = new StringBuilder("[Block:");
         for (Piece piece : blockedPieces) {
             block.append(' ').append(describePiece(piece, captureCount));
         }
+        MovementDirectionStrategy blockDirection = BlockTravelDirection.resolve(blockedPieces, board);
+        block.append(" BlockDirection:").append(blockDirection.getLabel());
         block.append(']');
         return block.toString();
     }
 
     private String describePiece(Piece piece, int captureCount) {
-        return piece + "(" + describeLocation(piece) + ", Caps:" + captureCount + ")";
+        return piece + "(" + describeLocation(piece) + describeDirection(piece)
+                + ", Caps:" + captureCount + ")";
+    }
+
+    // T-1: shown only after a coin toss assigns direction - never for Base or Home.
+    private String describeDirection(Piece piece) {
+        if (piece.isAtBase() || piece.isHome()) {
+            return "";
+        }
+        MovementDirectionStrategy direction = piece.getMovementDirectionStrategy();
+        return ", " + direction.getLabel() + ", Pass:" + piece.getApproachPassCount();
     }
 
     private String describeLocation(Piece piece) {

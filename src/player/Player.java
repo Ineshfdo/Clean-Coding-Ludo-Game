@@ -3,6 +3,7 @@ package player;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import direction.MovementDirectionStrategy;
 import ludoboard.Board;
 import ludoboard.HomeStraightCell;
 import ludoboard.PlayerColor;
@@ -41,39 +42,52 @@ public abstract class Player {
         piece.leaveBase(board.getEntryCellPosition(color));
     }
 
-    // Rule 7: sends this player's own piece back to Base after it
-    // was captured by an opponent.
+    // Rule 7: sends this player's piece back to Base after an opponent captures it.
     public void returnToBase(Piece piece) {
         requireOwnership(piece);
         piece.returnToBase();
     }
 
-    // Rule 1: moves a piece forward by the dice's face
-    // value, along the track or its own HomeStraight.
-    public void moveForward(Piece piece, int steps, Board board) {
+    // T-1: assigns the coin toss's chosen direction to a piece that just left Base.
+    public void assignMovementDirection(Piece piece, MovementDirectionStrategy movementDirection) {
+        requireOwnership(piece);
+        piece.assignMovementDirection(movementDirection);
+    }
+
+    // Rule 1: moves a piece by the dice value using T-1's travelDirection, own direction unchanged.
+    public void moveForward(
+            Piece piece, int steps, Board board, HomeStraightEntryRule homeStraightEntryRule,
+            MovementDirectionStrategy travelDirection) {
         requireOwnership(piece);
 
         if (piece.isOnHomeStraight()) {
             applyHomeStraightMove(piece, steps);
         } else {
-            applyTrackMove(piece, steps, board);
+            applyTrackMove(piece, steps, board, homeStraightEntryRule, travelDirection);
         }
     }
 
-    // Once a move would pass this color's own Approach cell, the remaining steps continue onto the HomeStraight instead of looping back around the track.
-    private void applyTrackMove(Piece piece, int steps, Board board) {
-        int approachPosition = board.getApproachCellPosition(color);
-        int stepsToApproach = board.getForwardDistance(piece.getTrackPosition(), approachPosition);
+    // T-1: reaching Approach only enters HomeStraight once homeStraightEntryRule allows it.
+    private void applyTrackMove(
+            Piece piece, int steps, Board board, HomeStraightEntryRule homeStraightEntryRule,
+            MovementDirectionStrategy travelDirection) {
+        int stepsToApproach = travelDirection.stepsToApproach(piece.getTrackPosition(), color, board);
 
-        if (steps <= stepsToApproach) {
-            piece.moveTo(board.getPositionAfterMoving(piece.getTrackPosition(), steps));
+        if (steps < stepsToApproach) {
+            piece.moveTo(travelDirection.nextPosition(piece.getTrackPosition(), steps, board));
+            return;
+        }
+
+        piece.recordApproachPass();
+        if (homeStraightEntryRule.forbidsEntry(piece)) {
+            piece.moveTo(travelDirection.nextPosition(piece.getTrackPosition(), steps, board));
             return;
         }
 
         applyHomeStraightMove(piece, steps - stepsToApproach);
     }
 
-    // Reaching or passing the last HomeStraight cell sends the piece Home, where it finishes and stops moving.
+    // Reaching or passing the last HomeStraight cell sends the piece Home.
     private void applyHomeStraightMove(Piece piece, int steps) {
         int currentIndex = piece.isOnHomeStraight() ? piece.getHomeStraightIndex() : -1;
         int newIndex = currentIndex + steps;

@@ -8,20 +8,24 @@ import command.BlockMoveCommand;
 import command.BlockedMoveCommand;
 import command.Command;
 import command.MoveCommand;
+import direction.MovementDirectionStrategy;
 import ludoboard.Board;
+import player.BlockTravelDirection;
+import player.HomeStraightEntryRule;
 import player.Piece;
 import player.Player;
 
-// Rule 1: a piece already on the track moves forward by the
-// dice's value, capped by any blockade in its path (T-3).
+// Rule 1: a track piece moves by the dice value, capped by any blockade (T-3).
 public final class MovementRule implements TurnRule {
 
     private static final int BLOCKADE_PIECE_COUNT = 2;
 
     private final BlockadeRule blockadeRule;
+    private final HomeStraightEntryRule homeStraightEntryRule;
 
-    public MovementRule(BlockadeRule blockadeRule) {
+    public MovementRule(BlockadeRule blockadeRule, HomeStraightEntryRule homeStraightEntryRule) {
         this.blockadeRule = blockadeRule;
+        this.homeStraightEntryRule = homeStraightEntryRule;
     }
 
     @Override
@@ -32,28 +36,31 @@ public final class MovementRule implements TurnRule {
             return Optional.empty();
         }
 
-        // Try this player's own pieces in order; a blockade against
-        // one piece must not stop a different, unblocked piece from
-        // moving with the same roll.
+        // Try this player's pieces in order; a blockade on one must not stop another.
         for (Piece piece : candidates) {
-            int effectiveSteps = effectiveSteps(player, piece, rollValue, board, allPlayers);
+            List<Piece> blockPieces = findOwnBlock(piece, candidates);
+            MovementDirectionStrategy travelDirection = resolveTravelDirection(piece, blockPieces, board);
+            int effectiveSteps =
+                    effectiveSteps(player, piece, rollValue, board, allPlayers, travelDirection);
             if (effectiveSteps > 0) {
-                return Optional.of(buildMoveCommand(player, piece, candidates, effectiveSteps, board));
+                return Optional.of(buildMoveCommand(
+                        player, piece, blockPieces, effectiveSteps, board, travelDirection));
             }
         }
 
         return Optional.of(new BlockedMoveCommand(candidates.get(0)));
     }
 
-    // T-3: a piece sharing its own color's block moves together with
-    // its partner(s), using the same effective steps.
-    private static Command buildMoveCommand(
-            Player player, Piece piece, List<Piece> candidates, int effectiveSteps, Board board) {
-        List<Piece> blockPieces = findOwnBlock(piece, candidates);
+    // T-3/T-1: pieces sharing a cell move together via the block's travelDirection.
+    private Command buildMoveCommand(
+            Player player, Piece piece, List<Piece> blockPieces, int effectiveSteps, Board board,
+            MovementDirectionStrategy travelDirection) {
         if (blockPieces.size() >= BLOCKADE_PIECE_COUNT) {
-            return new BlockMoveCommand(player, blockPieces, effectiveSteps, board);
+            return new BlockMoveCommand(
+                    player, blockPieces, effectiveSteps, board, homeStraightEntryRule, travelDirection);
         }
-        return new MoveCommand(player, piece, effectiveSteps, board);
+        return new MoveCommand(
+                player, piece, effectiveSteps, board, homeStraightEntryRule, travelDirection);
     }
 
     private static List<Piece> findOwnBlock(Piece piece, List<Piece> candidates) {
@@ -66,15 +73,25 @@ public final class MovementRule implements TurnRule {
                 .collect(Collectors.toList());
     }
 
-    // T-3: HomeStraight cells are single-color, so a blockade can
-    // only ever limit movement still on the shared track.
+    // T-1: HomeStraight cells are single-color, so only track pieces need a block direction.
+    private static MovementDirectionStrategy resolveTravelDirection(
+            Piece piece, List<Piece> blockPieces, Board board) {
+        if (!piece.isOnTrack()) {
+            return piece.getMovementDirectionStrategy();
+        }
+        return BlockTravelDirection.resolve(blockPieces, board);
+    }
+
+    // T-3: HomeStraight cells are single-color, so a blockade can only limit track movement.
     private int effectiveSteps(
-            Player player, Piece piece, int rollValue, Board board, List<Player> allPlayers) {
+            Player player, Piece piece, int rollValue, Board board, List<Player> allPlayers,
+            MovementDirectionStrategy travelDirection) {
         if (!piece.isOnTrack()) {
             return rollValue;
         }
         return blockadeRule.limitSteps(
-                player.getColor(), piece.getTrackPosition(), rollValue, board, allPlayers);
+                player.getColor(), piece.getTrackPosition(), rollValue, board, allPlayers,
+                travelDirection);
     }
 
     private static List<Piece> findMovableCandidates(Player player) {

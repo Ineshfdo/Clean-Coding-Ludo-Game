@@ -8,9 +8,7 @@ import command.Command;
 import player.Piece;
 import player.Player;
 
-// Rule 7: landing on a shared track cell occupied by an opponent's
-// piece captures it. HomeStraight/Home cells are single-color, so
-// only track landings can ever trigger this.
+// Rule 7: landing on an opponent's track cell captures it; single-color HomeStraight/Home cells are exempt.
 public final class OpponentCaptureRule extends CaptureRule {
 
     @Override

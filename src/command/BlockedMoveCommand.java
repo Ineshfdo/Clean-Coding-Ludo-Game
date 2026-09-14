@@ -4,8 +4,7 @@ import gamemessage.GameMessage;
 import gamemessage.GameMessagePublisher;
 import player.Piece;
 
-// T-3: announces that an opponent blockade fully prevents this
-// piece from moving - no state changes, just the announcement.
+// T-3: announces an opponent blockade fully preventing this piece from moving.
 public final class BlockedMoveCommand implements Command {
 
     private final Piece piece;

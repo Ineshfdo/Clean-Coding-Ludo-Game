@@ -17,6 +17,8 @@ public interface Board {
 
     int getPositionAfterMoving(int currentPosition, int steps);
 
+    int getPositionAfterMovingBackward(int currentPosition, int steps);
+
     int getForwardDistance(int fromPosition, int toPosition);
 
     PlayerColor getNextColorClockwise(PlayerColor color);

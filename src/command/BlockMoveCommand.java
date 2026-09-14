@@ -2,40 +2,44 @@ package command;
 
 import java.util.List;
 
+import direction.MovementDirectionStrategy;
 import gamemessage.GameMessage;
 import gamemessage.GameMessagePublisher;
 import ludoboard.Board;
+import player.HomeStraightEntryRule;
 import player.Piece;
 import player.Player;
 
-// T-3: a block (2+ same-color pieces sharing a cell) moves together.
-// Every member gets the same effective steps, so they land on the
-// same new cell and stay paired.
+// T-3 block moves together, using T-1's shared travelDirection - not each piece's own.
 public final class BlockMoveCommand implements Command {
 
     private final Player player;
     private final List<Piece> blockPieces;
     private final int effectiveDiceValue;
     private final Board board;
+    private final HomeStraightEntryRule homeStraightEntryRule;
+    private final MovementDirectionStrategy travelDirection;
 
     public BlockMoveCommand(Player player, List<Piece> blockPieces, int effectiveDiceValue,
-            Board board) {
+            Board board, HomeStraightEntryRule homeStraightEntryRule,
+            MovementDirectionStrategy travelDirection) {
         this.player = player;
         this.blockPieces = blockPieces;
         this.effectiveDiceValue = effectiveDiceValue;
         this.board = board;
+        this.homeStraightEntryRule = homeStraightEntryRule;
+        this.travelDirection = travelDirection;
     }
 
     @Override
     public void execute(GameMessagePublisher messages) {
         for (Piece piece : blockPieces) {
-            player.moveForward(piece, effectiveDiceValue, board);
+            player.moveForward(piece, effectiveDiceValue, board, homeStraightEntryRule, travelDirection);
         }
         messages.publish(describeOutcome());
     }
 
-    // Every member ends up identically placed (same start, same
-    // steps), so one representative piece describes the whole block.
+    // Every member starts and moves identically, so one representative piece describes the block.
     private GameMessage describeOutcome() {
         Piece representative = blockPieces.get(0);
         String blockLabel = describeBlockLabel();
