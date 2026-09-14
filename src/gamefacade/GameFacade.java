@@ -27,7 +27,6 @@ public final class GameFacade {
         
     }
 
-    // Stand-in for a future GameEngine's turn loop, which will roll for a player's piece instead of printing raw dice values.
     private static void simulateDiceRolls(Dice dice) {
         for (int rollNumber = 0; rollNumber < ROLLS_TO_SIMULATE; rollNumber++) {
             System.out.println(dice.roll());

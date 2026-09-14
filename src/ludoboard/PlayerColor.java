@@ -8,4 +8,8 @@ public enum PlayerColor {
         String lowerCaseName = name().toLowerCase();
         return Character.toUpperCase(lowerCaseName.charAt(0)) + lowerCaseName.substring(1);
     }
+
+    public String getShortCode() {
+        return name().substring(0, 1);
+    }
 }
