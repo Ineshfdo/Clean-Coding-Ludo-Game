@@ -21,10 +21,20 @@ public final class ConsoleGameObserver implements GameMessageObserver {
             case TOSS_STARTING -> "Rolling dice to determine who goes first...";
             case DICE_ROLLED ->
                     message.getColor() + " Player rolled a " + message.getRollValue();
+            case TOSS_TIED ->
+                    "There was a tie for the highest roll (" + message.getRollValue()
+                            + ")! Everyone rerolls...\n";
             case TOSS_WON ->
-                    "\n" + message.getColor() + " Player won the toss with a "
-                            + message.getRollValue() + " and goes first!\n";
-            case TURN_STARTED -> message.getColor() + " Player's turn:";
+                    message.getColor() + " Player won the toss with a "
+                            + message.getRollValue() + " and goes first!";
+            case ROUND_STARTED ->
+                    "\n" + message.getRoundNumber() + ". Round " + message.getRoundNumber();
+            case TURN_STARTED -> "- " + message.getColor() + " Player's Turn -";
+            case TURN_ROLLED -> "  -> Rolled a " + message.getRollValue();
+            case NO_PIECE_MOVABLE -> "  -> No pieces on the board could be moved.";
+            case PIECE_MOVED ->
+                    "  -> Moved " + message.getPieceLabel() + " to cell "
+                            + message.getNewPosition() + ".";
         };
     }
 }

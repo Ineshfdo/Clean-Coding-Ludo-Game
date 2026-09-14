@@ -14,12 +14,14 @@ public final class LudoBoard implements Board {
     private final Map<PlayerColor, Integer> entryPositionByColor;
     private final StandardCell[] standardCells;
     private final Map<PlayerColor, HomeStraightCell[]> homeStraightCellsByColor;
+    private final Map<PlayerColor, PlayerColor> nextColorClockwiseByColor;
 
     private LudoBoard() {
         this.approachPositionByColor = buildApproachPositions();
         this.entryPositionByColor = buildEntryPositions();
         this.standardCells = buildStandardCells();
         this.homeStraightCellsByColor = buildHomeStraightCells();
+        this.nextColorClockwiseByColor = buildNextColorClockwise();
     }
 
     public static LudoBoard getInstance() {
@@ -56,6 +58,11 @@ public final class LudoBoard implements Board {
         return (currentPosition + steps) % STANDARD_CELL_COUNT;
     }
 
+    @Override
+    public PlayerColor getNextColorClockwise(PlayerColor color) {
+        return nextColorClockwiseByColor.get(color);
+    }
+
     private static Map<PlayerColor, Integer> buildApproachPositions() {
         Map<PlayerColor, Integer> positionByColor = new EnumMap<>(PlayerColor.class);
         positionByColor.put(PlayerColor.YELLOW, 0);
@@ -72,6 +79,16 @@ public final class LudoBoard implements Board {
         positionByColor.put(PlayerColor.RED, 28);
         positionByColor.put(PlayerColor.GREEN, 41);
         return positionByColor;
+    }
+
+    // Colors are physically arranged clockwise around the board:
+    private static Map<PlayerColor, PlayerColor> buildNextColorClockwise() {
+        Map<PlayerColor, PlayerColor> nextColorByColor = new EnumMap<>(PlayerColor.class);
+        nextColorByColor.put(PlayerColor.YELLOW, PlayerColor.BLUE);
+        nextColorByColor.put(PlayerColor.BLUE, PlayerColor.RED);
+        nextColorByColor.put(PlayerColor.RED, PlayerColor.GREEN);
+        nextColorByColor.put(PlayerColor.GREEN, PlayerColor.YELLOW);
+        return nextColorByColor;
     }
 
     private StandardCell[] buildStandardCells() {

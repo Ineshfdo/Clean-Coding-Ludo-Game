@@ -24,6 +24,13 @@ public final class GameMessageCenter implements GameMessagePublisher {
         observers.add(observer);
     }
 
+    // Lets a fresh game start with a clean observer list, since this
+    // is a Singleton shared across the whole JVM rather than
+    // recreated per game.
+    public void clearObservers() {
+        observers.clear();
+    }
+
     @Override
     public void publish(GameMessage message) {
         for (GameMessageObserver observer : observers) {

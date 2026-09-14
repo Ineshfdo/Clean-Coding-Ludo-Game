@@ -15,4 +15,6 @@ public interface Board {
     int getEntryCellPosition(PlayerColor color);
 
     int getPositionAfterMoving(int currentPosition, int steps);
+
+    PlayerColor getNextColorClockwise(PlayerColor color);
 }
