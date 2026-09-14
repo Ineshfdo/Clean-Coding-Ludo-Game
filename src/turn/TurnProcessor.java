@@ -2,6 +2,7 @@ package turn;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import command.Command;
 import dice.Dice;
@@ -9,7 +10,9 @@ import gamemessage.GameMessage;
 import gamemessage.GameMessagePublisher;
 import gamemessage.GameMessageType;
 import ludoboard.Board;
+import player.Piece;
 import player.Player;
+import rule.CaptureRule;
 import rule.RollValidityRule;
 import rule.TurnRule;
 import strategy.PlayerStrategy;
@@ -21,16 +24,20 @@ public abstract class TurnProcessor {
     private final List<TurnRule> turnRules;
     private final PlayerStrategy strategy;
     private final RollValidityRule rollValidityRule;
+    private final CaptureRule captureRule;
 
     protected TurnProcessor(
-            List<TurnRule> turnRules, PlayerStrategy strategy, RollValidityRule rollValidityRule) {
+            List<TurnRule> turnRules, PlayerStrategy strategy,
+            RollValidityRule rollValidityRule, CaptureRule captureRule) {
         this.turnRules = turnRules;
         this.strategy = strategy;
         this.rollValidityRule = rollValidityRule;
+        this.captureRule = captureRule;
     }
 
     public final void playTurn(
-            Player player, Dice dice, Board board, GameMessagePublisher messages) {
+            Player player, List<Player> allPlayers, Dice dice, Board board,
+            GameMessagePublisher messages) {
         messages.publish(GameMessage.turnStarted(player.getColor()));
 
         int rollNumber = 0;
@@ -46,22 +53,26 @@ public abstract class TurnProcessor {
                 return;
             }
 
-            resolveAndPlay(player, rollValue, board, messages);
+            boolean capturedOpponent = resolveAndPlay(player, allPlayers, rollValue, board, messages);
 
-            turnContinues = grantsAnotherRoll(rollValue);
+            turnContinues = grantsAnotherRoll(rollValue, capturedOpponent);
         }
     }
 
-    private void resolveAndPlay(
-            Player player, int rollValue, Board board, GameMessagePublisher messages) {
+    private boolean resolveAndPlay(
+            Player player, List<Player> allPlayers, int rollValue, Board board,
+            GameMessagePublisher messages) {
         List<Command> legalOptions = findLegalOptions(player, rollValue, board);
 
         if (legalOptions.isEmpty()) {
             messages.publish(GameMessage.noPieceMovable());
-            return;
+            return false;
         }
 
-        strategy.choose(legalOptions).execute(messages);
+        Command chosenCommand = strategy.choose(legalOptions);
+        chosenCommand.execute(messages);
+
+        return applyCapture(player, chosenCommand.getAffectedPiece(), allPlayers, messages);
     }
 
     private List<Command> findLegalOptions(Player player, int rollValue, Board board) {
@@ -72,7 +83,16 @@ public abstract class TurnProcessor {
         return legalOptions;
     }
 
-    // Rule 4: rolling a 6 earns another roll; called
+    // Rule 7: a piece landing on an opponent's cell captures it.
+    private boolean applyCapture(
+            Player mover, Piece movedPiece, List<Player> allPlayers,
+            GameMessagePublisher messages) {
+        Optional<Command> captureCommand = captureRule.resolve(mover, movedPiece, allPlayers);
+        captureCommand.ifPresent(command -> command.execute(messages));
+        return captureCommand.isPresent();
+    }
+
+    // Rule 4/7: a 6 or a capture earns another roll; called
     // after every roll automatically.
-    protected abstract boolean grantsAnotherRoll(int rollValue);
+    protected abstract boolean grantsAnotherRoll(int rollValue, boolean capturedOpponent);
 }

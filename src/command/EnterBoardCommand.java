@@ -30,4 +30,9 @@ public final class EnterBoardCommand implements Command {
     public CommandType getType() {
         return CommandType.ENTER_BOARD;
     }
+
+    @Override
+    public Piece getAffectedPiece() {
+        return piece;
+    }
 }

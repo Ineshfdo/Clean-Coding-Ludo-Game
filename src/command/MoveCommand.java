@@ -46,4 +46,9 @@ public final class MoveCommand implements Command {
     public CommandType getType() {
         return CommandType.MOVE_FORWARD;
     }
+
+    @Override
+    public Piece getAffectedPiece() {
+        return piece;
+    }
 }

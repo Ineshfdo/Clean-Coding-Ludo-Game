@@ -4,5 +4,6 @@ package command;
 // instanceof against concrete command classes.
 public enum CommandType {
     ENTER_BOARD,
-    MOVE_FORWARD
+    MOVE_FORWARD,
+    CAPTURE
 }

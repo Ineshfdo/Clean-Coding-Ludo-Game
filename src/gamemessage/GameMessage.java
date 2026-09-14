@@ -13,9 +13,11 @@ public final class GameMessage {
     private final int newPosition;
     private final String pieceLabel;
     private final String homeStraightCellLabel;
+    private final String capturedPieceLabel;
 
     private GameMessage(GameMessageType type, PlayerColor color, int rollValue,
-            int roundNumber, int newPosition, String pieceLabel, String homeStraightCellLabel) {
+            int roundNumber, int newPosition, String pieceLabel, String homeStraightCellLabel,
+            String capturedPieceLabel) {
         this.type = type;
         this.color = color;
         this.rollValue = rollValue;
@@ -23,58 +25,75 @@ public final class GameMessage {
         this.newPosition = newPosition;
         this.pieceLabel = pieceLabel;
         this.homeStraightCellLabel = homeStraightCellLabel;
+        this.capturedPieceLabel = capturedPieceLabel;
     }
 
     public static GameMessage of(GameMessageType type) {
-        return new GameMessage(type, null, 0, 0, 0, null, null);
+        return new GameMessage(type, null, 0, 0, 0, null, null, null);
     }
 
     public static GameMessage diceRolled(PlayerColor color, int rollValue) {
-        return new GameMessage(GameMessageType.DICE_ROLLED, color, rollValue, 0, 0, null, null);
+        return new GameMessage(
+                GameMessageType.DICE_ROLLED, color, rollValue, 0, 0, null, null, null);
     }
 
     public static GameMessage tossWon(PlayerColor color, int rollValue) {
-        return new GameMessage(GameMessageType.TOSS_WON, color, rollValue, 0, 0, null, null);
+        return new GameMessage(GameMessageType.TOSS_WON, color, rollValue, 0, 0, null, null, null);
     }
 
     public static GameMessage tossTied(int rollValue) {
-        return new GameMessage(GameMessageType.TOSS_TIED, null, rollValue, 0, 0, null, null);
+        return new GameMessage(GameMessageType.TOSS_TIED, null, rollValue, 0, 0, null, null, null);
     }
 
     public static GameMessage roundStarted(int roundNumber) {
-        return new GameMessage(GameMessageType.ROUND_STARTED, null, 0, roundNumber, 0, null, null);
+        return new GameMessage(
+                GameMessageType.ROUND_STARTED, null, 0, roundNumber, 0, null, null, null);
     }
 
     public static GameMessage turnStarted(PlayerColor color) {
-        return new GameMessage(GameMessageType.TURN_STARTED, color, 0, 0, 0, null, null);
+        return new GameMessage(GameMessageType.TURN_STARTED, color, 0, 0, 0, null, null, null);
     }
 
     public static GameMessage turnRolled(PlayerColor color, int rollValue) {
-        return new GameMessage(GameMessageType.TURN_ROLLED, color, rollValue, 0, 0, null, null);
+        return new GameMessage(
+                GameMessageType.TURN_ROLLED, color, rollValue, 0, 0, null, null, null);
     }
 
     public static GameMessage noPieceMovable() {
-        return new GameMessage(GameMessageType.NO_PIECE_MOVABLE, null, 0, 0, 0, null, null);
+        return new GameMessage(GameMessageType.NO_PIECE_MOVABLE, null, 0, 0, 0, null, null, null);
     }
 
     public static GameMessage pieceMoved(String pieceLabel, int newPosition) {
         return new GameMessage(
-                GameMessageType.PIECE_MOVED, null, 0, 0, newPosition, pieceLabel, null);
+                GameMessageType.PIECE_MOVED, null, 0, 0, newPosition, pieceLabel, null, null);
     }
 
     public static GameMessage pieceEnteredBoard(String pieceLabel, int newPosition) {
         return new GameMessage(
-                GameMessageType.PIECE_ENTERED_BOARD, null, 0, 0, newPosition, pieceLabel, null);
+                GameMessageType.PIECE_ENTERED_BOARD, null, 0, 0, newPosition, pieceLabel, null,
+                null);
     }
 
     public static GameMessage pieceEnteredHomeStraight(String pieceLabel, String cellLabel) {
         return new GameMessage(
-                GameMessageType.PIECE_ENTERED_HOME_STRAIGHT, null, 0, 0, 0, pieceLabel, cellLabel);
+                GameMessageType.PIECE_ENTERED_HOME_STRAIGHT, null, 0, 0, 0, pieceLabel, cellLabel,
+                null);
     }
 
     public static GameMessage pieceReachedHome(String pieceLabel) {
         return new GameMessage(
-                GameMessageType.PIECE_REACHED_HOME, null, 0, 0, 0, pieceLabel, null);
+                GameMessageType.PIECE_REACHED_HOME, null, 0, 0, 0, pieceLabel, null, null);
+    }
+
+    public static GameMessage pieceCaptured(String capturingPieceLabel, String capturedPieceLabel) {
+        return new GameMessage(
+                GameMessageType.PIECE_CAPTURED, null, 0, 0, 0, capturingPieceLabel, null,
+                capturedPieceLabel);
+    }
+
+    public static GameMessage boardStateReported(int roundNumber) {
+        return new GameMessage(
+                GameMessageType.BOARD_STATE_REPORTED, null, 0, roundNumber, 0, null, null, null);
     }
 
     public GameMessageType getType() {
@@ -103,5 +122,9 @@ public final class GameMessage {
 
     public String getHomeStraightCellLabel() {
         return homeStraightCellLabel;
+    }
+
+    public String getCapturedPieceLabel() {
+        return capturedPieceLabel;
     }
 }

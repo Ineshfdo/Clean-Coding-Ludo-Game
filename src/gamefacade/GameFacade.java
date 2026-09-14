@@ -19,8 +19,10 @@ import player.Player;
 import player.RedPlayer;
 import player.YellowPlayer;
 import rule.BaseExitRule;
+import rule.CaptureRule;
 import rule.ConsecutiveSixVoidRule;
 import rule.MovementRule;
+import rule.OpponentCaptureRule;
 import rule.RollValidityRule;
 import rule.TurnRule;
 import strategy.PlayerStrategy;
@@ -42,9 +44,13 @@ public final class GameFacade {
     }
 
     public static void startGame(long seed) {
+        // Built before the observer, which needs the live roster
+        // reference to render the board-state report each round.
+        List<Player> players = buildPlayers();
+
         GameMessageCenter.getInstance().clearObservers();
         GameMessagePublisher messages = GameMessageCenter.getInstance();
-        messages.addObserver(new ConsoleGameObserver());
+        messages.addObserver(new ConsoleGameObserver(players));
 
         messages.publish(GameMessage.of(GameMessageType.GAME_INITIALIZING));
         SeededRandomNumberGenerator.getInstance().setSeed(seed);
@@ -55,7 +61,6 @@ public final class GameFacade {
         Dice dice = SixSidedDice.getInstance();
         messages.publish(GameMessage.of(GameMessageType.DICE_INITIALIZED));
 
-        List<Player> players = buildPlayers();
         messages.publish(GameMessage.of(GameMessageType.PLAYERS_CREATED));
 
         messages.publish(GameMessage.of(GameMessageType.GAME_STARTING));
@@ -68,8 +73,9 @@ public final class GameFacade {
         for (int roundNumber = 1; roundNumber <= TEST_ROUND_COUNT; roundNumber++) {
             messages.publish(GameMessage.roundStarted(roundNumber));
             for (Player player : turnOrder) {
-                TURN_PROCESSOR.playTurn(player, dice, board, messages);
+                TURN_PROCESSOR.playTurn(player, players, dice, board, messages);
             }
+            messages.publish(GameMessage.boardStateReported(roundNumber));
         }
     }
 
@@ -140,6 +146,7 @@ public final class GameFacade {
         List<TurnRule> turnRules = List.of(new BaseExitRule(), new MovementRule());
         PlayerStrategy strategy = new PreferEnteringBoardStrategy();
         RollValidityRule rollValidityRule = new ConsecutiveSixVoidRule();
-        return new StandardTurnProcessor(turnRules, strategy, rollValidityRule);
+        CaptureRule captureRule = new OpponentCaptureRule();
+        return new StandardTurnProcessor(turnRules, strategy, rollValidityRule, captureRule);
     }
 }

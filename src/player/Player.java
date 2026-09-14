@@ -13,6 +13,7 @@ public abstract class Player {
 
     private final PlayerColor color;
     private final List<Piece> pieces;
+    private int captureCount;
 
     protected Player(PlayerColor color) {
         this.color = color;
@@ -27,9 +28,24 @@ public abstract class Player {
         return pieces;
     }
 
+    public int getCaptureCount() {
+        return captureCount;
+    }
+
+    public void recordCapture() {
+        captureCount++;
+    }
+
     public void leaveBase(Piece piece, Board board) {
         requireOwnership(piece);
         piece.leaveBase(board.getEntryCellPosition(color));
+    }
+
+    // Rule 7: sends this player's own piece back to Base after it
+    // was captured by an opponent.
+    public void returnToBase(Piece piece) {
+        requireOwnership(piece);
+        piece.returnToBase();
     }
 
     // Rule 1: moves a piece forward by the dice's face

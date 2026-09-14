@@ -68,6 +68,10 @@ public final class Piece {
         this.location = PieceLocation.HOME;
     }
 
+    void returnToBase() {
+        this.location = PieceLocation.BASE;
+    }
+
     private void requireLocation(PieceLocation requiredLocation) {
         if (location != requiredLocation) {
             throw new IllegalStateException(this + " is not on " + requiredLocation);
