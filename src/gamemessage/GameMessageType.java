@@ -8,5 +8,6 @@ public enum GameMessageType {
     GAME_STARTING,
     TOSS_STARTING,
     DICE_ROLLED,
-    TOSS_WON
+    TOSS_WON,
+    TURN_STARTED
 }

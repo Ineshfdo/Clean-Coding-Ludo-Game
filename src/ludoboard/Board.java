@@ -13,4 +13,6 @@ public interface Board {
     int getApproachCellPosition(PlayerColor color);
 
     int getEntryCellPosition(PlayerColor color);
+
+    int getPositionAfterMoving(int currentPosition, int steps);
 }

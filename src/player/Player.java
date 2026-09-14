@@ -27,10 +27,21 @@ public abstract class Player {
     }
 
     public void leaveBase(Piece piece, Board board) {
+        requireOwnership(piece);
+        piece.leaveBase(board.getEntryCellPosition(color));
+    }
+
+    // Rule 1: move a piece already on the shared track forward by the dice's face value.
+    public void moveForward(Piece piece, int steps, Board board) {
+        requireOwnership(piece);
+        int newPosition = board.getPositionAfterMoving(piece.getTrackPosition(), steps);
+        piece.moveTo(newPosition);
+    }
+
+    private void requireOwnership(Piece piece) {
         if (piece.getColor() != color) {
             throw new IllegalArgumentException(piece + " does not belong to " + color);
         }
-        piece.leaveBase(board.getEntryCellPosition(color));
     }
 
     private static List<Piece> buildPieces(PlayerColor color) {

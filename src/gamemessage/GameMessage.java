@@ -27,6 +27,10 @@ public final class GameMessage {
         return new GameMessage(GameMessageType.TOSS_WON, color, rollValue);
     }
 
+    public static GameMessage turnStarted(PlayerColor color) {
+        return new GameMessage(GameMessageType.TURN_STARTED, color, 0);
+    }
+
     public GameMessageType getType() {
         return type;
     }

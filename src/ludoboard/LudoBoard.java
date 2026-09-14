@@ -51,6 +51,11 @@ public final class LudoBoard implements Board {
         return entryPositionByColor.get(color);
     }
 
+    @Override
+    public int getPositionAfterMoving(int currentPosition, int steps) {
+        return (currentPosition + steps) % STANDARD_CELL_COUNT;
+    }
+
     private static Map<PlayerColor, Integer> buildApproachPositions() {
         Map<PlayerColor, Integer> positionByColor = new EnumMap<>(PlayerColor.class);
         positionByColor.put(PlayerColor.YELLOW, 0);

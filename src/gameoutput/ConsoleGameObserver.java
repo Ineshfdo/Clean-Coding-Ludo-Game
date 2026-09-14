@@ -19,8 +19,12 @@ public final class ConsoleGameObserver implements GameMessageObserver {
             case PLAYERS_CREATED -> "Players created.";
             case GAME_STARTING -> "Starting the Ludo game!\n";
             case TOSS_STARTING -> "Rolling dice to determine who goes first...";
-            case DICE_ROLLED ->message.getColor() + " Player rolled a " + message.getRollValue();
-            case TOSS_WON -> message.getColor() + " Player won the toss with a " + message.getRollValue() + " and goes first!";
+            case DICE_ROLLED ->
+                    message.getColor() + " Player rolled a " + message.getRollValue();
+            case TOSS_WON ->
+                    "\n" + message.getColor() + " Player won the toss with a "
+                            + message.getRollValue() + " and goes first!\n";
+            case TURN_STARTED -> message.getColor() + " Player's turn:";
         };
     }
 }

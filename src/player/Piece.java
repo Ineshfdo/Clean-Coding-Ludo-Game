@@ -36,6 +36,10 @@ public final class Piece {
         this.atBase = false;
     }
 
+    void moveTo(int newTrackPosition) {
+        this.trackPosition = newTrackPosition;
+    }
+
     @Override
     public String toString() {
         return color.getShortCode() + pieceNumber;
