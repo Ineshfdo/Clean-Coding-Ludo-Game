@@ -19,9 +19,11 @@ import player.Player;
 import player.RedPlayer;
 import player.YellowPlayer;
 import rule.BaseExitRule;
+import rule.BlockadeRule;
 import rule.CaptureRule;
 import rule.ConsecutiveSixVoidRule;
 import rule.MovementRule;
+import rule.OpponentBlockadeRule;
 import rule.OpponentCaptureRule;
 import rule.RollValidityRule;
 import rule.TurnRule;
@@ -44,18 +46,18 @@ public final class GameFacade {
     }
 
     public static void startGame(long seed) {
-        // Built before the observer, which needs the live roster
-        // reference to render the board-state report each round.
+        // Built before the observer, which needs the live roster and
+        // board references to render the board-state report.
         List<Player> players = buildPlayers();
+        Board board = LudoBoard.getInstance();
 
         GameMessageCenter.getInstance().clearObservers();
         GameMessagePublisher messages = GameMessageCenter.getInstance();
-        messages.addObserver(new ConsoleGameObserver(players));
+        messages.addObserver(new ConsoleGameObserver(players, board));
 
         messages.publish(GameMessage.of(GameMessageType.GAME_INITIALIZING));
         SeededRandomNumberGenerator.getInstance().setSeed(seed);
 
-        Board board = LudoBoard.getInstance();
         messages.publish(GameMessage.of(GameMessageType.BOARD_INITIALIZED));
 
         Dice dice = SixSidedDice.getInstance();
@@ -143,7 +145,8 @@ public final class GameFacade {
     }
 
     private static TurnProcessor buildTurnProcessor() {
-        List<TurnRule> turnRules = List.of(new BaseExitRule(), new MovementRule());
+        BlockadeRule blockadeRule = new OpponentBlockadeRule();
+        List<TurnRule> turnRules = List.of(new BaseExitRule(), new MovementRule(blockadeRule));
         PlayerStrategy strategy = new PreferEnteringBoardStrategy();
         RollValidityRule rollValidityRule = new ConsecutiveSixVoidRule();
         CaptureRule captureRule = new OpponentCaptureRule();

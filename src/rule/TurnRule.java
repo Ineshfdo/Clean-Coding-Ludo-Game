@@ -1,5 +1,6 @@
 package rule;
 
+import java.util.List;
 import java.util.Optional;
 
 import command.Command;
@@ -10,5 +11,5 @@ import player.Player;
 // GameFacade collects every answer.
 public interface TurnRule {
 
-    Optional<Command> resolve(Player player, int rollValue, Board board);
+    Optional<Command> resolve(Player player, int rollValue, Board board, List<Player> allPlayers);
 }

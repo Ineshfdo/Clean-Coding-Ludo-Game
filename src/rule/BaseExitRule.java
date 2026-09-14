@@ -1,5 +1,6 @@
 package rule;
 
+import java.util.List;
 import java.util.Optional;
 
 import command.Command;
@@ -14,7 +15,8 @@ public final class BaseExitRule implements TurnRule {
     private static final int BASE_EXIT_ROLL_VALUE = 6;
 
     @Override
-    public Optional<Command> resolve(Player player, int rollValue, Board board) {
+    public Optional<Command> resolve(
+            Player player, int rollValue, Board board, List<Player> allPlayers) {
         if (rollValue != BASE_EXIT_ROLL_VALUE) {
             return Optional.empty();
         }

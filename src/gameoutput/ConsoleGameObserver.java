@@ -1,24 +1,32 @@
 package gameoutput;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import gamemessage.GameMessage;
 import gamemessage.GameMessageObserver;
-import java.util.List;
+import ludoboard.Board;
 import ludoboard.PlayerColor;
 import player.Piece;
 import player.Player;
 
 // Observer: turns a GameMessage into the actual command-line text.
-// Holds the player roster only to render the board-state report -
+// Holds the roster and board only to render the board-state report -
 // game logic never tells this class what to say.
 public final class ConsoleGameObserver implements GameMessageObserver {
 
+    private static final int BLOCKADE_PIECE_COUNT = 2;
     private static final PlayerColor[] BOARD_STATE_DISPLAY_ORDER =
             { PlayerColor.GREEN, PlayerColor.YELLOW, PlayerColor.BLUE, PlayerColor.RED };
 
     private final List<Player> players;
+    private final Board board;
 
-    public ConsoleGameObserver(List<Player> players) {
+    public ConsoleGameObserver(List<Player> players, Board board) {
         this.players = players;
+        this.board = board;
     }
 
     @Override
@@ -62,6 +70,9 @@ public final class ConsoleGameObserver implements GameMessageObserver {
             case PIECE_CAPTURED ->
                     "  -> " + message.getPieceLabel() + " captured " + message.getCapturedPieceLabel()
                             + "! " + message.getCapturedPieceLabel() + " returns to Base.";
+            case PIECE_BLOCKED ->
+                    "  -> " + message.getPieceLabel()
+                            + " is blocked by an opponent's blockade and cannot move.";
             case THIRD_SIX_VOIDED ->
                     "  -> Three sixes in a row! This roll is void - turn passes to the next player.";
             case BOARD_STATE_REPORTED -> describeBoardState(message.getRoundNumber());
@@ -82,24 +93,72 @@ public final class ConsoleGameObserver implements GameMessageObserver {
         return report.toString();
     }
 
-    private static String describePlayerRow(Player player) {
+    private String describePlayerRow(Player player) {
         StringBuilder row = new StringBuilder();
         row.append(player.getColor()).append(':');
 
-        List<Piece> pieces = player.getPieces();
-        for (int index = 0; index < pieces.size(); index++) {
+        List<String> segments = buildPieceSegments(player);
+        for (int index = 0; index < segments.size(); index++) {
             row.append(index == 0 ? " " : "  ");
-            row.append(describePiece(pieces.get(index), player.getCaptureCount()));
+            row.append(segments.get(index));
         }
 
         return row.toString();
     }
 
-    private static String describePiece(Piece piece, int captureCount) {
+    // T-3: two or more same-color pieces sharing a track cell form a
+    // block, shown as one grouped segment instead of separate pieces.
+    private List<String> buildPieceSegments(Player player) {
+        List<Piece> pieces = player.getPieces();
+        List<String> segments = new ArrayList<>();
+        Set<Piece> alreadyShown = new HashSet<>();
+
+        for (Piece piece : pieces) {
+            if (alreadyShown.contains(piece)) {
+                continue;
+            }
+
+            List<Piece> blockGroup = findBlockGroup(piece, pieces);
+            if (blockGroup.size() >= BLOCKADE_PIECE_COUNT) {
+                segments.add(describeBlock(blockGroup, player.getCaptureCount()));
+                alreadyShown.addAll(blockGroup);
+            } else {
+                segments.add(describePiece(piece, player.getCaptureCount()));
+                alreadyShown.add(piece);
+            }
+        }
+
+        return segments;
+    }
+
+    private static List<Piece> findBlockGroup(Piece piece, List<Piece> allPieces) {
+        List<Piece> group = new ArrayList<>();
+        if (!piece.isOnTrack()) {
+            return group;
+        }
+
+        for (Piece candidate : allPieces) {
+            if (candidate.isOnTrack() && candidate.getTrackPosition() == piece.getTrackPosition()) {
+                group.add(candidate);
+            }
+        }
+        return group;
+    }
+
+    private String describeBlock(List<Piece> blockedPieces, int captureCount) {
+        StringBuilder block = new StringBuilder("[Block:");
+        for (Piece piece : blockedPieces) {
+            block.append(' ').append(describePiece(piece, captureCount));
+        }
+        block.append(']');
+        return block.toString();
+    }
+
+    private String describePiece(Piece piece, int captureCount) {
         return piece + "(" + describeLocation(piece) + ", Caps:" + captureCount + ")";
     }
 
-    private static String describeLocation(Piece piece) {
+    private String describeLocation(Piece piece) {
         if (piece.isAtBase()) {
             return "BASE";
         }
@@ -109,7 +168,21 @@ public final class ConsoleGameObserver implements GameMessageObserver {
         if (piece.isHome()) {
             return "HOME";
         }
-        return "Cell(" + piece.getTrackPosition() + ")";
+
+        int position = piece.getTrackPosition();
+        if (isApproachCell(position)) {
+            return "Approach(" + position + ")";
+        }
+        return "Cell(" + position + ")";
+    }
+
+    private boolean isApproachCell(int position) {
+        for (PlayerColor color : PlayerColor.values()) {
+            if (board.getApproachCellPosition(color) == position) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private Player findPlayer(PlayerColor color) {

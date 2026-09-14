@@ -62,7 +62,7 @@ public abstract class TurnProcessor {
     private boolean resolveAndPlay(
             Player player, List<Player> allPlayers, int rollValue, Board board,
             GameMessagePublisher messages) {
-        List<Command> legalOptions = findLegalOptions(player, rollValue, board);
+        List<Command> legalOptions = findLegalOptions(player, allPlayers, rollValue, board);
 
         if (legalOptions.isEmpty()) {
             messages.publish(GameMessage.noPieceMovable());
@@ -75,10 +75,11 @@ public abstract class TurnProcessor {
         return applyCapture(player, chosenCommand.getAffectedPiece(), allPlayers, messages);
     }
 
-    private List<Command> findLegalOptions(Player player, int rollValue, Board board) {
+    private List<Command> findLegalOptions(
+            Player player, List<Player> allPlayers, int rollValue, Board board) {
         List<Command> legalOptions = new ArrayList<>();
         for (TurnRule rule : turnRules) {
-            rule.resolve(player, rollValue, board).ifPresent(legalOptions::add);
+            rule.resolve(player, rollValue, board, allPlayers).ifPresent(legalOptions::add);
         }
         return legalOptions;
     }

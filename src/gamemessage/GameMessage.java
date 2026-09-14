@@ -96,6 +96,11 @@ public final class GameMessage {
                 GameMessageType.BOARD_STATE_REPORTED, null, 0, roundNumber, 0, null, null, null);
     }
 
+    public static GameMessage pieceBlocked(String pieceLabel) {
+        return new GameMessage(
+                GameMessageType.PIECE_BLOCKED, null, 0, 0, 0, pieceLabel, null, null);
+    }
+
     public GameMessageType getType() {
         return type;
     }
