@@ -26,4 +26,9 @@ public final class MoveCommand implements Command {
         player.moveForward(piece, effectiveDiceValue, board);
         messages.publish(GameMessage.pieceMoved(piece.toString(), piece.getTrackPosition()));
     }
+
+    @Override
+    public CommandType getType() {
+        return CommandType.MOVE_FORWARD;
+    }
 }

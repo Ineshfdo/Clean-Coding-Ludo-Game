@@ -24,4 +24,9 @@ public final class EnterBoardCommand implements Command {
         player.leaveBase(piece, board);
         messages.publish(GameMessage.pieceEnteredBoard(piece.toString(), piece.getTrackPosition()));
     }
+
+    @Override
+    public CommandType getType() {
+        return CommandType.ENTER_BOARD;
+    }
 }

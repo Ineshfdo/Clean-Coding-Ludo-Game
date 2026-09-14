@@ -1,6 +1,8 @@
 package gamefacade;
 
-import command.Command;
+import java.util.ArrayList;
+import java.util.List;
+
 import dice.Dice;
 import dice.SixSidedDice;
 import gamemessage.GameMessage;
@@ -8,9 +10,6 @@ import gamemessage.GameMessageCenter;
 import gamemessage.GameMessagePublisher;
 import gamemessage.GameMessageType;
 import gameoutput.ConsoleGameObserver;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
 import ludoboard.Board;
 import ludoboard.LudoBoard;
 import ludoboard.PlayerColor;
@@ -21,8 +20,14 @@ import player.Player;
 import player.RedPlayer;
 import player.YellowPlayer;
 import rule.BaseExitRule;
+import rule.ConsecutiveSixVoidRule;
 import rule.MovementRule;
+import rule.RollValidityRule;
 import rule.TurnRule;
+import strategy.PlayerStrategy;
+import strategy.PreferEnteringBoardStrategy;
+import turn.StandardTurnProcessor;
+import turn.TurnProcessor;
 
 // Facade: Main only ever calls startGame(). Game logic here only
 // publishes GameMessages; ConsoleGameObserver decides the wording
@@ -31,10 +36,12 @@ public final class GameFacade {
 
     private static final int TEST_ROUND_COUNT = 20;
 
-    // Chain of Responsibility: a 6 lets a Base piece enter the board
-    // (Rule 2); otherwise an already-entered piece moves forward
-    // (Rule 1). Both rules are stateless, so one chain is reused.
-    private static final TurnRule TURN_RULE_CHAIN = buildTurnRuleChain();
+    // How a turn plays out (Template Method) is wired up once from
+    // its rules (Rule 1/2, Chain of Responsibility), its roll-void
+    // check (Rule 4, Chain of Responsibility), and its choice policy
+    // (Rule 4, Strategy). Everything here is stateless, so one
+    // processor is reused for every player's every turn.
+    private static final TurnProcessor TURN_PROCESSOR = buildTurnProcessor();
 
     private GameFacade() {
     }
@@ -66,7 +73,7 @@ public final class GameFacade {
         for (int roundNumber = 1; roundNumber <= TEST_ROUND_COUNT; roundNumber++) {
             messages.publish(GameMessage.roundStarted(roundNumber));
             for (Player player : turnOrder) {
-                playTurn(player, dice, board, messages);
+                TURN_PROCESSOR.playTurn(player, dice, board, messages);
             }
         }
     }
@@ -134,27 +141,10 @@ public final class GameFacade {
                 .orElseThrow();
     }
 
-    private static TurnRule buildTurnRuleChain() {
-        TurnRule baseExitRule = new BaseExitRule();
-        TurnRule movementRule = new MovementRule();
-        baseExitRule.setNext(movementRule);
-        return baseExitRule;
-    }
-
-    // Ask the rule chain (Rule 2 then Rule 1) for the one legal
-    // Command this roll produces, if any, and run it.
-    private static void playTurn(
-            Player player, Dice dice, Board board, GameMessagePublisher messages) {
-        messages.publish(GameMessage.turnStarted(player.getColor()));
-
-        int rollValue = dice.roll();
-        messages.publish(GameMessage.turnRolled(player.getColor(), rollValue));
-
-        Optional<Command> command = TURN_RULE_CHAIN.handle(player, rollValue, board);
-        if (command.isPresent()) {
-            command.get().execute(messages);
-        } else {
-            messages.publish(GameMessage.noPieceMovable());
-        }
+    private static TurnProcessor buildTurnProcessor() {
+        List<TurnRule> turnRules = List.of(new BaseExitRule(), new MovementRule());
+        PlayerStrategy strategy = new PreferEnteringBoardStrategy();
+        RollValidityRule rollValidityRule = new ConsecutiveSixVoidRule();
+        return new StandardTurnProcessor(turnRules, strategy, rollValidityRule);
     }
 }
