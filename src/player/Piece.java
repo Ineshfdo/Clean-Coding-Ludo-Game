@@ -2,18 +2,21 @@ package player;
 
 import ludoboard.PlayerColor;
 
+// Rule 6: a piece travels Base -> track -> its own
+// HomeStraight -> Home, where it finishes and stops moving.
 public final class Piece {
 
     private final PlayerColor color;
     private final int pieceNumber;
 
-    private boolean atBase;
+    private PieceLocation location;
     private int trackPosition;
+    private int homeStraightIndex;
 
     Piece(PlayerColor color, int pieceNumber) {
         this.color = color;
         this.pieceNumber = pieceNumber;
-        this.atBase = true;
+        this.location = PieceLocation.BASE;
     }
 
     public PlayerColor getColor() {
@@ -21,23 +24,54 @@ public final class Piece {
     }
 
     public boolean isAtBase() {
-        return atBase;
+        return location == PieceLocation.BASE;
+    }
+
+    public boolean isOnTrack() {
+        return location == PieceLocation.TRACK;
+    }
+
+    public boolean isOnHomeStraight() {
+        return location == PieceLocation.HOME_STRAIGHT;
+    }
+
+    public boolean isHome() {
+        return location == PieceLocation.HOME;
     }
 
     public int getTrackPosition() {
-        if (atBase) {
-            throw new IllegalStateException(this + " is still at base");
-        }
+        requireLocation(PieceLocation.TRACK);
         return trackPosition;
     }
 
+    public int getHomeStraightIndex() {
+        requireLocation(PieceLocation.HOME_STRAIGHT);
+        return homeStraightIndex;
+    }
+
     void leaveBase(int entryCellPosition) {
+        this.location = PieceLocation.TRACK;
         this.trackPosition = entryCellPosition;
-        this.atBase = false;
     }
 
     void moveTo(int newTrackPosition) {
+        this.location = PieceLocation.TRACK;
         this.trackPosition = newTrackPosition;
+    }
+
+    void moveToHomeStraight(int newHomeStraightIndex) {
+        this.location = PieceLocation.HOME_STRAIGHT;
+        this.homeStraightIndex = newHomeStraightIndex;
+    }
+
+    void moveHome() {
+        this.location = PieceLocation.HOME;
+    }
+
+    private void requireLocation(PieceLocation requiredLocation) {
+        if (location != requiredLocation) {
+            throw new IllegalStateException(this + " is not on " + requiredLocation);
+        }
     }
 
     @Override

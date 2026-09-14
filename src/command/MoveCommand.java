@@ -25,7 +25,21 @@ public final class MoveCommand implements Command {
     @Override
     public void execute(GameMessagePublisher messages) {
         player.moveForward(piece, effectiveDiceValue, board);
-        messages.publish(GameMessage.pieceMoved(piece.toString(), piece.getTrackPosition()));
+        messages.publish(describeOutcome());
+    }
+
+    // The same move can land the piece back on the track, onto its HomeStraight, or send it Home - each needs its own announcement.
+    private GameMessage describeOutcome() {
+        if (piece.isHome()) {
+            return GameMessage.pieceReachedHome(piece.toString());
+        }
+        if (piece.isOnHomeStraight()) {
+            String cellLabel =
+                    board.getHomeStraightCell(piece.getColor(), piece.getHomeStraightIndex())
+                            .toString();
+            return GameMessage.pieceEnteredHomeStraight(piece.toString(), cellLabel);
+        }
+        return GameMessage.pieceMoved(piece.toString(), piece.getTrackPosition());
     }
 
     @Override

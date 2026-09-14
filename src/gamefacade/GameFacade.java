@@ -1,8 +1,5 @@
 package gamefacade;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import dice.Dice;
 import dice.SixSidedDice;
 import gamemessage.GameMessage;
@@ -10,6 +7,8 @@ import gamemessage.GameMessageCenter;
 import gamemessage.GameMessagePublisher;
 import gamemessage.GameMessageType;
 import gameoutput.ConsoleGameObserver;
+import java.util.ArrayList;
+import java.util.List;
 import ludoboard.Board;
 import ludoboard.LudoBoard;
 import ludoboard.PlayerColor;
@@ -33,7 +32,7 @@ import turn.TurnProcessor;
 // messages; ConsoleGameObserver decides the wording.
 public final class GameFacade {
 
-    private static final int TEST_ROUND_COUNT = 20;
+    private static final int TEST_ROUND_COUNT = 23;
 
     // Wires Rules 1/2, Rule 4's void check, and its Strategy
     // into one reusable turn processor.

@@ -20,7 +20,7 @@ public final class MovementRule implements TurnRule {
 
     private static Optional<Piece> findMovablePiece(Player player) {
         return player.getPieces().stream()
-                .filter(piece -> !piece.isAtBase())
+                .filter(piece -> piece.isOnTrack() || piece.isOnHomeStraight())
                 .findFirst();
     }
 }

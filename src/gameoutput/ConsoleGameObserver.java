@@ -39,6 +39,11 @@ public final class ConsoleGameObserver implements GameMessageObserver {
                     "  -> " + message.getPieceLabel()
                             + " left Base and entered the board at (X) position cell "
                             + message.getNewPosition() + ".";
+            case PIECE_ENTERED_HOME_STRAIGHT ->
+                    "  -> " + message.getPieceLabel() + " entered its HomeStraight at "
+                            + message.getHomeStraightCellLabel() + ".";
+            case PIECE_REACHED_HOME ->
+                    "  -> " + message.getPieceLabel() + " reached Home and is removed from play!";
             case THIRD_SIX_VOIDED ->
                     "  -> Three sixes in a row! This roll is void - turn passes to the next player.";
         };
