@@ -29,18 +29,14 @@ import strategy.PreferEnteringBoardStrategy;
 import turn.StandardTurnProcessor;
 import turn.TurnProcessor;
 
-// Facade: Main only ever calls startGame(). Game logic here only
-// publishes GameMessages; ConsoleGameObserver decides the wording
-// (Observer pattern), so this class never calls System.out itself.
+// Facade: Main only calls startGame(). Game logic publishes
+// messages; ConsoleGameObserver decides the wording.
 public final class GameFacade {
 
     private static final int TEST_ROUND_COUNT = 20;
 
-    // How a turn plays out (Template Method) is wired up once from
-    // its rules (Rule 1/2, Chain of Responsibility), its roll-void
-    // check (Rule 4, Chain of Responsibility), and its choice policy
-    // (Rule 4, Strategy). Everything here is stateless, so one
-    // processor is reused for every player's every turn.
+    // Wires Rules 1/2, Rule 4's void check, and its Strategy
+    // into one reusable turn processor.
     private static final TurnProcessor TURN_PROCESSOR = buildTurnProcessor();
 
     private GameFacade() {
@@ -86,8 +82,8 @@ public final class GameFacade {
                 new BluePlayer());
     }
 
-    // Rerolls everyone whenever two or more players tie for the
-    // highest roll, since a toss must produce exactly one winner.
+    // Rerolls everyone when two or more players tie for
+    // the highest roll.
     private static Player determineFirstPlayer(
             List<Player> players, Dice dice, GameMessagePublisher messages) {
         messages.publish(GameMessage.of(GameMessageType.TOSS_STARTING));
@@ -119,8 +115,8 @@ public final class GameFacade {
         }
     }
 
-    // Rule 3: play proceeds clockwise around the board starting from
-    // a given color - the toss's fixed start, or later the winner's.
+    // Rule 3: turn order runs clockwise from a given
+    // color - toss start or winner.
     private static List<Player> buildTurnOrder(
             PlayerColor startingColor, List<Player> players, Board board) {
         List<Player> turnOrder = new ArrayList<>();

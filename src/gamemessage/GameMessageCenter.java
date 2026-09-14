@@ -3,8 +3,8 @@ package gamemessage;
 import java.util.ArrayList;
 import java.util.List;
 
-// Singleton: every part of the game (board setup, dice setup, players through this one center,so one set of observers sees every message in order.
-
+// Singleton: every part of the game publishes here, so
+// all observers see every message.
 public final class GameMessageCenter implements GameMessagePublisher {
 
     private static final GameMessageCenter SHARED_INSTANCE = new GameMessageCenter();
@@ -24,9 +24,8 @@ public final class GameMessageCenter implements GameMessagePublisher {
         observers.add(observer);
     }
 
-    // Lets a fresh game start with a clean observer list, since this
-    // is a Singleton shared across the whole JVM rather than
-    // recreated per game.
+    // Clears observers so a fresh game starts clean; this
+    // Singleton persists across the whole JVM.
     public void clearObservers() {
         observers.clear();
     }

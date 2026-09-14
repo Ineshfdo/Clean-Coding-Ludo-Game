@@ -1,7 +1,8 @@
 package ludoboard;
 
 
-// One of the board's 52 shared-track cells. Approach or entryOwner when the board wires it that way during construction.
+// One of the board's 52 shared-track cells; only some are
+// marked Approach or Entry cells.
 public final class StandardCell {
 
     private final int position;

@@ -1,10 +1,7 @@
 package rule;
 
-// Chain of Responsibility: each rule decides whether it recognizes
-// a void condition for this roll; if not, it defers to the next
-// rule in the chain. isVoided() is the fixed chain-walking
-// template; appliesTo() is the one thing each concrete rule
-// implements.
+// Chain of Responsibility: each rule checks for a void
+// condition, else defers onward.
 public abstract class RollValidityRule {
 
     private RollValidityRule nextRule;

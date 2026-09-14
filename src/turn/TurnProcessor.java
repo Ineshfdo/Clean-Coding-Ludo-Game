@@ -14,11 +14,8 @@ import rule.RollValidityRule;
 import rule.TurnRule;
 import strategy.PlayerStrategy;
 
-// Template Method: the fixed skeleton of "play a turn" - announce
-// the turn, roll, check whether the roll is voided, resolve and
-// play it if not, then ask the one hook whether the player earned
-// another roll. Concrete subclasses only decide that last part;
-// everything else about how a turn proceeds is fixed here.
+// Template Method: the fixed skeleton for playing a turn;
+// subclasses only decide one hook.
 public abstract class TurnProcessor {
 
     private final List<TurnRule> turnRules;
@@ -75,9 +72,7 @@ public abstract class TurnProcessor {
         return legalOptions;
     }
 
-    // Rule 4: rolling a 6 earns another roll. This one hook is
-    // called after every roll, so it naturally covers both "6
-    // grants a second roll" and "a second six grants a third" -
-    // the template doesn't need to know which roll number it is.
+    // Rule 4: rolling a 6 earns another roll; called
+    // after every roll automatically.
     protected abstract boolean grantsAnotherRoll(int rollValue);
 }

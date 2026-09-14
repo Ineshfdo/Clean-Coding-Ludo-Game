@@ -1,7 +1,7 @@
 package rule;
 
-// Rule 4: a third consecutive six does not count - the roll is
-// voided and the turn ends immediately without producing a move.
+// Rule 4: a third consecutive six is voided - the roll
+// produces no move.
 public final class ConsecutiveSixVoidRule extends RollValidityRule {
 
     private static final int VOIDING_ROLL_NUMBER = 3;

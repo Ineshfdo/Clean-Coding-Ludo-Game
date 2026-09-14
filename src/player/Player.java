@@ -31,7 +31,8 @@ public abstract class Player {
         piece.leaveBase(board.getEntryCellPosition(color));
     }
 
-    // Rule 1: move a piece already on the shared track forward by the dice's face value.
+    // Rule 1: moves a piece already on the track forward
+    // by the dice's face value.
     public void moveForward(Piece piece, int steps, Board board) {
         requireOwnership(piece);
         int newPosition = board.getPositionAfterMoving(piece.getTrackPosition(), steps);

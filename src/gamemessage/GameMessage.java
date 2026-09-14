@@ -2,10 +2,8 @@ package gamemessage;
 
 import ludoboard.PlayerColor;
 
-// Carries what happened. Game logic only ever builds these; it never
-// decides wording - that is ConsoleGameObserver's job. Each factory
-// below stays 0-2 parameters even though the private constructor
-// carries every optional field a message kind might need.
+// Carries what happened; game logic never decides wording -
+// that's ConsoleGameObserver's job.
 public final class GameMessage {
 
     private final GameMessageType type;

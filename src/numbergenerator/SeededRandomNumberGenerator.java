@@ -2,7 +2,8 @@ package numbergenerator;
 
 import java.util.Random;
 
-// Singleton: every component that needs random (dice, mystery cells, future strategies) must draw from the same seeded sequence otherwise a fixed seed would not make the whole game reproducible.
+// Singleton: every component needing randomness draws from this
+// same seeded sequence for reproducibility.
 public final class SeededRandomNumberGenerator implements SeedableRandomNumberGenerator {
 
     private static final SeededRandomNumberGenerator SHARED_INSTANCE =

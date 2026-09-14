@@ -8,8 +8,8 @@ import ludoboard.Board;
 import player.Piece;
 import player.Player;
 
-// Rule 1: a piece already on the shared track moves forward by the
-// dice's face value.
+// Rule 1: a piece already on the track moves forward
+// by the dice's value.
 public final class MovementRule implements TurnRule {
 
     @Override

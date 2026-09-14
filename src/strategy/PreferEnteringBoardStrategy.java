@@ -4,9 +4,8 @@ import command.Command;
 import command.CommandType;
 import java.util.List;
 
-// Default rule-based choice: prefer bringing a new piece onto the
-// board over moving one already in play, since getting more pieces
-// active early reduces the risk of having no legal move later.
+// Default strategy: prefer bringing a new piece onto the
+// board over moving one in play.
 public final class PreferEnteringBoardStrategy implements PlayerStrategy {
 
     @Override

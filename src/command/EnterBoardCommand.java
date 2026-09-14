@@ -6,7 +6,8 @@ import ludoboard.Board;
 import player.Piece;
 import player.Player;
 
-// Rule 2 as a command: move the selected piece from Base onto its color's Entry ("X") cell. Delegates to Player.leaveBase(), which  already owns ownership validation and the actual piece mutation.
+// Rule 2 as a command: moves a piece from Base to
+// its Entry ("X") cell.
 public final class EnterBoardCommand implements Command {
 
     private final Player player;

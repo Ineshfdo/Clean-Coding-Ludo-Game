@@ -37,7 +37,7 @@ public final class ConsoleGameObserver implements GameMessageObserver {
                             + message.getNewPosition() + ".";
             case PIECE_ENTERED_BOARD ->
                     "  -> " + message.getPieceLabel()
-                            + " left Base and entered the board at cell "
+                            + " left Base and entered the board at (X) position cell "
                             + message.getNewPosition() + ".";
             case THIRD_SIX_VOIDED ->
                     "  -> Three sixes in a row! This roll is void - turn passes to the next player.";

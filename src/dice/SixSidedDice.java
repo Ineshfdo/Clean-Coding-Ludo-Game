@@ -3,7 +3,7 @@ package dice;
 import numbergenerator.RandomNumberGenerator;
 import numbergenerator.SeededRandomNumberGenerator;
 
-// Singleton one physical die is shared by every player's turn.
+// Singleton: one physical die is shared by every player's turn.
 public final class SixSidedDice implements Dice {
 
     private static final int LOWEST_FACE_VALUE = 1;

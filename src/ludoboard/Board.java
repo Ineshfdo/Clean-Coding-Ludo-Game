@@ -1,6 +1,7 @@
 package ludoboard;
 
-// The board-geometry contract. Future Player/Piece/Rules classes depend on this abstraction (DIP) instead of the concrete LudoBoard.
+// Board-geometry contract; Player/Piece/Rules depend on this
+// abstraction (DIP), not the concrete LudoBoard.
 
 public interface Board {
 

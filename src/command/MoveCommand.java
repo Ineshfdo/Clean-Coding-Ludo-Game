@@ -6,7 +6,8 @@ import ludoboard.Board;
 import player.Piece;
 import player.Player;
 
-// Rule 1 as a command: move the selected piece by the effective dice value. Delegates to Player.moveForward(), which already owns ownership validation and the actual piece mutation - this class only represents the intention to make that move, and announces the result once it happens.
+// Rule 1 as a command: moves a piece forward by the
+// dice's face value.
 public final class MoveCommand implements Command {
 
     private final Player player;
