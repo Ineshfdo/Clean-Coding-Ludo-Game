@@ -10,7 +10,8 @@ import gamemessage.GameMessage;
 import gamemessage.GameMessageObserver;
 import ludoboard.Board;
 import ludoboard.PlayerColor;
-import player.BlockTravelDirection;
+import player.BlockDirectionStrategy;
+import player.BlockDirectionType;
 import player.Piece;
 import player.Player;
 
@@ -23,10 +24,13 @@ public final class ConsoleGameObserver implements GameMessageObserver {
 
     private final List<Player> players;
     private final Board board;
+    private final BlockDirectionStrategy blockDirectionStrategy;
 
-    public ConsoleGameObserver(List<Player> players, Board board) {
+    public ConsoleGameObserver(
+            List<Player> players, Board board, BlockDirectionStrategy blockDirectionStrategy) {
         this.players = players;
         this.board = board;
+        this.blockDirectionStrategy = blockDirectionStrategy;
     }
 
     @Override
@@ -55,9 +59,7 @@ public final class ConsoleGameObserver implements GameMessageObserver {
             case TURN_STARTED -> "- " + message.getColor() + " Player's Turn -";
             case TURN_ROLLED -> "  -> Rolled a " + message.getRollValue();
             case NO_PIECE_MOVABLE -> "  -> No pieces on the board could be moved.";
-            case PIECE_MOVED ->
-                    "  -> Moved " + message.getPieceLabel() + " to cell "
-                            + message.getNewPosition() + ".";
+            case PIECE_MOVED -> describePieceMoved(message);
             case PIECE_ENTERED_BOARD ->
                     "  -> " + message.getPieceLabel()
                             + " left Base and entered the board at (X) position cell "
@@ -80,10 +82,24 @@ public final class ConsoleGameObserver implements GameMessageObserver {
             case PIECE_NEEDS_EXACT_ROLL ->
                     "  -> " + message.getPieceLabel()
                             + " needs an exact roll to reach Home and cannot move.";
+            case BLOCK_ROLL_TOO_SMALL ->
+                    "  -> " + message.getPieceLabel()
+                            + "'s block roll divided to zero cells and cannot move.";
             case THIRD_SIX_VOIDED ->
                     "  -> Three sixes in a row! This roll is void - turn passes to the next player.";
             case BOARD_STATE_REPORTED -> describeBoardState(message.getRoundNumber());
         };
+    }
+
+    // T-4: a block move also names its BlockType and BlockDirection; a solo move does not.
+    private static String describePieceMoved(GameMessage message) {
+        String outcome = "  -> Moved " + message.getPieceLabel() + " to cell "
+                + message.getNewPosition() + ".";
+        if (message.getBlockTypeLabel() == null) {
+            return outcome;
+        }
+        return outcome + " [BlockType:" + message.getBlockTypeLabel()
+                + " BlockDirection:" + message.getMovementDirectionLabel() + "]";
     }
 
     private String describeBoardState(int roundNumber) {
@@ -167,7 +183,8 @@ public final class ConsoleGameObserver implements GameMessageObserver {
             block.append(' ').append(describePiece(piece, captureCount));
         }
         if (blockedPieces.get(0).isOnTrack()) {
-            Piece dominantPiece = BlockTravelDirection.resolveDominantPiece(blockedPieces, board);
+            Piece dominantPiece = blockDirectionStrategy.resolveDominantPiece(blockedPieces, board);
+            block.append(" BlockType:").append(BlockDirectionType.classify(blockedPieces).getLabel());
             block.append(" BlockDirection:").append(dominantPiece.getMovementDirectionStrategy().getLabel());
             block.append(" BlockApproachCellPasses:").append(dominantPiece.getApproachPassCount());
         }

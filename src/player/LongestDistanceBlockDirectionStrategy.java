@@ -6,19 +6,11 @@ import direction.MovementDirectionStrategy;
 import ludoboard.Board;
 import ludoboard.HomeStraightCell;
 
-// T-1: block travels via the member with the longest remaining distance; shared by two callers.
-public final class BlockTravelDirection {
+// T-4: a mixed-direction block travels via the member with the longest remaining distance.
+public final class LongestDistanceBlockDirectionStrategy implements BlockDirectionStrategy {
 
-    private BlockTravelDirection() {
-    }
-
-    public static MovementDirectionStrategy resolve(List<Piece> blockPieces, Board board) {
-        return resolveDominantPiece(blockPieces, board).getMovementDirectionStrategy();
-    }
-
-    // Exposes the dominant piece itself, not just its direction, so a
-    // caller can also read its own ApproachCellPasses for display.
-    public static Piece resolveDominantPiece(List<Piece> blockPieces, Board board) {
+    @Override
+    public Piece resolveDominantPiece(List<Piece> blockPieces, Board board) {
         Piece dominantPiece = blockPieces.get(0);
         int longestRemaining = remainingDistanceToHome(dominantPiece, board);
 

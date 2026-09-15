@@ -1,16 +1,18 @@
 package rule;
 
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
 import command.BlockMoveCommand;
+import command.BlockRollTooSmallCommand;
 import command.BlockedMoveCommand;
 import command.Command;
 import command.ExactRollRequiredCommand;
 import command.MoveCommand;
 import direction.MovementDirectionStrategy;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 import ludoboard.Board;
-import player.BlockTravelDirection;
+import player.BlockDirectionStrategy;
 import player.ExactHomeRule;
 import player.HomeStraightEntryRule;
 import player.Piece;
@@ -24,13 +26,18 @@ public final class MovementRule implements TurnRule {
     private final BlockadeRule blockadeRule;
     private final HomeStraightEntryRule homeStraightEntryRule;
     private final ExactHomeRule exactHomeRule;
+    private final BlockMovementRule blockMovementRule;
+    private final BlockDirectionStrategy blockDirectionStrategy;
 
     public MovementRule(
             BlockadeRule blockadeRule, HomeStraightEntryRule homeStraightEntryRule,
-            ExactHomeRule exactHomeRule) {
+            ExactHomeRule exactHomeRule, BlockMovementRule blockMovementRule,
+            BlockDirectionStrategy blockDirectionStrategy) {
         this.blockadeRule = blockadeRule;
         this.homeStraightEntryRule = homeStraightEntryRule;
         this.exactHomeRule = exactHomeRule;
+        this.blockMovementRule = blockMovementRule;
+        this.blockDirectionStrategy = blockDirectionStrategy;
     }
 
     @Override
@@ -46,20 +53,24 @@ public final class MovementRule implements TurnRule {
             List<Piece> blockPieces = findOwnBlock(piece, candidates);
             MovementDirectionStrategy travelDirection = resolveTravelDirection(piece, blockPieces, board);
             int effectiveSteps =
-                    effectiveSteps(player, piece, rollValue, board, allPlayers, travelDirection);
+                    effectiveSteps(player, piece, rollValue, board, allPlayers, blockPieces, travelDirection);
             if (effectiveSteps > 0) {
                 return Optional.of(buildMoveCommand(
                         player, piece, blockPieces, effectiveSteps, board, travelDirection));
             }
         }
 
-        return Optional.of(buildNoMoveCommand(candidates.get(0)));
+        return Optional.of(buildNoMoveCommand(candidates.get(0), candidates, rollValue));
     }
 
-    // Rule 10: a HomeStraight piece needs its own message, not the blockade one.
-    private static Command buildNoMoveCommand(Piece representative) {
+    // Rule 10/T-4: a stalled piece needs the message matching why it cannot move.
+    private Command buildNoMoveCommand(Piece representative, List<Piece> candidates, int rollValue) {
         if (representative.isOnHomeStraight()) {
             return new ExactRollRequiredCommand(representative);
+        }
+        List<Piece> blockPieces = findOwnBlock(representative, candidates);
+        if (blockMovementRule.limitSteps(blockPieces, rollValue) == 0) {
+            return new BlockRollTooSmallCommand(representative);
         }
         return new BlockedMoveCommand(representative);
     }
@@ -91,21 +102,22 @@ public final class MovementRule implements TurnRule {
     }
 
     // T-1: HomeStraight cells are single-color, so only track pieces need a block direction.
-    private static MovementDirectionStrategy resolveTravelDirection(
+    private MovementDirectionStrategy resolveTravelDirection(
             Piece piece, List<Piece> blockPieces, Board board) {
         if (!piece.isOnTrack()) {
             return piece.getMovementDirectionStrategy();
         }
-        return BlockTravelDirection.resolve(blockPieces, board);
+        return blockDirectionStrategy.resolveDominantPiece(blockPieces, board).getMovementDirectionStrategy();
     }
 
-    // T-3/Rule 10: a track piece is capped by blockade; HomeStraight needs an exact roll.
+    // T-3/T-4/Rule 10: a track block is first halved if mixed-direction, then capped by blockade.
     private int effectiveSteps(
             Player player, Piece piece, int rollValue, Board board, List<Player> allPlayers,
-            MovementDirectionStrategy travelDirection) {
+            List<Piece> blockPieces, MovementDirectionStrategy travelDirection) {
         if (piece.isOnTrack()) {
+            int requestedSteps = blockMovementRule.limitSteps(blockPieces, rollValue);
             return blockadeRule.limitSteps(
-                    player.getColor(), piece.getTrackPosition(), rollValue, board, allPlayers,
+                    player.getColor(), piece.getTrackPosition(), requestedSteps, board, allPlayers,
                     travelDirection);
         }
         return exactHomeRule.forbidsMove(piece, rollValue) ? 0 : rollValue;

@@ -6,6 +6,7 @@ import direction.MovementDirectionStrategy;
 import gamemessage.GameMessage;
 import gamemessage.GameMessagePublisher;
 import ludoboard.Board;
+import player.BlockDirectionType;
 import player.HomeStraightEntryRule;
 import player.Piece;
 import player.Player;
@@ -53,7 +54,9 @@ public final class BlockMoveCommand implements Command {
                     .toString();
             return GameMessage.pieceEnteredHomeStraight(blockLabel, cellLabel);
         }
-        return GameMessage.pieceMoved(blockLabel, representative.getTrackPosition());
+        return GameMessage.blockMoved(
+                blockLabel, representative.getTrackPosition(),
+                BlockDirectionType.classify(blockPieces).getLabel(), travelDirection.getLabel());
     }
 
     private String describeBlockLabel() {

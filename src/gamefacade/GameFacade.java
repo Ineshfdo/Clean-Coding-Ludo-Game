@@ -16,19 +16,23 @@ import ludoboard.LudoBoard;
 import ludoboard.PlayerColor;
 import numbergenerator.SeededRandomNumberGenerator;
 import player.ApproachPassCountRule;
+import player.BlockDirectionStrategy;
 import player.BluePlayer;
 import player.ExactHomeRule;
 import player.GreenPlayer;
 import player.HomeStraightEligibilityRule;
 import player.HomeStraightEntryRule;
+import player.LongestDistanceBlockDirectionStrategy;
 import player.OvershootHomeRule;
 import player.Player;
 import player.RedPlayer;
 import player.YellowPlayer;
 import rule.BaseExitRule;
+import rule.BlockMovementRule;
 import rule.BlockadeRule;
 import rule.CaptureRule;
 import rule.ConsecutiveSixVoidRule;
+import rule.MixedDirectionBlockMovementRule;
 import rule.MovementRule;
 import rule.OpponentBlockadeRule;
 import rule.OpponentCaptureRule;
@@ -45,6 +49,10 @@ public final class GameFacade {
 
     private static final int TEST_ROUND_COUNT = 23;
 
+    // T-4: shared so a block's direction is resolved the same way for movement and display.
+    private static final BlockDirectionStrategy BLOCK_DIRECTION_STRATEGY =
+            new LongestDistanceBlockDirectionStrategy();
+
     // Wires Rules 1/2, Rule 4's void check, and its Strategy
     // into one reusable turn processor.
     private static final TurnProcessor TURN_PROCESSOR = buildTurnProcessor();
@@ -59,7 +67,7 @@ public final class GameFacade {
 
         GameMessageCenter.getInstance().clearObservers();
         GameMessagePublisher messages = GameMessageCenter.getInstance();
-        messages.addObserver(new ConsoleGameObserver(players, board));
+        messages.addObserver(new ConsoleGameObserver(players, board, BLOCK_DIRECTION_STRATEGY));
 
         messages.publish(GameMessage.of(GameMessageType.GAME_INITIALIZING));
         SeededRandomNumberGenerator.getInstance().setSeed(seed);
@@ -155,10 +163,13 @@ public final class GameFacade {
         HomeStraightEntryRule homeStraightEntryRule = new ApproachPassCountRule();
         homeStraightEntryRule.setNext(new HomeStraightEligibilityRule());
         ExactHomeRule exactHomeRule = new OvershootHomeRule();
+        BlockMovementRule blockMovementRule = new MixedDirectionBlockMovementRule();
         CoinToss coinToss = SeededCoinToss.getInstance();
         List<TurnRule> turnRules = List.of(
                 new BaseExitRule(coinToss),
-                new MovementRule(blockadeRule, homeStraightEntryRule, exactHomeRule));
+                new MovementRule(
+                        blockadeRule, homeStraightEntryRule, exactHomeRule, blockMovementRule,
+                        BLOCK_DIRECTION_STRATEGY));
         PlayerStrategy strategy = new PreferEnteringBoardStrategy();
         RollValidityRule rollValidityRule = new ConsecutiveSixVoidRule();
         CaptureRule captureRule = new OpponentCaptureRule();
