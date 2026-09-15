@@ -1,9 +1,9 @@
 package player;
 
+import direction.MovementDirectionStrategy;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import direction.MovementDirectionStrategy;
 import ludoboard.Board;
 import ludoboard.HomeStraightCell;
 import ludoboard.PlayerColor;
@@ -88,6 +88,12 @@ public abstract class Player {
 
         if (steps < stepsToApproach) {
             piece.moveTo(travelDirection.nextPosition(piece.getTrackPosition(), steps, board));
+            return;
+        }
+        if (steps == stepsToApproach) {
+            // Landing exactly on Approach keeps the piece on the track - HomeStraight starts after it.
+            piece.moveTo(travelDirection.nextPosition(piece.getTrackPosition(), steps, board));
+            piece.recordApproachPass();
             return;
         }
 
