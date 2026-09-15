@@ -49,6 +49,12 @@ public abstract class Player {
         piece.returnToBase();
     }
 
+    // T-11: places a piece directly onto a track cell - a jump, not a normal move.
+    public void teleportTo(Piece piece, int trackPosition) {
+        requireOwnership(piece);
+        piece.moveTo(trackPosition);
+    }
+
     // T-1: assigns the coin toss's chosen direction to a piece that just left Base.
     public void assignMovementDirection(Piece piece, MovementDirectionStrategy movementDirection) {
         requireOwnership(piece);

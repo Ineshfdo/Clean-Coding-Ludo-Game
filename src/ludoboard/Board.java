@@ -15,6 +15,13 @@ public interface Board {
 
     int getEntryCellPosition(PlayerColor color);
 
+    // T-11: fixed Mystery Cell teleport destinations, the same for every color.
+    int getAlphaCellPosition();
+
+    int getBetaCellPosition();
+
+    int getGammaCellPosition();
+
     int getPositionAfterMoving(int currentPosition, int steps);
 
     int getPositionAfterMovingBackward(int currentPosition, int steps);

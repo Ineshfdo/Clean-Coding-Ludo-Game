@@ -8,6 +8,11 @@ public final class LudoBoard implements Board {
 
     private static final int STANDARD_CELL_COUNT = 52;
 
+    // T-11: fixed Mystery Cell teleport destinations - the same three cells for every color.
+    private static final int ALPHA_CELL_POSITION = 9;
+    private static final int BETA_CELL_POSITION = 27;
+    private static final int GAMMA_CELL_POSITION = 46;
+
     private static final LudoBoard SHARED_INSTANCE = new LudoBoard();
 
     private final Map<PlayerColor, Integer> approachPositionByColor;
@@ -51,6 +56,21 @@ public final class LudoBoard implements Board {
     @Override
     public int getEntryCellPosition(PlayerColor color) {
         return entryPositionByColor.get(color);
+    }
+
+    @Override
+    public int getAlphaCellPosition() {
+        return ALPHA_CELL_POSITION;
+    }
+
+    @Override
+    public int getBetaCellPosition() {
+        return BETA_CELL_POSITION;
+    }
+
+    @Override
+    public int getGammaCellPosition() {
+        return GAMMA_CELL_POSITION;
     }
 
     @Override

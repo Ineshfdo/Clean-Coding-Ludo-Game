@@ -35,6 +35,11 @@ public final class MysteryCellManager {
         return currentCellPosition;
     }
 
+    // T-11: lets other rules check whether a piece can land on an active Mystery Cell.
+    public boolean isActive() {
+        return isActive;
+    }
+
     // Called once per round, before turns are played, so a spawn/relocation
     // is visible for the whole round it takes effect in.
     public void onRoundStarted(int roundNumber, List<Player> players, GameMessagePublisher messages) {

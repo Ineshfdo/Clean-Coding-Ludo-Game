@@ -37,6 +37,7 @@ import rule.CaptureRule;
 import rule.ConsecutiveSixVoidRule;
 import rule.MixedDirectionBlockMovementRule;
 import rule.MovementRule;
+import rule.MysteryCellTeleportRule;
 import rule.OpponentBlockadeRule;
 import rule.OpponentCaptureRule;
 import rule.RollValidityRule;
@@ -56,10 +57,6 @@ public final class GameFacade {
     // T-4: shared so a block's direction is resolved the same way for movement and display.
     private static final BlockDirectionStrategy BLOCK_DIRECTION_STRATEGY =
             new LongestDistanceBlockDirectionStrategy();
-
-    // Wires Rules 1/2, Rule 4's void check, and its Strategy
-    // into one reusable turn processor.
-    private static final TurnProcessor TURN_PROCESSOR = buildTurnProcessor();
 
     private GameFacade() {
     }
@@ -93,12 +90,14 @@ public final class GameFacade {
         // T-10: shares the same seeded random source as everything else, for reproducibility.
         MysteryCellManager mysteryCellManager =
                 new MysteryCellManager(board, SeededRandomNumberGenerator.getInstance());
+        // T-11: this game's turn processor needs its own MysteryCellManager, so it is built per game.
+        TurnProcessor turnProcessor = buildTurnProcessor(mysteryCellManager);
 
         for (int roundNumber = 1; roundNumber <= TEST_ROUND_COUNT; roundNumber++) {
             messages.publish(GameMessage.roundStarted(roundNumber));
             mysteryCellManager.onRoundStarted(roundNumber, players, messages);
             for (Player player : turnOrder) {
-                TURN_PROCESSOR.playTurn(player, players, dice, board, messages);
+                turnProcessor.playTurn(player, players, dice, board, messages);
             }
             mysteryCellManager.onRoundCompleted(roundNumber, players);
             messages.publish(GameMessage.boardStateReported(roundNumber));
@@ -168,7 +167,8 @@ public final class GameFacade {
                 .orElseThrow();
     }
 
-    private static TurnProcessor buildTurnProcessor() {
+    private static TurnProcessor buildTurnProcessor(MysteryCellManager mysteryCellManager) {
+        Board board = LudoBoard.getInstance();
         BlockadeRule blockadeRule = new OpponentBlockadeRule();
         HomeStraightEntryRule homeStraightEntryRule = new ApproachPassCountRule();
         homeStraightEntryRule.setNext(new HomeStraightEligibilityRule());
@@ -185,7 +185,11 @@ public final class GameFacade {
         CaptureRule captureRule = new BlockCaptureRule();
         captureRule.setNext(new OpponentCaptureRule());
         BlockadeBreakRule blockadeBreakRule = new ThirdSixBlockadeBreakRule(homeStraightEntryRule);
+        // T-11: shares the same seeded random source as everything else, for reproducibility.
+        MysteryCellTeleportRule mysteryCellTeleportRule = new MysteryCellTeleportRule(
+                mysteryCellManager, SeededRandomNumberGenerator.getInstance(), board);
         return new StandardTurnProcessor(
-                turnRules, strategy, rollValidityRule, captureRule, blockadeBreakRule);
+                turnRules, strategy, rollValidityRule, captureRule, blockadeBreakRule,
+                mysteryCellTeleportRule);
     }
 }

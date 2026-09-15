@@ -1,8 +1,10 @@
 package turn;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import command.Command;
 import dice.Dice;
@@ -14,6 +16,7 @@ import player.Piece;
 import player.Player;
 import rule.BlockadeBreakRule;
 import rule.CaptureRule;
+import rule.MysteryCellTeleportRule;
 import rule.RollValidityRule;
 import rule.TurnRule;
 import strategy.PlayerStrategy;
@@ -27,16 +30,18 @@ public abstract class TurnProcessor {
     private final RollValidityRule rollValidityRule;
     private final CaptureRule captureRule;
     private final BlockadeBreakRule blockadeBreakRule;
+    private final MysteryCellTeleportRule mysteryCellTeleportRule;
 
     protected TurnProcessor(
             List<TurnRule> turnRules, PlayerStrategy strategy,
             RollValidityRule rollValidityRule, CaptureRule captureRule,
-            BlockadeBreakRule blockadeBreakRule) {
+            BlockadeBreakRule blockadeBreakRule, MysteryCellTeleportRule mysteryCellTeleportRule) {
         this.turnRules = turnRules;
         this.strategy = strategy;
         this.rollValidityRule = rollValidityRule;
         this.captureRule = captureRule;
         this.blockadeBreakRule = blockadeBreakRule;
+        this.mysteryCellTeleportRule = mysteryCellTeleportRule;
     }
 
     public final void playTurn(
@@ -84,7 +89,22 @@ public abstract class TurnProcessor {
         Command chosenCommand = strategy.choose(legalOptions);
         chosenCommand.execute(messages);
 
-        return applyCapture(player, chosenCommand, allPlayers, messages);
+        boolean capturedOpponent = applyCapture(player, chosenCommand, allPlayers, messages);
+        applyMysteryCellTeleport(player, chosenCommand, messages);
+        return capturedOpponent;
+    }
+
+    // T-11: every distinct landing position among the moved pieces is checked once for the Mystery Cell.
+    private void applyMysteryCellTeleport(
+            Player mover, Command executedCommand, GameMessagePublisher messages) {
+        Set<Integer> checkedPositions = new HashSet<>();
+        for (Piece movedPiece : executedCommand.getAffectedPieces()) {
+            if (!movedPiece.isOnTrack() || !checkedPositions.add(movedPiece.getTrackPosition())) {
+                continue;
+            }
+            mysteryCellTeleportRule.resolve(mover, movedPiece)
+                    .ifPresent(teleportCommand -> teleportCommand.execute(messages));
+        }
     }
 
     private List<Command> findLegalOptions(

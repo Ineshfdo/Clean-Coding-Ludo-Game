@@ -98,8 +98,19 @@ public final class ConsoleGameObserver implements GameMessageObserver {
                     "A Mystery Cell has appeared at cell " + message.getNewPosition() + "!");
             case MYSTERY_CELL_RELOCATED -> describeMysteryCellBanner(
                     "The Mystery Cell has relocated to cell " + message.getNewPosition() + ".");
+            case PIECE_TELEPORTED -> describePieceTeleported(message);
             case BOARD_STATE_REPORTED -> describeBoardState(message.getRoundNumber());
         };
+    }
+
+    // T-11: a Base destination has no track cell to report - every other destination does.
+    private static String describePieceTeleported(GameMessage message) {
+        String outcome = "  -> " + message.getPieceLabel() + " landed on the Mystery Cell! Teleported to "
+                + message.getDestinationLabel();
+        if (message.getNewPosition() < 0) {
+            return outcome + ".";
+        }
+        return outcome + " (cell " + message.getNewPosition() + ").";
     }
 
     // T-4: a block move also names its BlockType and BlockDirection; a solo move does not.

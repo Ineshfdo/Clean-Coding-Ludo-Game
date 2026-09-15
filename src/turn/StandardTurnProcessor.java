@@ -4,6 +4,7 @@ import java.util.List;
 
 import rule.BlockadeBreakRule;
 import rule.CaptureRule;
+import rule.MysteryCellTeleportRule;
 import rule.RollValidityRule;
 import rule.TurnRule;
 import strategy.PlayerStrategy;
@@ -15,8 +16,9 @@ public final class StandardTurnProcessor extends TurnProcessor {
     public StandardTurnProcessor(
             List<TurnRule> turnRules, PlayerStrategy strategy,
             RollValidityRule rollValidityRule, CaptureRule captureRule,
-            BlockadeBreakRule blockadeBreakRule) {
-        super(turnRules, strategy, rollValidityRule, captureRule, blockadeBreakRule);
+            BlockadeBreakRule blockadeBreakRule, MysteryCellTeleportRule mysteryCellTeleportRule) {
+        super(turnRules, strategy, rollValidityRule, captureRule, blockadeBreakRule,
+                mysteryCellTeleportRule);
     }
 
     @Override
