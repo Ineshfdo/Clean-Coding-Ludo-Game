@@ -18,6 +18,7 @@ import numbergenerator.SeededRandomNumberGenerator;
 import player.ApproachPassCountRule;
 import player.BluePlayer;
 import player.GreenPlayer;
+import player.HomeStraightEligibilityRule;
 import player.HomeStraightEntryRule;
 import player.Player;
 import player.RedPlayer;
@@ -150,6 +151,7 @@ public final class GameFacade {
     private static TurnProcessor buildTurnProcessor() {
         BlockadeRule blockadeRule = new OpponentBlockadeRule();
         HomeStraightEntryRule homeStraightEntryRule = new ApproachPassCountRule();
+        homeStraightEntryRule.setNext(new HomeStraightEligibilityRule());
         CoinToss coinToss = SeededCoinToss.getInstance();
         List<TurnRule> turnRules = List.of(
                 new BaseExitRule(coinToss),

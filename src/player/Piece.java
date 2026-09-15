@@ -14,6 +14,7 @@ public final class Piece {
     private int homeStraightIndex;
     private MovementDirectionStrategy movementDirectionStrategy;
     private int approachPassCount;
+    private int captureCount;
 
     Piece(PlayerColor color, int pieceNumber) {
         this.color = color;
@@ -61,6 +62,11 @@ public final class Piece {
         return approachPassCount;
     }
 
+    // T-7: how many opponent pieces this piece itself has captured.
+    public int getCaptureCount() {
+        return captureCount;
+    }
+
     void leaveBase(int entryCellPosition) {
         this.location = PieceLocation.TRACK;
         this.trackPosition = entryCellPosition;
@@ -73,6 +79,10 @@ public final class Piece {
 
     void recordApproachPass() {
         approachPassCount++;
+    }
+
+    void recordCapture() {
+        captureCount++;
     }
 
     void moveTo(int newTrackPosition) {

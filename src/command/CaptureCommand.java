@@ -25,7 +25,7 @@ public final class CaptureCommand implements Command {
     @Override
     public void execute(GameMessagePublisher messages) {
         capturedPlayer.returnToBase(capturedPiece);
-        capturingPlayer.recordCapture();
+        capturingPlayer.recordCapture(capturingPiece);
         messages.publish(GameMessage.pieceCaptured(capturingPiece.toString(), capturedPiece.toString()));
     }
 

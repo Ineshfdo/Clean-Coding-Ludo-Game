@@ -148,14 +148,15 @@ public final class ConsoleGameObserver implements GameMessageObserver {
         return group;
     }
 
-    // T-1: shows the block's shared travel direction, alongside each member's own direction.
+    // T-1: shows the direction and Approach passes of whoever steers the block.
     private String describeBlock(List<Piece> blockedPieces, int captureCount) {
         StringBuilder block = new StringBuilder("[Block:");
         for (Piece piece : blockedPieces) {
             block.append(' ').append(describePiece(piece, captureCount));
         }
-        MovementDirectionStrategy blockDirection = BlockTravelDirection.resolve(blockedPieces, board);
-        block.append(" BlockDirection:").append(blockDirection.getLabel());
+        Piece dominantPiece = BlockTravelDirection.resolveDominantPiece(blockedPieces, board);
+        block.append(" BlockDirection:").append(dominantPiece.getMovementDirectionStrategy().getLabel());
+        block.append(" BlockApproachCellPasses:").append(dominantPiece.getApproachPassCount());
         block.append(']');
         return block.toString();
     }
@@ -171,7 +172,7 @@ public final class ConsoleGameObserver implements GameMessageObserver {
             return "";
         }
         MovementDirectionStrategy direction = piece.getMovementDirectionStrategy();
-        return ", " + direction.getLabel() + ", Pass:" + piece.getApproachPassCount();
+        return ", " + direction.getLabel() + ", ApproachCellPasses:" + piece.getApproachPassCount();
     }
 
     private String describeLocation(Piece piece) {

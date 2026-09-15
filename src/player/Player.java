@@ -14,7 +14,6 @@ public abstract class Player {
 
     private final PlayerColor color;
     private final List<Piece> pieces;
-    private int captureCount;
 
     protected Player(PlayerColor color) {
         this.color = color;
@@ -29,12 +28,14 @@ public abstract class Player {
         return pieces;
     }
 
+    // T-7: the player's total is every piece's own count, summed on demand.
     public int getCaptureCount() {
-        return captureCount;
+        return pieces.stream().mapToInt(Piece::getCaptureCount).sum();
     }
 
-    public void recordCapture() {
-        captureCount++;
+    public void recordCapture(Piece piece) {
+        requireOwnership(piece);
+        piece.recordCapture();
     }
 
     public void leaveBase(Piece piece, Board board) {

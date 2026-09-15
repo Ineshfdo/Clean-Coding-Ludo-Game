@@ -13,6 +13,12 @@ public final class BlockTravelDirection {
     }
 
     public static MovementDirectionStrategy resolve(List<Piece> blockPieces, Board board) {
+        return resolveDominantPiece(blockPieces, board).getMovementDirectionStrategy();
+    }
+
+    // Exposes the dominant piece itself, not just its direction, so a
+    // caller can also read its own ApproachCellPasses for display.
+    public static Piece resolveDominantPiece(List<Piece> blockPieces, Board board) {
         Piece dominantPiece = blockPieces.get(0);
         int longestRemaining = remainingDistanceToHome(dominantPiece, board);
 
@@ -23,7 +29,7 @@ public final class BlockTravelDirection {
                 dominantPiece = piece;
             }
         }
-        return dominantPiece.getMovementDirectionStrategy();
+        return dominantPiece;
     }
 
     // T-1: short of its required passes, a piece must lap the track again before Home.
