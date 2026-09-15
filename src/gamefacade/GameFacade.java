@@ -14,6 +14,7 @@ import java.util.List;
 import ludoboard.Board;
 import ludoboard.LudoBoard;
 import ludoboard.PlayerColor;
+import mysterycell.MysteryCellManager;
 import numbergenerator.SeededRandomNumberGenerator;
 import player.ApproachPassCountRule;
 import player.BlockDirectionStrategy;
@@ -89,11 +90,17 @@ public final class GameFacade {
         Player firstPlayer = determineFirstPlayer(tossOrder, dice, messages);
         List<Player> turnOrder = buildTurnOrder(firstPlayer.getColor(), players, board);
 
+        // T-10: shares the same seeded random source as everything else, for reproducibility.
+        MysteryCellManager mysteryCellManager =
+                new MysteryCellManager(board, SeededRandomNumberGenerator.getInstance());
+
         for (int roundNumber = 1; roundNumber <= TEST_ROUND_COUNT; roundNumber++) {
             messages.publish(GameMessage.roundStarted(roundNumber));
+            mysteryCellManager.onRoundStarted(roundNumber, players, messages);
             for (Player player : turnOrder) {
                 TURN_PROCESSOR.playTurn(player, players, dice, board, messages);
             }
+            mysteryCellManager.onRoundCompleted(roundNumber, players);
             messages.publish(GameMessage.boardStateReported(roundNumber));
         }
     }

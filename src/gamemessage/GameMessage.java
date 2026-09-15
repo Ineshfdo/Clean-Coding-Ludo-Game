@@ -161,6 +161,20 @@ public final class GameMessage {
                 null);
     }
 
+    // T-10: the mystery cell's first spawn, at a random empty standard-path cell.
+    public static GameMessage mysteryCellAppeared(int cellPosition) {
+        return new GameMessage(
+                GameMessageType.MYSTERY_CELL_APPEARED, null, 0, 0, cellPosition, null, null, null,
+                null, null, null);
+    }
+
+    // T-10: the mystery cell relocating after its four rounds at the previous cell.
+    public static GameMessage mysteryCellRelocated(int cellPosition) {
+        return new GameMessage(
+                GameMessageType.MYSTERY_CELL_RELOCATED, null, 0, 0, cellPosition, null, null, null,
+                null, null, null);
+    }
+
     public GameMessageType getType() {
         return type;
     }

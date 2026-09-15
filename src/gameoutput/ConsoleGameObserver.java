@@ -1,13 +1,12 @@
 package gameoutput;
 
+import direction.MovementDirectionStrategy;
+import gamemessage.GameMessage;
+import gamemessage.GameMessageObserver;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
-import direction.MovementDirectionStrategy;
-import gamemessage.GameMessage;
-import gamemessage.GameMessageObserver;
 import ludoboard.Board;
 import ludoboard.PlayerColor;
 import player.BlockDirectionStrategy;
@@ -21,6 +20,7 @@ public final class ConsoleGameObserver implements GameMessageObserver {
     private static final int BLOCKADE_PIECE_COUNT = 2;
     private static final PlayerColor[] BOARD_STATE_DISPLAY_ORDER =
             { PlayerColor.GREEN, PlayerColor.YELLOW, PlayerColor.BLUE, PlayerColor.RED };
+    private static final String MYSTERY_CELL_BANNER_BORDER = "=".repeat(40);
 
     private final List<Player> players;
     private final Board board;
@@ -94,6 +94,10 @@ public final class ConsoleGameObserver implements GameMessageObserver {
                             + " leaves the block and resumes its own direction.";
             case THIRD_SIX_VOIDED ->
                     "  -> Three sixes in a row! This roll is void - turn passes to the next player.";
+            case MYSTERY_CELL_APPEARED -> describeMysteryCellBanner(
+                    "A Mystery Cell has appeared at cell " + message.getNewPosition() + "!");
+            case MYSTERY_CELL_RELOCATED -> describeMysteryCellBanner(
+                    "The Mystery Cell has relocated to cell " + message.getNewPosition() + ".");
             case BOARD_STATE_REPORTED -> describeBoardState(message.getRoundNumber());
         };
     }
@@ -107,6 +111,11 @@ public final class ConsoleGameObserver implements GameMessageObserver {
         }
         return outcome + " [BlockType:" + message.getBlockTypeLabel()
                 + " BlockDirection:" + message.getMovementDirectionLabel() + "]";
+    }
+
+    // T-10: the mystery cell spawn/relocate wording is bordered so it stands out on the console.
+    private static String describeMysteryCellBanner(String messageText) {
+        return "\n" + MYSTERY_CELL_BANNER_BORDER + "\n" + messageText + "\n" + MYSTERY_CELL_BANNER_BORDER;
     }
 
     private String describeBoardState(int roundNumber) {
