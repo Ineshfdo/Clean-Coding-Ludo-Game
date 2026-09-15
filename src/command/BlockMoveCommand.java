@@ -14,6 +14,8 @@ import player.Player;
 // T-3 block moves together, using T-1's shared travelDirection - not each piece's own.
 public final class BlockMoveCommand implements Command {
 
+    private static final int NO_PREVIOUS_POSITION = -1;
+
     private final Player player;
     private final List<Piece> blockPieces;
     private final int effectiveDiceValue;
@@ -34,15 +36,18 @@ public final class BlockMoveCommand implements Command {
 
     @Override
     public void execute(GameMessagePublisher messages) {
+        Piece representative = blockPieces.get(0);
+        int fromPosition = representative.isOnTrack()
+                ? representative.getTrackPosition() : NO_PREVIOUS_POSITION;
         for (Piece piece : blockPieces) {
             player.adoptBlockDirection(piece, travelDirection);
             player.moveForward(piece, effectiveDiceValue, board, homeStraightEntryRule, travelDirection);
         }
-        messages.publish(describeOutcome());
+        messages.publish(describeOutcome(fromPosition));
     }
 
     // Every member starts and moves identically, so one representative piece describes the block.
-    private GameMessage describeOutcome() {
+    private GameMessage describeOutcome(int fromPosition) {
         Piece representative = blockPieces.get(0);
         String blockLabel = describeBlockLabel();
 
@@ -56,7 +61,7 @@ public final class BlockMoveCommand implements Command {
             return GameMessage.pieceEnteredHomeStraight(blockLabel, cellLabel);
         }
         return GameMessage.blockMoved(
-                blockLabel, representative.getTrackPosition(),
+                blockLabel, fromPosition, representative.getTrackPosition(),
                 BlockDirectionType.classify(blockPieces).getLabel(), travelDirection.getLabel());
     }
 

@@ -4,7 +4,7 @@ import gamemessage.GameMessage;
 import gamemessage.GameMessagePublisher;
 import player.Piece;
 
-// T-4: announces a mixed-direction block's roll divided down to zero cells.
+// T-4: announces a block's roll divided down to zero cells.
 public final class BlockRollTooSmallCommand implements Command {
 
     private final Piece piece;

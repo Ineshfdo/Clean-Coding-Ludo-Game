@@ -12,6 +12,8 @@ import player.Player;
 // dice's face value.
 public final class MoveCommand implements Command {
 
+    private static final int NO_PREVIOUS_POSITION = -1;
+
     private final Player player;
     private final Piece piece;
     private final int effectiveDiceValue;
@@ -32,12 +34,13 @@ public final class MoveCommand implements Command {
 
     @Override
     public void execute(GameMessagePublisher messages) {
+        int fromPosition = piece.isOnTrack() ? piece.getTrackPosition() : NO_PREVIOUS_POSITION;
         player.moveForward(piece, effectiveDiceValue, board, homeStraightEntryRule, travelDirection);
-        messages.publish(describeOutcome());
+        messages.publish(describeOutcome(fromPosition));
     }
 
     // The move may land back on the track, onto HomeStraight, or send it Home.
-    private GameMessage describeOutcome() {
+    private GameMessage describeOutcome(int fromPosition) {
         if (piece.isHome()) {
             return GameMessage.pieceReachedHome(piece.toString());
         }
@@ -47,7 +50,7 @@ public final class MoveCommand implements Command {
                             .toString();
             return GameMessage.pieceEnteredHomeStraight(piece.toString(), cellLabel);
         }
-        return GameMessage.pieceMoved(piece.toString(), piece.getTrackPosition());
+        return GameMessage.pieceMoved(piece.toString(), fromPosition, piece.getTrackPosition());
     }
 
     @Override

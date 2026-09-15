@@ -122,7 +122,7 @@ public final class MovementRule implements TurnRule {
                 .getOriginalMovementDirectionStrategy();
     }
 
-    // T-3/T-4/T-12/Rule 10: mixed-direction division, then Energized/Sick, then blockade capping.
+    // T-3/T-4/T-12/Rule 10: block-size division, then Energized/Sick, then blockade capping.
     private int effectiveSteps(
             Player player, Piece piece, int rollValue, Board board, List<Player> allPlayers,
             List<Piece> blockPieces, MovementDirectionStrategy travelDirection) {

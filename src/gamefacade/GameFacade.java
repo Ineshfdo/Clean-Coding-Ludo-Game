@@ -36,7 +36,7 @@ import rule.BlockadeBreakRule;
 import rule.BlockadeRule;
 import rule.CaptureRule;
 import rule.ConsecutiveSixVoidRule;
-import rule.MixedDirectionBlockMovementRule;
+import rule.DivideByBlockSizeRule;
 import rule.MovementRule;
 import rule.MysteryCellTeleportRule;
 import rule.OpponentBlockadeRule;
@@ -178,7 +178,7 @@ public final class GameFacade {
         HomeStraightEntryRule homeStraightEntryRule = new ApproachPassCountRule();
         homeStraightEntryRule.setNext(new HomeStraightEligibilityRule());
         ExactHomeRule exactHomeRule = new OvershootHomeRule();
-        BlockMovementRule blockMovementRule = new MixedDirectionBlockMovementRule();
+        BlockMovementRule blockMovementRule = new DivideByBlockSizeRule();
         CoinToss coinToss = SeededCoinToss.getInstance();
         List<TurnRule> turnRules = List.of(
                 new BaseExitRule(coinToss),

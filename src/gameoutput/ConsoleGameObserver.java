@@ -123,10 +123,10 @@ public final class ConsoleGameObserver implements GameMessageObserver {
         return outcome + " (cell " + message.getNewPosition() + ").";
     }
 
-    // T-4: a block move also names its BlockType and BlockDirection; a solo move does not.
+    // T-4/T-13: a block move also names its BlockType and BlockDirection; a solo move does not.
     private static String describePieceMoved(GameMessage message) {
-        String outcome = "  -> Moved " + message.getPieceLabel() + " to cell "
-                + message.getNewPosition() + ".";
+        String outcome = "  -> Moved " + message.getPieceLabel() + " from cell "
+                + message.getFromPosition() + " to cell " + message.getNewPosition() + ".";
         if (message.getBlockTypeLabel() == null) {
             return outcome;
         }
