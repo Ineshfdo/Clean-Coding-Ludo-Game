@@ -149,6 +149,12 @@ public final class GameMessage {
                 null, null);
     }
 
+    public static GameMessage pieceLeftBlock(String pieceLabel) {
+        return new GameMessage(
+                GameMessageType.PIECE_LEFT_BLOCK, null, 0, 0, 0, pieceLabel, null, null, null, null,
+                null);
+    }
+
     public GameMessageType getType() {
         return type;
     }

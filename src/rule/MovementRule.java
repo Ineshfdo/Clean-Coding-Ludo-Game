@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import command.BlockMoveCommand;
 import command.BlockRollTooSmallCommand;
 import command.BlockedMoveCommand;
+import command.BreakBlockCommand;
 import command.Command;
 import command.ExactRollRequiredCommand;
 import command.MoveCommand;
@@ -75,7 +76,7 @@ public final class MovementRule implements TurnRule {
         return new BlockedMoveCommand(representative);
     }
 
-    // T-3/T-1: pieces sharing a cell move together via the block's travelDirection.
+    // T-3/T-1/T-5: a block moves together; a lone piece breaks away if a restore is owed.
     private Command buildMoveCommand(
             Player player, Piece piece, List<Piece> blockPieces, int effectiveSteps, Board board,
             MovementDirectionStrategy travelDirection) {
@@ -83,8 +84,12 @@ public final class MovementRule implements TurnRule {
             return new BlockMoveCommand(
                     player, blockPieces, effectiveSteps, board, homeStraightEntryRule, travelDirection);
         }
-        return new MoveCommand(
+        Command moveCommand = new MoveCommand(
                 player, piece, effectiveSteps, board, homeStraightEntryRule, travelDirection);
+        if (piece.hasAdoptedBlockDirection()) {
+            return new BreakBlockCommand(player, piece, moveCommand);
+        }
+        return moveCommand;
     }
 
     // Rule 10: same-index HomeStraight pieces need the same roll, so they move as a block.
@@ -107,7 +112,8 @@ public final class MovementRule implements TurnRule {
         if (!piece.isOnTrack()) {
             return piece.getMovementDirectionStrategy();
         }
-        return blockDirectionStrategy.resolveDominantPiece(blockPieces, board).getMovementDirectionStrategy();
+        return blockDirectionStrategy.resolveDominantPiece(blockPieces, board)
+                .getOriginalMovementDirectionStrategy();
     }
 
     // T-3/T-4/Rule 10: a track block is first halved if mixed-direction, then capped by blockade.

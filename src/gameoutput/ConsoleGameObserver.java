@@ -85,6 +85,9 @@ public final class ConsoleGameObserver implements GameMessageObserver {
             case BLOCK_ROLL_TOO_SMALL ->
                     "  -> " + message.getPieceLabel()
                             + "'s block roll divided to zero cells and cannot move.";
+            case PIECE_LEFT_BLOCK ->
+                    "  -> " + message.getPieceLabel()
+                            + " leaves the block and resumes its own direction.";
             case THIRD_SIX_VOIDED ->
                     "  -> Three sixes in a row! This roll is void - turn passes to the next player.";
             case BOARD_STATE_REPORTED -> describeBoardState(message.getRoundNumber());
@@ -185,7 +188,8 @@ public final class ConsoleGameObserver implements GameMessageObserver {
         if (blockedPieces.get(0).isOnTrack()) {
             Piece dominantPiece = blockDirectionStrategy.resolveDominantPiece(blockedPieces, board);
             block.append(" BlockType:").append(BlockDirectionType.classify(blockedPieces).getLabel());
-            block.append(" BlockDirection:").append(dominantPiece.getMovementDirectionStrategy().getLabel());
+            block.append(" BlockDirection:")
+                    .append(dominantPiece.getOriginalMovementDirectionStrategy().getLabel());
             block.append(" BlockApproachCellPasses:").append(dominantPiece.getApproachPassCount());
         }
         block.append(']');

@@ -1,11 +1,12 @@
 package player;
 
-// T-1: counter-clockwise needs 2 Approach passes to enter HomeStraight; clockwise needs only 1.
+// T-1/T-5: counter-clockwise needs 2 Approach passes; clockwise needs only 1 - by own direction.
 public final class ApproachPassCountRule extends HomeStraightEntryRule {
 
     @Override
     protected boolean appliesTo(Piece piece) {
-        int requiredPasses = piece.getMovementDirectionStrategy().getRequiredApproachPassCount();
+        int requiredPasses =
+                piece.getOriginalMovementDirectionStrategy().getRequiredApproachPassCount();
         return piece.getApproachPassCount() < requiredPasses;
     }
 }

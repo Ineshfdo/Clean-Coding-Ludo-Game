@@ -6,7 +6,7 @@ import java.util.stream.Collectors;
 
 import direction.MovementDirectionStrategy;
 
-// T-4: classifies whether a block's members share one direction or travel opposite ways.
+// T-4/T-5: classifies by each piece's own original direction, immune to any adopted block one.
 public enum BlockDirectionType {
 
     SAME_DIRECTION("Same-Direction"),
@@ -25,7 +25,7 @@ public enum BlockDirectionType {
             return SAME_DIRECTION;
         }
         Set<MovementDirectionStrategy> directions = blockPieces.stream()
-                .map(Piece::getMovementDirectionStrategy)
+                .map(Piece::getOriginalMovementDirectionStrategy)
                 .collect(Collectors.toSet());
         return directions.size() > 1 ? OPPOSITE_DIRECTION : SAME_DIRECTION;
     }

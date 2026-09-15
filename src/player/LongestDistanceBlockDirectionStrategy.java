@@ -24,9 +24,9 @@ public final class LongestDistanceBlockDirectionStrategy implements BlockDirecti
         return dominantPiece;
     }
 
-    // T-1: short of its required passes, a piece must lap the track again before Home.
+    // T-1/T-5: uses each piece's own original direction, never a block's borrowed one.
     private static int remainingDistanceToHome(Piece piece, Board board) {
-        MovementDirectionStrategy ownDirection = piece.getMovementDirectionStrategy();
+        MovementDirectionStrategy ownDirection = piece.getOriginalMovementDirectionStrategy();
         int stepsToApproach =
                 ownDirection.stepsToApproach(piece.getTrackPosition(), piece.getColor(), board);
 

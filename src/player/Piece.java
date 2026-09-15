@@ -13,6 +13,7 @@ public final class Piece {
     private int trackPosition;
     private int homeStraightIndex;
     private MovementDirectionStrategy movementDirectionStrategy;
+    private MovementDirectionStrategy originalMovementDirectionStrategy;
     private int approachPassCount;
     private int captureCount;
 
@@ -52,9 +53,19 @@ public final class Piece {
         return homeStraightIndex;
     }
 
-    // T-1: set once at Base -> X by coin toss; drives this piece's path.
+    // T-1/T-5: the direction currently driving this piece - its own, or a block's while grouped.
     public MovementDirectionStrategy getMovementDirectionStrategy() {
         return movementDirectionStrategy;
+    }
+
+    // T-5: the direction assigned at Base exit, unaffected by any block it later joins.
+    public MovementDirectionStrategy getOriginalMovementDirectionStrategy() {
+        return originalMovementDirectionStrategy;
+    }
+
+    // T-5: true once a block's direction has replaced this piece's own, pending restoration.
+    public boolean hasAdoptedBlockDirection() {
+        return movementDirectionStrategy != originalMovementDirectionStrategy;
     }
 
     // T-1: how many times this piece has passed its own Approach cell so far.
@@ -75,6 +86,17 @@ public final class Piece {
 
     void assignMovementDirection(MovementDirectionStrategy movementDirectionStrategy) {
         this.movementDirectionStrategy = movementDirectionStrategy;
+        this.originalMovementDirectionStrategy = movementDirectionStrategy;
+    }
+
+    // T-5: temporarily borrows a block's shared direction while grouped with teammates.
+    void adoptBlockDirection(MovementDirectionStrategy blockDirection) {
+        this.movementDirectionStrategy = blockDirection;
+    }
+
+    // T-5: resumes the direction assigned when this piece left Base.
+    void restoreOriginalDirection() {
+        this.movementDirectionStrategy = originalMovementDirectionStrategy;
     }
 
     void recordApproachPass() {

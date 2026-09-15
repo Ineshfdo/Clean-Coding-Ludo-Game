@@ -35,6 +35,7 @@ public final class BlockMoveCommand implements Command {
     @Override
     public void execute(GameMessagePublisher messages) {
         for (Piece piece : blockPieces) {
+            player.adoptBlockDirection(piece, travelDirection);
             player.moveForward(piece, effectiveDiceValue, board, homeStraightEntryRule, travelDirection);
         }
         messages.publish(describeOutcome());

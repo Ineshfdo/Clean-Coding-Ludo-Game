@@ -55,6 +55,18 @@ public abstract class Player {
         piece.assignMovementDirection(movementDirection);
     }
 
+    // T-5: every member of a moving block shares the block's chosen direction.
+    public void adoptBlockDirection(Piece piece, MovementDirectionStrategy blockDirection) {
+        requireOwnership(piece);
+        piece.adoptBlockDirection(blockDirection);
+    }
+
+    // T-5: a piece leaving its block resumes the direction assigned at Base exit.
+    public void restoreOriginalDirection(Piece piece) {
+        requireOwnership(piece);
+        piece.restoreOriginalDirection();
+    }
+
     // Rule 1: moves a piece by the dice value using T-1's travelDirection, own direction unchanged.
     public void moveForward(
             Piece piece, int steps, Board board, HomeStraightEntryRule homeStraightEntryRule,
