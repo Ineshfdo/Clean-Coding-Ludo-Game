@@ -124,7 +124,7 @@ public final class MovementRule implements TurnRule {
             int requestedSteps = blockMovementRule.limitSteps(blockPieces, rollValue);
             return blockadeRule.limitSteps(
                     player.getColor(), piece.getTrackPosition(), requestedSteps, board, allPlayers,
-                    travelDirection);
+                    travelDirection, blockPieces.size());
         }
         return exactHomeRule.forbidsMove(piece, rollValue) ? 0 : rollValue;
     }

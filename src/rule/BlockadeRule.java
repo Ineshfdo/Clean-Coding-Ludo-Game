@@ -19,15 +19,17 @@ public abstract class BlockadeRule {
 
     public final int limitSteps(
             PlayerColor moverColor, int fromPosition, int requestedSteps, Board board,
-            List<Player> allPlayers, MovementDirectionStrategy direction) {
-        int allowedSteps =
-                restrict(moverColor, fromPosition, requestedSteps, board, allPlayers, direction);
+            List<Player> allPlayers, MovementDirectionStrategy direction, int moverBlockSize) {
+        int allowedSteps = restrict(
+                moverColor, fromPosition, requestedSteps, board, allPlayers, direction, moverBlockSize);
         return nextRule == null
                 ? allowedSteps
-                : nextRule.limitSteps(moverColor, fromPosition, allowedSteps, board, allPlayers, direction);
+                : nextRule.limitSteps(
+                        moverColor, fromPosition, allowedSteps, board, allPlayers, direction,
+                        moverBlockSize);
     }
 
     protected abstract int restrict(
             PlayerColor moverColor, int fromPosition, int requestedSteps, Board board,
-            List<Player> allPlayers, MovementDirectionStrategy direction);
+            List<Player> allPlayers, MovementDirectionStrategy direction, int moverBlockSize);
 }

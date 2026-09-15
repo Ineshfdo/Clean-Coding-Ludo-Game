@@ -76,6 +76,10 @@ public final class ConsoleGameObserver implements GameMessageObserver {
             case PIECE_CAPTURED ->
                     "  -> " + message.getPieceLabel() + " captured " + message.getCapturedPieceLabel()
                             + "! " + message.getCapturedPieceLabel() + " returns to Base.";
+            case BLOCK_CAPTURED ->
+                    "  -> Blockade " + message.getPieceLabel() + " captured Blockade "
+                            + message.getCapturedPieceLabel() + "! All of "
+                            + message.getCapturedPieceLabel() + " returns to Base.";
             case PIECE_BLOCKED ->
                     "  -> " + message.getPieceLabel()
                             + " is blocked by an opponent's blockade and cannot move.";
@@ -201,13 +205,15 @@ public final class ConsoleGameObserver implements GameMessageObserver {
                 + ", Caps:" + captureCount + ")";
     }
 
-    // T-1: shown only after a coin toss assigns direction - never for Base or Home.
+    // T-1/T-5: shown only after a coin toss assigns direction - never for Base or Home.
     private String describeDirection(Piece piece) {
         if (piece.isAtBase() || piece.isHome()) {
             return "";
         }
         MovementDirectionStrategy direction = piece.getMovementDirectionStrategy();
-        return ", " + direction.getLabel() + ", ApproachCellPasses:" + piece.getApproachPassCount();
+        MovementDirectionStrategy originalDirection = piece.getOriginalMovementDirectionStrategy();
+        return ", " + direction.getLabel() + ", OriginalDirection:" + originalDirection.getLabel()
+                + ", ApproachCellPasses:" + piece.getApproachPassCount();
     }
 
     private String describeLocation(Piece piece) {

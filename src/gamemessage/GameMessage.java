@@ -125,6 +125,12 @@ public final class GameMessage {
                 capturedPieceLabel, null, null, null);
     }
 
+    public static GameMessage blockCaptured(String capturingBlockLabel, String capturedBlockLabel) {
+        return new GameMessage(
+                GameMessageType.BLOCK_CAPTURED, null, 0, 0, 0, capturingBlockLabel, null,
+                capturedBlockLabel, null, null, null);
+    }
+
     public static GameMessage boardStateReported(int roundNumber) {
         return new GameMessage(
                 GameMessageType.BOARD_STATE_REPORTED, null, 0, roundNumber, 0, null, null, null,

@@ -28,6 +28,7 @@ import player.Player;
 import player.RedPlayer;
 import player.YellowPlayer;
 import rule.BaseExitRule;
+import rule.BlockCaptureRule;
 import rule.BlockMovementRule;
 import rule.BlockadeBreakRule;
 import rule.BlockadeRule;
@@ -174,7 +175,8 @@ public final class GameFacade {
                         BLOCK_DIRECTION_STRATEGY));
         PlayerStrategy strategy = new PreferEnteringBoardStrategy();
         RollValidityRule rollValidityRule = new ConsecutiveSixVoidRule();
-        CaptureRule captureRule = new OpponentCaptureRule();
+        CaptureRule captureRule = new BlockCaptureRule();
+        captureRule.setNext(new OpponentCaptureRule());
         BlockadeBreakRule blockadeBreakRule = new ThirdSixBlockadeBreakRule(homeStraightEntryRule);
         return new StandardTurnProcessor(
                 turnRules, strategy, rollValidityRule, captureRule, blockadeBreakRule);
