@@ -77,6 +77,9 @@ public final class ConsoleGameObserver implements GameMessageObserver {
             case PIECE_BLOCKED ->
                     "  -> " + message.getPieceLabel()
                             + " is blocked by an opponent's blockade and cannot move.";
+            case PIECE_NEEDS_EXACT_ROLL ->
+                    "  -> " + message.getPieceLabel()
+                            + " needs an exact roll to reach Home and cannot move.";
             case THIRD_SIX_VOIDED ->
                     "  -> Three sixes in a row! This roll is void - turn passes to the next player.";
             case BOARD_STATE_REPORTED -> describeBoardState(message.getRoundNumber());
@@ -134,29 +137,40 @@ public final class ConsoleGameObserver implements GameMessageObserver {
         return segments;
     }
 
+    // Rule 10: same-index HomeStraight pieces also form a block, moving together.
     private static List<Piece> findBlockGroup(Piece piece, List<Piece> allPieces) {
         List<Piece> group = new ArrayList<>();
-        if (!piece.isOnTrack()) {
-            return group;
-        }
 
         for (Piece candidate : allPieces) {
-            if (candidate.isOnTrack() && candidate.getTrackPosition() == piece.getTrackPosition()) {
+            if (sharesLocation(candidate, piece)) {
                 group.add(candidate);
             }
         }
         return group;
     }
 
-    // T-1: shows the direction and Approach passes of whoever steers the block.
+    private static boolean sharesLocation(Piece candidate, Piece piece) {
+        if (piece.isOnTrack()) {
+            return candidate.isOnTrack() && candidate.getTrackPosition() == piece.getTrackPosition();
+        }
+        if (piece.isOnHomeStraight()) {
+            return candidate.isOnHomeStraight()
+                    && candidate.getHomeStraightIndex() == piece.getHomeStraightIndex();
+        }
+        return false;
+    }
+
+    // T-1: only a track block has a direction to choose - HomeStraight has no branching.
     private String describeBlock(List<Piece> blockedPieces, int captureCount) {
         StringBuilder block = new StringBuilder("[Block:");
         for (Piece piece : blockedPieces) {
             block.append(' ').append(describePiece(piece, captureCount));
         }
-        Piece dominantPiece = BlockTravelDirection.resolveDominantPiece(blockedPieces, board);
-        block.append(" BlockDirection:").append(dominantPiece.getMovementDirectionStrategy().getLabel());
-        block.append(" BlockApproachCellPasses:").append(dominantPiece.getApproachPassCount());
+        if (blockedPieces.get(0).isOnTrack()) {
+            Piece dominantPiece = BlockTravelDirection.resolveDominantPiece(blockedPieces, board);
+            block.append(" BlockDirection:").append(dominantPiece.getMovementDirectionStrategy().getLabel());
+            block.append(" BlockApproachCellPasses:").append(dominantPiece.getApproachPassCount());
+        }
         block.append(']');
         return block.toString();
     }

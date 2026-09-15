@@ -120,6 +120,12 @@ public final class GameMessage {
                 GameMessageType.PIECE_BLOCKED, null, 0, 0, 0, pieceLabel, null, null, null, null);
     }
 
+    public static GameMessage pieceNeedsExactRoll(String pieceLabel) {
+        return new GameMessage(
+                GameMessageType.PIECE_NEEDS_EXACT_ROLL, null, 0, 0, 0, pieceLabel, null, null, null,
+                null);
+    }
+
     public GameMessageType getType() {
         return type;
     }

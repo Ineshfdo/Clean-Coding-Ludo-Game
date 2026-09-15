@@ -17,9 +17,11 @@ import ludoboard.PlayerColor;
 import numbergenerator.SeededRandomNumberGenerator;
 import player.ApproachPassCountRule;
 import player.BluePlayer;
+import player.ExactHomeRule;
 import player.GreenPlayer;
 import player.HomeStraightEligibilityRule;
 import player.HomeStraightEntryRule;
+import player.OvershootHomeRule;
 import player.Player;
 import player.RedPlayer;
 import player.YellowPlayer;
@@ -152,10 +154,11 @@ public final class GameFacade {
         BlockadeRule blockadeRule = new OpponentBlockadeRule();
         HomeStraightEntryRule homeStraightEntryRule = new ApproachPassCountRule();
         homeStraightEntryRule.setNext(new HomeStraightEligibilityRule());
+        ExactHomeRule exactHomeRule = new OvershootHomeRule();
         CoinToss coinToss = SeededCoinToss.getInstance();
         List<TurnRule> turnRules = List.of(
                 new BaseExitRule(coinToss),
-                new MovementRule(blockadeRule, homeStraightEntryRule));
+                new MovementRule(blockadeRule, homeStraightEntryRule, exactHomeRule));
         PlayerStrategy strategy = new PreferEnteringBoardStrategy();
         RollValidityRule rollValidityRule = new ConsecutiveSixVoidRule();
         CaptureRule captureRule = new OpponentCaptureRule();

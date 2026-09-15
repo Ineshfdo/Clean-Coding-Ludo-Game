@@ -1,16 +1,17 @@
 package rule;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
 import command.BlockMoveCommand;
 import command.BlockedMoveCommand;
 import command.Command;
+import command.ExactRollRequiredCommand;
 import command.MoveCommand;
 import direction.MovementDirectionStrategy;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 import ludoboard.Board;
 import player.BlockTravelDirection;
+import player.ExactHomeRule;
 import player.HomeStraightEntryRule;
 import player.Piece;
 import player.Player;
@@ -22,10 +23,14 @@ public final class MovementRule implements TurnRule {
 
     private final BlockadeRule blockadeRule;
     private final HomeStraightEntryRule homeStraightEntryRule;
+    private final ExactHomeRule exactHomeRule;
 
-    public MovementRule(BlockadeRule blockadeRule, HomeStraightEntryRule homeStraightEntryRule) {
+    public MovementRule(
+            BlockadeRule blockadeRule, HomeStraightEntryRule homeStraightEntryRule,
+            ExactHomeRule exactHomeRule) {
         this.blockadeRule = blockadeRule;
         this.homeStraightEntryRule = homeStraightEntryRule;
+        this.exactHomeRule = exactHomeRule;
     }
 
     @Override
@@ -48,7 +53,15 @@ public final class MovementRule implements TurnRule {
             }
         }
 
-        return Optional.of(new BlockedMoveCommand(candidates.get(0)));
+        return Optional.of(buildNoMoveCommand(candidates.get(0)));
+    }
+
+    // Rule 10: a HomeStraight piece needs its own message, not the blockade one.
+    private static Command buildNoMoveCommand(Piece representative) {
+        if (representative.isOnHomeStraight()) {
+            return new ExactRollRequiredCommand(representative);
+        }
+        return new BlockedMoveCommand(representative);
     }
 
     // T-3/T-1: pieces sharing a cell move together via the block's travelDirection.
@@ -63,14 +76,18 @@ public final class MovementRule implements TurnRule {
                 player, piece, effectiveSteps, board, homeStraightEntryRule, travelDirection);
     }
 
+    // Rule 10: same-index HomeStraight pieces need the same roll, so they move as a block.
     private static List<Piece> findOwnBlock(Piece piece, List<Piece> candidates) {
-        if (!piece.isOnTrack()) {
-            return List.of(piece);
-        }
-        return candidates.stream()
+        if (piece.isOnTrack()) {
+            return candidates.stream()
                 .filter(Piece::isOnTrack)
                 .filter(candidate -> candidate.getTrackPosition() == piece.getTrackPosition())
                 .collect(Collectors.toList());
+        }
+        return candidates.stream()
+            .filter(Piece::isOnHomeStraight)
+            .filter(candidate -> candidate.getHomeStraightIndex() == piece.getHomeStraightIndex())
+            .collect(Collectors.toList());
     }
 
     // T-1: HomeStraight cells are single-color, so only track pieces need a block direction.
@@ -82,16 +99,16 @@ public final class MovementRule implements TurnRule {
         return BlockTravelDirection.resolve(blockPieces, board);
     }
 
-    // T-3: HomeStraight cells are single-color, so a blockade can only limit track movement.
+    // T-3/Rule 10: a track piece is capped by blockade; HomeStraight needs an exact roll.
     private int effectiveSteps(
             Player player, Piece piece, int rollValue, Board board, List<Player> allPlayers,
             MovementDirectionStrategy travelDirection) {
-        if (!piece.isOnTrack()) {
-            return rollValue;
+        if (piece.isOnTrack()) {
+            return blockadeRule.limitSteps(
+                    player.getColor(), piece.getTrackPosition(), rollValue, board, allPlayers,
+                    travelDirection);
         }
-        return blockadeRule.limitSteps(
-                player.getColor(), piece.getTrackPosition(), rollValue, board, allPlayers,
-                travelDirection);
+        return exactHomeRule.forbidsMove(piece, rollValue) ? 0 : rollValue;
     }
 
     private static List<Piece> findMovableCandidates(Player player) {
