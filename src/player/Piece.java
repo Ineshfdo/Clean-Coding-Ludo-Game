@@ -121,8 +121,15 @@ public final class Piece {
         this.location = PieceLocation.HOME;
     }
 
+    // T-9: every field returns to its Base default; a future temporary effect resets here too.
     void returnToBase() {
         this.location = PieceLocation.BASE;
+        this.trackPosition = 0;
+        this.homeStraightIndex = 0;
+        this.approachPassCount = 0;
+        this.captureCount = 0;
+        this.movementDirectionStrategy = null;
+        this.originalMovementDirectionStrategy = null;
     }
 
     private void requireLocation(PieceLocation requiredLocation) {

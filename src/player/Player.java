@@ -43,7 +43,7 @@ public abstract class Player {
         piece.leaveBase(board.getEntryCellPosition(color));
     }
 
-    // Rule 7: sends this player's piece back to Base after an opponent captures it.
+    // Rule 7/T-9: sends this piece to Base with all its stored information reset.
     public void returnToBase(Piece piece) {
         requireOwnership(piece);
         piece.returnToBase();
