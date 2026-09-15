@@ -158,10 +158,10 @@ public final class ConsoleGameObserver implements GameMessageObserver {
 
             List<Piece> blockGroup = findBlockGroup(piece, pieces);
             if (blockGroup.size() >= BLOCKADE_PIECE_COUNT) {
-                segments.add(describeBlock(blockGroup, player.getCaptureCount()));
+                segments.add(describeBlock(blockGroup));
                 alreadyShown.addAll(blockGroup);
             } else {
-                segments.add(describePiece(piece, player.getCaptureCount()));
+                segments.add(describePiece(piece));
                 alreadyShown.add(piece);
             }
         }
@@ -193,10 +193,10 @@ public final class ConsoleGameObserver implements GameMessageObserver {
     }
 
     // T-1: only a track block has a direction to choose - HomeStraight has no branching.
-    private String describeBlock(List<Piece> blockedPieces, int captureCount) {
+    private String describeBlock(List<Piece> blockedPieces) {
         StringBuilder block = new StringBuilder("[Block:");
         for (Piece piece : blockedPieces) {
-            block.append(' ').append(describePiece(piece, captureCount));
+            block.append(' ').append(describePiece(piece));
         }
         if (blockedPieces.get(0).isOnTrack()) {
             Piece dominantPiece = blockDirectionStrategy.resolveDominantPiece(blockedPieces, board);
@@ -209,9 +209,10 @@ public final class ConsoleGameObserver implements GameMessageObserver {
         return block.toString();
     }
 
-    private String describePiece(Piece piece, int captureCount) {
+    // T-9: each piece shows its OWN capture count - HomeStraightEligibilityRule gates on this, not the team total.
+    private String describePiece(Piece piece) {
         return piece + "(" + describeLocation(piece) + describeDirection(piece)
-                + ", Caps:" + captureCount + ")";
+                + ", IndividualCaptureCount:" + piece.getCaptureCount() + ")";
     }
 
     // T-1/T-5: shown only after a coin toss assigns direction - never for Base or Home.
