@@ -2,6 +2,7 @@ package turn;
 
 import java.util.List;
 
+import rule.BlockadeBreakRule;
 import rule.CaptureRule;
 import rule.RollValidityRule;
 import rule.TurnRule;
@@ -13,8 +14,9 @@ public final class StandardTurnProcessor extends TurnProcessor {
 
     public StandardTurnProcessor(
             List<TurnRule> turnRules, PlayerStrategy strategy,
-            RollValidityRule rollValidityRule, CaptureRule captureRule) {
-        super(turnRules, strategy, rollValidityRule, captureRule);
+            RollValidityRule rollValidityRule, CaptureRule captureRule,
+            BlockadeBreakRule blockadeBreakRule) {
+        super(turnRules, strategy, rollValidityRule, captureRule, blockadeBreakRule);
     }
 
     @Override

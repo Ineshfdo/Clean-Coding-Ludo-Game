@@ -1,5 +1,7 @@
 package command;
 
+import java.util.List;
+
 import gamemessage.GameMessagePublisher;
 import player.Piece;
 
@@ -12,4 +14,9 @@ public interface Command {
     CommandType getType();
 
     Piece getAffectedPiece();
+
+    // T-6: most commands move one piece; a forced breakup overrides this for several.
+    default List<Piece> getAffectedPieces() {
+        return List.of(getAffectedPiece());
+    }
 }

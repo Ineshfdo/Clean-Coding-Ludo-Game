@@ -12,6 +12,7 @@ import gamemessage.GameMessageType;
 import ludoboard.Board;
 import player.Piece;
 import player.Player;
+import rule.BlockadeBreakRule;
 import rule.CaptureRule;
 import rule.RollValidityRule;
 import rule.TurnRule;
@@ -25,14 +26,17 @@ public abstract class TurnProcessor {
     private final PlayerStrategy strategy;
     private final RollValidityRule rollValidityRule;
     private final CaptureRule captureRule;
+    private final BlockadeBreakRule blockadeBreakRule;
 
     protected TurnProcessor(
             List<TurnRule> turnRules, PlayerStrategy strategy,
-            RollValidityRule rollValidityRule, CaptureRule captureRule) {
+            RollValidityRule rollValidityRule, CaptureRule captureRule,
+            BlockadeBreakRule blockadeBreakRule) {
         this.turnRules = turnRules;
         this.strategy = strategy;
         this.rollValidityRule = rollValidityRule;
         this.captureRule = captureRule;
+        this.blockadeBreakRule = blockadeBreakRule;
     }
 
     public final void playTurn(
@@ -47,6 +51,14 @@ public abstract class TurnProcessor {
             rollNumber++;
             int rollValue = dice.roll();
             messages.publish(GameMessage.turnRolled(player.getColor(), rollValue));
+
+            Optional<Command> forcedBreak =
+                    blockadeBreakRule.resolve(player, rollNumber, rollValue, board, allPlayers);
+            if (forcedBreak.isPresent()) {
+                forcedBreak.get().execute(messages);
+                applyCapture(player, forcedBreak.get(), allPlayers, messages);
+                return;
+            }
 
             if (rollValidityRule.isVoided(rollNumber, rollValue)) {
                 messages.publish(GameMessage.of(GameMessageType.THIRD_SIX_VOIDED));
@@ -72,7 +84,7 @@ public abstract class TurnProcessor {
         Command chosenCommand = strategy.choose(legalOptions);
         chosenCommand.execute(messages);
 
-        return applyCapture(player, chosenCommand.getAffectedPiece(), allPlayers, messages);
+        return applyCapture(player, chosenCommand, allPlayers, messages);
     }
 
     private List<Command> findLegalOptions(
@@ -84,13 +96,19 @@ public abstract class TurnProcessor {
         return legalOptions;
     }
 
-    // Rule 7: a piece landing on an opponent's cell captures it.
+    // Rule 7/T-6: every piece an executed command actually moved is checked for a capture.
     private boolean applyCapture(
-            Player mover, Piece movedPiece, List<Player> allPlayers,
+            Player mover, Command executedCommand, List<Player> allPlayers,
             GameMessagePublisher messages) {
-        Optional<Command> captureCommand = captureRule.resolve(mover, movedPiece, allPlayers);
-        captureCommand.ifPresent(command -> command.execute(messages));
-        return captureCommand.isPresent();
+        boolean capturedAny = false;
+        for (Piece movedPiece : executedCommand.getAffectedPieces()) {
+            Optional<Command> captureCommand = captureRule.resolve(mover, movedPiece, allPlayers);
+            if (captureCommand.isPresent()) {
+                captureCommand.get().execute(messages);
+                capturedAny = true;
+            }
+        }
+        return capturedAny;
     }
 
     // Rule 4/7: a 6 or a capture earns another roll; called

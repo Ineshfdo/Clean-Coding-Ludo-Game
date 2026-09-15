@@ -87,7 +87,7 @@ public final class MovementRule implements TurnRule {
         Command moveCommand = new MoveCommand(
                 player, piece, effectiveSteps, board, homeStraightEntryRule, travelDirection);
         if (piece.hasAdoptedBlockDirection()) {
-            return new BreakBlockCommand(player, piece, moveCommand);
+            return new BreakBlockCommand(player, List.of(piece), List.of(moveCommand));
         }
         return moveCommand;
     }
