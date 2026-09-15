@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 import gamemessage.GameMessage;
 import gamemessage.GameMessagePublisher;
 import ludoboard.Board;
+import mysterycell.AlphaEffectRule;
 import mysterycell.MysteryCellDestinationType;
 import player.Piece;
 import player.Player;
@@ -19,14 +20,16 @@ public final class TeleportCommand implements Command {
     private final List<Piece> teleportedPieces;
     private final MysteryCellDestinationType destinationType;
     private final Board board;
+    private final AlphaEffectRule alphaEffectRule;
 
     public TeleportCommand(
             Player player, List<Piece> teleportedPieces, MysteryCellDestinationType destinationType,
-            Board board) {
+            Board board, AlphaEffectRule alphaEffectRule) {
         this.player = player;
         this.teleportedPieces = teleportedPieces;
         this.destinationType = destinationType;
         this.board = board;
+        this.alphaEffectRule = alphaEffectRule;
     }
 
     @Override
@@ -46,6 +49,11 @@ public final class TeleportCommand implements Command {
         }
         messages.publish(GameMessage.pieceTeleported(
                 describeLabel(), destinationType.getLabel(), targetPosition));
+
+        // T-12: only Alpha assigns an Energized/Sick effect.
+        if (destinationType == MysteryCellDestinationType.ALPHA) {
+            alphaEffectRule.applyTo(player, teleportedPieces, messages);
+        }
     }
 
     private int resolveTrackPosition() {

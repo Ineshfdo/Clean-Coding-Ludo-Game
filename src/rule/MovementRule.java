@@ -9,6 +9,7 @@ import command.BlockRollTooSmallCommand;
 import command.BlockedMoveCommand;
 import command.BreakBlockCommand;
 import command.Command;
+import command.EffectRollTooSmallCommand;
 import command.ExactRollRequiredCommand;
 import command.MoveCommand;
 import direction.MovementDirectionStrategy;
@@ -16,6 +17,7 @@ import ludoboard.Board;
 import player.BlockDirectionStrategy;
 import player.ExactHomeRule;
 import player.HomeStraightEntryRule;
+import player.MovementEffect;
 import player.Piece;
 import player.Player;
 
@@ -64,14 +66,18 @@ public final class MovementRule implements TurnRule {
         return Optional.of(buildNoMoveCommand(candidates.get(0), candidates, rollValue));
     }
 
-    // Rule 10/T-4: a stalled piece needs the message matching why it cannot move.
+    // Rule 10/T-4/T-12: a stalled piece needs the message matching why it cannot move.
     private Command buildNoMoveCommand(Piece representative, List<Piece> candidates, int rollValue) {
         if (representative.isOnHomeStraight()) {
             return new ExactRollRequiredCommand(representative);
         }
         List<Piece> blockPieces = findOwnBlock(representative, candidates);
-        if (blockMovementRule.limitSteps(blockPieces, rollValue) == 0) {
+        int blockAdjustedSteps = blockMovementRule.limitSteps(blockPieces, rollValue);
+        if (blockAdjustedSteps == 0) {
             return new BlockRollTooSmallCommand(representative);
+        }
+        if (resolveActiveEffect(blockPieces).applyTo(blockAdjustedSteps) == 0) {
+            return new EffectRollTooSmallCommand(representative);
         }
         return new BlockedMoveCommand(representative);
     }
@@ -116,17 +122,28 @@ public final class MovementRule implements TurnRule {
                 .getOriginalMovementDirectionStrategy();
     }
 
-    // T-3/T-4/Rule 10: a track block is first halved if mixed-direction, then capped by blockade.
+    // T-3/T-4/T-12/Rule 10: mixed-direction division, then Energized/Sick, then blockade capping.
     private int effectiveSteps(
             Player player, Piece piece, int rollValue, Board board, List<Player> allPlayers,
             List<Piece> blockPieces, MovementDirectionStrategy travelDirection) {
         if (piece.isOnTrack()) {
             int requestedSteps = blockMovementRule.limitSteps(blockPieces, rollValue);
+            int adjustedSteps = resolveActiveEffect(blockPieces).applyTo(requestedSteps);
             return blockadeRule.limitSteps(
-                    player.getColor(), piece.getTrackPosition(), requestedSteps, board, allPlayers,
+                    player.getColor(), piece.getTrackPosition(), adjustedSteps, board, allPlayers,
                     travelDirection, blockPieces.size());
         }
-        return exactHomeRule.forbidsMove(piece, rollValue) ? 0 : rollValue;
+        int adjustedRollValue = resolveActiveEffect(blockPieces).applyTo(rollValue);
+        return exactHomeRule.forbidsMove(piece, adjustedRollValue) ? 0 : adjustedRollValue;
+    }
+
+    // T-12: a block's shared effect overrides every member's own individual effect while grouped.
+    private static MovementEffect resolveActiveEffect(List<Piece> blockPieces) {
+        Piece representative = blockPieces.get(0);
+        if (blockPieces.size() >= BLOCKADE_PIECE_COUNT) {
+            return representative.getBlockEffect();
+        }
+        return representative.getIndividualEffect();
     }
 
     private static List<Piece> findMovableCandidates(Player player) {

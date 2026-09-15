@@ -55,6 +55,26 @@ public abstract class Player {
         piece.moveTo(trackPosition);
     }
 
+    // T-12: assigns this piece's own Energized/Sick status, from a Mystery Cell Alpha teleport.
+    public void applyIndividualEffect(Piece piece, MovementEffect effect) {
+        requireOwnership(piece);
+        piece.applyIndividualEffect(effect);
+    }
+
+    // T-12: assigns the shared Energized/Sick status for the block this piece teleported with.
+    public void applyBlockEffect(Piece piece, MovementEffect effect) {
+        requireOwnership(piece);
+        piece.applyBlockEffect(effect);
+    }
+
+    // T-12: expires every piece's temporary movement effects by one round.
+    public void tickMovementEffects() {
+        for (Piece piece : pieces) {
+            piece.tickIndividualEffect();
+            piece.tickBlockEffect();
+        }
+    }
+
     // T-1: assigns the coin toss's chosen direction to a piece that just left Base.
     public void assignMovementDirection(Piece piece, MovementDirectionStrategy movementDirection) {
         requireOwnership(piece);

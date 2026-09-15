@@ -14,6 +14,7 @@ import java.util.List;
 import ludoboard.Board;
 import ludoboard.LudoBoard;
 import ludoboard.PlayerColor;
+import mysterycell.AlphaEffectRule;
 import mysterycell.MysteryCellManager;
 import numbergenerator.SeededRandomNumberGenerator;
 import player.ApproachPassCountRule;
@@ -96,6 +97,10 @@ public final class GameFacade {
         for (int roundNumber = 1; roundNumber <= TEST_ROUND_COUNT; roundNumber++) {
             messages.publish(GameMessage.roundStarted(roundNumber));
             mysteryCellManager.onRoundStarted(roundNumber, players, messages);
+            // T-12: expires one round of every piece's Energized/Sick status before this round's turns.
+            for (Player player : turnOrder) {
+                player.tickMovementEffects();
+            }
             for (Player player : turnOrder) {
                 turnProcessor.playTurn(player, players, dice, board, messages);
             }
@@ -185,9 +190,11 @@ public final class GameFacade {
         CaptureRule captureRule = new BlockCaptureRule();
         captureRule.setNext(new OpponentCaptureRule());
         BlockadeBreakRule blockadeBreakRule = new ThirdSixBlockadeBreakRule(homeStraightEntryRule);
+        // T-12: the same seeded coin toss T-1 uses for direction, reused for Energized/Sick.
+        AlphaEffectRule alphaEffectRule = new AlphaEffectRule(SeededCoinToss.getInstance());
         // T-11: shares the same seeded random source as everything else, for reproducibility.
         MysteryCellTeleportRule mysteryCellTeleportRule = new MysteryCellTeleportRule(
-                mysteryCellManager, SeededRandomNumberGenerator.getInstance(), board);
+                mysteryCellManager, SeededRandomNumberGenerator.getInstance(), board, alphaEffectRule);
         return new StandardTurnProcessor(
                 turnRules, strategy, rollValidityRule, captureRule, blockadeBreakRule,
                 mysteryCellTeleportRule);

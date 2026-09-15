@@ -16,6 +16,8 @@ public final class Piece {
     private MovementDirectionStrategy originalMovementDirectionStrategy;
     private int approachPassCount;
     private int captureCount;
+    private MovementEffect individualEffect = MovementEffect.none();
+    private MovementEffect blockEffect = MovementEffect.none();
 
     Piece(PlayerColor color, int pieceNumber) {
         this.color = color;
@@ -78,6 +80,17 @@ public final class Piece {
         return captureCount;
     }
 
+    // T-12: this piece's own Energized/Sick status, used only while it moves alone.
+    public MovementEffect getIndividualEffect() {
+        return individualEffect;
+    }
+
+    // T-12: the shared Energized/Sick status of the block this piece was teleported into -
+    // overrides its individual effect for as long as it stays grouped.
+    public MovementEffect getBlockEffect() {
+        return blockEffect;
+    }
+
     void leaveBase(int entryCellPosition) {
         this.location = PieceLocation.TRACK;
         this.trackPosition = entryCellPosition;
@@ -107,6 +120,24 @@ public final class Piece {
         captureCount++;
     }
 
+    // T-12: assigned once, at the moment this piece is teleported to Alpha.
+    void applyIndividualEffect(MovementEffect effect) {
+        this.individualEffect = effect;
+    }
+
+    void applyBlockEffect(MovementEffect effect) {
+        this.blockEffect = effect;
+    }
+
+    // T-12: called once per round so a 4-round effect eventually expires back to None.
+    void tickIndividualEffect() {
+        this.individualEffect = individualEffect.afterRoundElapses();
+    }
+
+    void tickBlockEffect() {
+        this.blockEffect = blockEffect.afterRoundElapses();
+    }
+
     void moveTo(int newTrackPosition) {
         this.location = PieceLocation.TRACK;
         this.trackPosition = newTrackPosition;
@@ -121,7 +152,7 @@ public final class Piece {
         this.location = PieceLocation.HOME;
     }
 
-    // T-9: every field returns to its Base default; a future temporary effect resets here too.
+    // T-9/T-12: every field returns to its Base default, including any temporary movement effect.
     void returnToBase() {
         this.location = PieceLocation.BASE;
         this.trackPosition = 0;
@@ -130,6 +161,8 @@ public final class Piece {
         this.captureCount = 0;
         this.movementDirectionStrategy = null;
         this.originalMovementDirectionStrategy = null;
+        this.individualEffect = MovementEffect.none();
+        this.blockEffect = MovementEffect.none();
     }
 
     private void requireLocation(PieceLocation requiredLocation) {

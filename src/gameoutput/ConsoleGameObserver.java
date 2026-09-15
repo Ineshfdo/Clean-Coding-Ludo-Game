@@ -11,6 +11,7 @@ import ludoboard.Board;
 import ludoboard.PlayerColor;
 import player.BlockDirectionStrategy;
 import player.BlockDirectionType;
+import player.MovementEffect;
 import player.Piece;
 import player.Player;
 
@@ -99,6 +100,15 @@ public final class ConsoleGameObserver implements GameMessageObserver {
             case MYSTERY_CELL_RELOCATED -> describeMysteryCellBanner(
                     "The Mystery Cell has relocated to cell " + message.getNewPosition() + ".");
             case PIECE_TELEPORTED -> describePieceTeleported(message);
+            case INDIVIDUAL_EFFECT_ASSIGNED ->
+                    "  -> " + message.getPieceLabel() + " is now " + message.getEffectLabel()
+                            + " (individual effect, lasts 4 rounds).";
+            case BLOCK_EFFECT_ASSIGNED ->
+                    "  -> Block " + message.getPieceLabel() + " is now " + message.getEffectLabel()
+                            + " (block effect, lasts 4 rounds, overrides individual effects).";
+            case EFFECT_ROLL_TOO_SMALL ->
+                    "  -> " + message.getPieceLabel()
+                            + "'s Sick effect halved this roll to zero cells and cannot move.";
             case BOARD_STATE_REPORTED -> describeBoardState(message.getRoundNumber());
         };
     }
@@ -133,13 +143,13 @@ public final class ConsoleGameObserver implements GameMessageObserver {
         StringBuilder report = new StringBuilder();
         report.append("\nRound ").append(roundNumber).append(" Current Board State\n");
         report.append("==================\n");
-        report.append("-------------------------------");
+        report.append("-------------------------------\n");
 
         for (PlayerColor color : BOARD_STATE_DISPLAY_ORDER) {
-            report.append('\n').append(describePlayerRow(findPlayer(color)));
+            report.append(describePlayerRow(findPlayer(color))).append("\n\n");
         }
 
-        report.append("\n-------------------------------");
+        report.append("-------------------------------");
         return report.toString();
     }
 
@@ -216,6 +226,11 @@ public final class ConsoleGameObserver implements GameMessageObserver {
                     .append(dominantPiece.getOriginalMovementDirectionStrategy().getLabel());
             block.append(" BlockApproachCellPasses:").append(dominantPiece.getApproachPassCount());
         }
+        // T-12: every member shares this identical value, so it is shown once for the whole block.
+        MovementEffect blockEffect = blockedPieces.get(0).getBlockEffect();
+        if (blockEffect.isActive()) {
+            block.append(" BlockEffect:").append(blockEffect.getLabel());
+        }
         block.append(']');
         return block.toString();
     }
@@ -223,7 +238,15 @@ public final class ConsoleGameObserver implements GameMessageObserver {
     // T-9: each piece shows its OWN capture count - HomeStraightEligibilityRule gates on this, not the team total.
     private String describePiece(Piece piece) {
         return piece + "(" + describeLocation(piece) + describeDirection(piece)
-                + ", IndividualCaptureCount:" + piece.getCaptureCount() + ")";
+                + ", IndividualCaptureCount:" + piece.getCaptureCount() + describeIndividualEffect(piece) + ")";
+    }
+
+    // T-12: only shown while this piece's own Energized/Sick status is active - most pieces never have one.
+    private static String describeIndividualEffect(Piece piece) {
+        if (!piece.getIndividualEffect().isActive()) {
+            return "";
+        }
+        return ", IndividualEffect:" + piece.getIndividualEffect().getLabel();
     }
 
     // T-1/T-5: shown only after a coin toss assigns direction - never for Base or Home.
