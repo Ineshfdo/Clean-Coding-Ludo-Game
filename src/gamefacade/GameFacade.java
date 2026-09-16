@@ -15,8 +15,11 @@ import ludoboard.Board;
 import ludoboard.LudoBoard;
 import ludoboard.PlayerColor;
 import mysterycell.AlphaEffectRule;
+import mysterycell.EffectActivationRule;
 import mysterycell.GammaDirectionRule;
+import mysterycell.MysteryCellEffects;
 import mysterycell.MysteryCellManager;
+import mysterycell.MysteryTeleportActivationRule;
 import numbergenerator.SeededRandomNumberGenerator;
 import player.ApproachPassCountRule;
 import player.BlockDirectionStrategy;
@@ -197,11 +200,14 @@ public final class GameFacade {
         // T-12: the same seeded coin toss T-1 uses for direction, reused for Energized/Sick.
         AlphaEffectRule alphaEffectRule = new AlphaEffectRule(SeededCoinToss.getInstance());
         // T-14: reverses direction, or forwards on to Beta, when a piece/block lands on Gamma.
-        GammaDirectionRule gammaDirectionRule = new GammaDirectionRule(board, alphaEffectRule);
+        GammaDirectionRule gammaDirectionRule = new GammaDirectionRule(board);
+        // T-15: Alpha/Beta/Gamma effects activate only after genuine Mystery Cell teleportation.
+        EffectActivationRule effectActivationRule = new MysteryTeleportActivationRule();
+        MysteryCellEffects mysteryCellEffects =
+                new MysteryCellEffects(alphaEffectRule, gammaDirectionRule, effectActivationRule);
         // T-11: shares the same seeded random source as everything else, for reproducibility.
         MysteryCellTeleportRule mysteryCellTeleportRule = new MysteryCellTeleportRule(
-                mysteryCellManager, SeededRandomNumberGenerator.getInstance(), board, alphaEffectRule,
-                gammaDirectionRule);
+                mysteryCellManager, SeededRandomNumberGenerator.getInstance(), board, mysteryCellEffects);
         // T-13: checks every roll for the Beta restriction's consecutive-3 return-to-base condition.
         BetaRestrictionRule betaRestrictionRule = new BetaRestrictionRule();
         return new StandardTurnProcessor(

@@ -6,9 +6,9 @@ import java.util.stream.Collectors;
 import gamemessage.GameMessage;
 import gamemessage.GameMessagePublisher;
 import ludoboard.Board;
-import mysterycell.AlphaEffectRule;
-import mysterycell.GammaDirectionRule;
+import mysterycell.MysteryCellArrival;
 import mysterycell.MysteryCellDestinationType;
+import mysterycell.MysteryCellEffects;
 import player.BetaRestrictedState;
 import player.Piece;
 import player.Player;
@@ -22,18 +22,16 @@ public final class TeleportCommand implements Command {
     private final List<Piece> teleportedPieces;
     private final MysteryCellDestinationType destinationType;
     private final Board board;
-    private final AlphaEffectRule alphaEffectRule;
-    private final GammaDirectionRule gammaDirectionRule;
+    private final MysteryCellEffects effects;
 
     public TeleportCommand(
             Player player, List<Piece> teleportedPieces, MysteryCellDestinationType destinationType,
-            Board board, AlphaEffectRule alphaEffectRule, GammaDirectionRule gammaDirectionRule) {
+            Board board, MysteryCellEffects effects) {
         this.player = player;
         this.teleportedPieces = teleportedPieces;
         this.destinationType = destinationType;
         this.board = board;
-        this.alphaEffectRule = alphaEffectRule;
-        this.gammaDirectionRule = gammaDirectionRule;
+        this.effects = effects;
     }
 
     @Override
@@ -54,9 +52,16 @@ public final class TeleportCommand implements Command {
         messages.publish(GameMessage.pieceTeleported(
                 describeLabel(), destinationType.getLabel(), targetPosition));
 
+        // T-15: Alpha/Beta/Gamma effects activate only after this validated, genuine teleport.
+        boolean effectPermitted = effects.getEffectActivationRule()
+                .permitsActivation(new MysteryCellArrival(destinationType));
+        if (!effectPermitted) {
+            return;
+        }
+
         // T-12: only Alpha assigns an Energized/Sick effect.
         if (destinationType == MysteryCellDestinationType.ALPHA) {
-            alphaEffectRule.applyTo(player, teleportedPieces, messages);
+            effects.getAlphaEffectRule().applyTo(player, teleportedPieces, messages);
         }
 
         // T-13: only Beta restricts movement and starts the consecutive-3 tracking.
@@ -70,7 +75,7 @@ public final class TeleportCommand implements Command {
 
         // T-14: only Gamma reverses direction, or forwards on to Beta if already reversed.
         if (destinationType == MysteryCellDestinationType.GAMMA) {
-            gammaDirectionRule.applyTo(player, teleportedPieces, messages);
+            effects.getGammaDirectionRule().applyTo(player, teleportedPieces, messages, effects);
         }
     }
 

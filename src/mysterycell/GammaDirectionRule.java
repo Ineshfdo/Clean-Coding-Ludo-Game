@@ -17,14 +17,16 @@ import player.Player;
 public final class GammaDirectionRule {
 
     private final Board board;
-    private final AlphaEffectRule alphaEffectRule;
 
-    public GammaDirectionRule(Board board, AlphaEffectRule alphaEffectRule) {
+    public GammaDirectionRule(Board board) {
         this.board = board;
-        this.alphaEffectRule = alphaEffectRule;
     }
 
-    public void applyTo(Player player, List<Piece> teleportedPieces, GameMessagePublisher messages) {
+    // T-15: receives the same MysteryCellEffects bundle TeleportCommand was given, so the
+    // forwarded Beta teleport goes through the identical activation-rule check.
+    public void applyTo(
+            Player player, List<Piece> teleportedPieces, GameMessagePublisher messages,
+            MysteryCellEffects effects) {
         MovementDirectionStrategy currentDirection = teleportedPieces.get(0).getMovementDirectionStrategy();
 
         if (currentDirection.isClockwise()) {
@@ -32,7 +34,7 @@ public final class GammaDirectionRule {
             return;
         }
 
-        forwardToBeta(player, teleportedPieces, messages);
+        forwardToBeta(player, teleportedPieces, messages, effects);
     }
 
     // T-14/Strategy: every member's direction is permanently replaced with its reverse.
@@ -48,9 +50,11 @@ public final class GammaDirectionRule {
 
     // T-14/Command: already Counter-Clockwise, so this group is teleported onward to Beta -
     // reusing TeleportCommand also reuses T-13's restriction, at no extra cost.
-    private void forwardToBeta(Player player, List<Piece> teleportedPieces, GameMessagePublisher messages) {
+    private void forwardToBeta(
+            Player player, List<Piece> teleportedPieces, GameMessagePublisher messages,
+            MysteryCellEffects effects) {
         Command forwardToBeta = new TeleportCommand(
-                player, teleportedPieces, MysteryCellDestinationType.BETA, board, alphaEffectRule, this);
+                player, teleportedPieces, MysteryCellDestinationType.BETA, board, effects);
         forwardToBeta.execute(messages);
     }
 
