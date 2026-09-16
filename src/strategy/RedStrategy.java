@@ -3,7 +3,6 @@ package strategy;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import command.Command;
 import command.CommandType;
@@ -18,8 +17,6 @@ import player.Player;
 // available, and otherwise avoids landing on its own pieces to form a new block unless that
 // is unavoidable.
 public final class RedStrategy implements PlayerStrategy {
-
-    private static final int BLOCKADE_PIECE_COUNT = 2;
 
     @Override
     public Command choose(List<Command> legalOptions, StrategyContext context) {
@@ -38,37 +35,17 @@ public final class RedStrategy implements PlayerStrategy {
 
     // Rule (1): among every option that would actually capture an opponent, prefer the one
     // capturing the opponent piece closest to Red's own Home.
-    private Optional<Command> findBestCapture(List<Command> legalOptions, StrategyContext context) {
+    private static Optional<Command> findBestCapture(List<Command> legalOptions, StrategyContext context) {
         return legalOptions.stream()
                 .flatMap(option -> findCapture(option, context).stream())
                 .min(Comparator.comparingInt(capture -> distanceToRedHome(capture.capturedPiece, context.getBoard())))
                 .map(capture -> capture.option);
     }
 
-    // T-8: a lone mover captures any opponent it can legally reach; a moving block only
-    // captures an opponent block of the exact same size - anything else is not a real capture.
-    private Optional<Capture> findCapture(Command option, StrategyContext context) {
-        Optional<Integer> landingPosition = option.previewLandingPosition();
-        if (landingPosition.isEmpty()) {
-            return Optional.empty();
-        }
-
-        int moverBlockSize = countOwnPiecesAt(context.getPlayer(), option.getAffectedPiece().getTrackPosition());
-        for (Player opponent : context.getAllPlayers()) {
-            if (opponent.getColor() == context.getPlayer().getColor()) {
-                continue;
-            }
-            List<Piece> opponentPiecesHere = findPiecesAt(opponent, landingPosition.get());
-            if (opponentPiecesHere.isEmpty()) {
-                continue;
-            }
-            boolean capturesHere = moverBlockSize < BLOCKADE_PIECE_COUNT
-                    || opponentPiecesHere.size() == moverBlockSize;
-            if (capturesHere) {
-                return Optional.of(new Capture(option, opponentPiecesHere.get(0)));
-            }
-        }
-        return Optional.empty();
+    // T-8: delegates to the shared, capture-rule-aware finder used by every color's strategy.
+    private static Optional<Capture> findCapture(Command option, StrategyContext context) {
+        return CaptureOpportunityFinder.findCapturedOpponent(option, context)
+                .map(capturedPiece -> new Capture(option, capturedPiece));
     }
 
     private static int distanceToRedHome(Piece opponentPiece, Board board) {
@@ -102,13 +79,6 @@ public final class RedStrategy implements PlayerStrategy {
                 .filter(Piece::isOnTrack)
                 .filter(piece -> piece.getTrackPosition() == trackPosition)
                 .count();
-    }
-
-    private static List<Piece> findPiecesAt(Player player, int trackPosition) {
-        return player.getPieces().stream()
-                .filter(Piece::isOnTrack)
-                .filter(piece -> piece.getTrackPosition() == trackPosition)
-                .collect(Collectors.toList());
     }
 
     // Pairs a candidate move with the specific opponent piece it would capture.

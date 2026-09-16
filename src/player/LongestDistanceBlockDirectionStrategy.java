@@ -5,7 +5,6 @@ import java.util.Optional;
 
 import direction.MovementDirectionStrategy;
 import ludoboard.Board;
-import ludoboard.HomeStraightCell;
 
 // T-4: a mixed-direction block travels via the member with the longest remaining distance -
 // decided once when the block first moves together, then kept for as long as it stays grouped.
@@ -31,29 +30,15 @@ public final class LongestDistanceBlockDirectionStrategy implements BlockDirecti
     // longest remaining distance to Home sets the direction everyone else then adopts.
     private static Piece resolveDominantPiece(List<Piece> blockPieces, Board board) {
         Piece dominantPiece = blockPieces.get(0);
-        int longestRemaining = remainingDistanceToHome(dominantPiece, board);
+        int longestRemaining = RemainingHomeDistance.forPiece(dominantPiece, board);
 
         for (Piece piece : blockPieces) {
-            int remaining = remainingDistanceToHome(piece, board);
+            int remaining = RemainingHomeDistance.forPiece(piece, board);
             if (remaining > longestRemaining) {
                 longestRemaining = remaining;
                 dominantPiece = piece;
             }
         }
         return dominantPiece;
-    }
-
-    // T-1/T-5: uses each piece's own original direction, never a block's borrowed one.
-    private static int remainingDistanceToHome(Piece piece, Board board) {
-        MovementDirectionStrategy ownDirection = piece.getOriginalMovementDirectionStrategy();
-        int stepsToApproach =
-                ownDirection.stepsToApproach(piece.getTrackPosition(), piece.getColor(), board);
-
-        int passesAfterThisCrossing = piece.getApproachPassCount() + 1;
-        int requiredPasses = ownDirection.getRequiredApproachPassCount();
-        int extraLapsNeeded = Math.max(0, requiredPasses - passesAfterThisCrossing);
-
-        return stepsToApproach + extraLapsNeeded * board.getStandardCellCount()
-                + HomeStraightCell.CELLS_PER_HOME_STRAIGHT;
     }
 }
