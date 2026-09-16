@@ -7,6 +7,7 @@ import gamemessage.GameMessage;
 import gamemessage.GameMessagePublisher;
 import ludoboard.Board;
 import mysterycell.AlphaEffectRule;
+import mysterycell.GammaDirectionRule;
 import mysterycell.MysteryCellDestinationType;
 import player.BetaRestrictedState;
 import player.Piece;
@@ -22,15 +23,17 @@ public final class TeleportCommand implements Command {
     private final MysteryCellDestinationType destinationType;
     private final Board board;
     private final AlphaEffectRule alphaEffectRule;
+    private final GammaDirectionRule gammaDirectionRule;
 
     public TeleportCommand(
             Player player, List<Piece> teleportedPieces, MysteryCellDestinationType destinationType,
-            Board board, AlphaEffectRule alphaEffectRule) {
+            Board board, AlphaEffectRule alphaEffectRule, GammaDirectionRule gammaDirectionRule) {
         this.player = player;
         this.teleportedPieces = teleportedPieces;
         this.destinationType = destinationType;
         this.board = board;
         this.alphaEffectRule = alphaEffectRule;
+        this.gammaDirectionRule = gammaDirectionRule;
     }
 
     @Override
@@ -62,6 +65,12 @@ public final class TeleportCommand implements Command {
             for (Piece piece : teleportedPieces) {
                 player.applyRestriction(piece, restriction);
             }
+            messages.publish(GameMessage.betaRestrictionApplied(describeLabel()));
+        }
+
+        // T-14: only Gamma reverses direction, or forwards on to Beta if already reversed.
+        if (destinationType == MysteryCellDestinationType.GAMMA) {
+            gammaDirectionRule.applyTo(player, teleportedPieces, messages);
         }
     }
 

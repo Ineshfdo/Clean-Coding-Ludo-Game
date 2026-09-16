@@ -118,6 +118,14 @@ public final class Piece {
         this.movementDirectionStrategy = originalMovementDirectionStrategy;
     }
 
+    // T-14: a Gamma teleport permanently reverses direction - unlike T-5's temporary
+    // block-borrowed direction, both the active AND original direction are replaced.
+    void reverseDirection() {
+        MovementDirectionStrategy reversed = movementDirectionStrategy.reverse();
+        this.movementDirectionStrategy = reversed;
+        this.originalMovementDirectionStrategy = reversed;
+    }
+
     void recordApproachPass() {
         approachPassCount++;
     }

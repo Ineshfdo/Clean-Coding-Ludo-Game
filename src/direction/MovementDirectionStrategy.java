@@ -14,4 +14,10 @@ public interface MovementDirectionStrategy {
     int getRequiredApproachPassCount();
 
     String getLabel();
+
+    // T-14: lets calling code branch on the current direction without an instanceof check.
+    boolean isClockwise();
+
+    // T-14: the opposite direction strategy - Gamma uses this to reverse a piece/block permanently.
+    MovementDirectionStrategy reverse();
 }

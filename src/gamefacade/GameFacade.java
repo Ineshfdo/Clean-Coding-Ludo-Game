@@ -15,6 +15,7 @@ import ludoboard.Board;
 import ludoboard.LudoBoard;
 import ludoboard.PlayerColor;
 import mysterycell.AlphaEffectRule;
+import mysterycell.GammaDirectionRule;
 import mysterycell.MysteryCellManager;
 import numbergenerator.SeededRandomNumberGenerator;
 import player.ApproachPassCountRule;
@@ -54,7 +55,7 @@ import turn.TurnProcessor;
 // messages; ConsoleGameObserver decides the wording.
 public final class GameFacade {
 
-    private static final int TEST_ROUND_COUNT = 25;
+    private static final int TEST_ROUND_COUNT = 1181 ;
 
     // T-4: shared so a block's direction is resolved the same way for movement and display.
     private static final BlockDirectionStrategy BLOCK_DIRECTION_STRATEGY =
@@ -195,9 +196,12 @@ public final class GameFacade {
         BlockadeBreakRule blockadeBreakRule = new ThirdSixBlockadeBreakRule(homeStraightEntryRule);
         // T-12: the same seeded coin toss T-1 uses for direction, reused for Energized/Sick.
         AlphaEffectRule alphaEffectRule = new AlphaEffectRule(SeededCoinToss.getInstance());
+        // T-14: reverses direction, or forwards on to Beta, when a piece/block lands on Gamma.
+        GammaDirectionRule gammaDirectionRule = new GammaDirectionRule(board, alphaEffectRule);
         // T-11: shares the same seeded random source as everything else, for reproducibility.
         MysteryCellTeleportRule mysteryCellTeleportRule = new MysteryCellTeleportRule(
-                mysteryCellManager, SeededRandomNumberGenerator.getInstance(), board, alphaEffectRule);
+                mysteryCellManager, SeededRandomNumberGenerator.getInstance(), board, alphaEffectRule,
+                gammaDirectionRule);
         // T-13: checks every roll for the Beta restriction's consecutive-3 return-to-base condition.
         BetaRestrictionRule betaRestrictionRule = new BetaRestrictionRule();
         return new StandardTurnProcessor(

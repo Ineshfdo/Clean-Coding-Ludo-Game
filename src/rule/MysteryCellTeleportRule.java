@@ -8,6 +8,7 @@ import command.Command;
 import command.TeleportCommand;
 import ludoboard.Board;
 import mysterycell.AlphaEffectRule;
+import mysterycell.GammaDirectionRule;
 import mysterycell.MysteryCellDestinationType;
 import mysterycell.MysteryCellManager;
 import numbergenerator.RandomNumberGenerator;
@@ -25,14 +26,16 @@ public final class MysteryCellTeleportRule {
     private final RandomNumberGenerator randomNumberGenerator;
     private final Board board;
     private final AlphaEffectRule alphaEffectRule;
+    private final GammaDirectionRule gammaDirectionRule;
 
     public MysteryCellTeleportRule(
             MysteryCellManager mysteryCellManager, RandomNumberGenerator randomNumberGenerator,
-            Board board, AlphaEffectRule alphaEffectRule) {
+            Board board, AlphaEffectRule alphaEffectRule, GammaDirectionRule gammaDirectionRule) {
         this.mysteryCellManager = mysteryCellManager;
         this.randomNumberGenerator = randomNumberGenerator;
         this.board = board;
         this.alphaEffectRule = alphaEffectRule;
+        this.gammaDirectionRule = gammaDirectionRule;
     }
 
     public Optional<Command> resolve(Player mover, Piece landedPiece) {
@@ -42,8 +45,8 @@ public final class MysteryCellTeleportRule {
 
         List<Piece> teleportedGroup = findOwnPiecesAt(mover, landedPiece.getTrackPosition());
         MysteryCellDestinationType destinationType = chooseRandomDestination();
-        return Optional.of(
-                new TeleportCommand(mover, teleportedGroup, destinationType, board, alphaEffectRule));
+        return Optional.of(new TeleportCommand(
+                mover, teleportedGroup, destinationType, board, alphaEffectRule, gammaDirectionRule));
     }
 
     private boolean landsOnMysteryCell(Piece piece) {

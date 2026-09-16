@@ -126,6 +126,13 @@ public abstract class Player {
         piece.restoreOriginalDirection();
     }
 
+    // T-14: a Gamma teleport permanently reverses this piece's direction (Strategy pattern -
+    // ClockwiseMovementStrategy is replaced with CounterClockwiseMovementStrategy, or vice versa).
+    public void reverseDirection(Piece piece) {
+        requireOwnership(piece);
+        piece.reverseDirection();
+    }
+
     // Rule 1: moves a piece by the dice value using T-1's travelDirection, own direction unchanged.
     public void moveForward(
             Piece piece, int steps, Board board, HomeStraightEntryRule homeStraightEntryRule,

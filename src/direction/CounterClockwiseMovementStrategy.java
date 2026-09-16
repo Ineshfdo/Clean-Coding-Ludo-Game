@@ -38,4 +38,14 @@ public final class CounterClockwiseMovementStrategy implements MovementDirection
     public String getLabel() {
         return LABEL;
     }
+
+    @Override
+    public boolean isClockwise() {
+        return false;
+    }
+
+    @Override
+    public MovementDirectionStrategy reverse() {
+        return ClockwiseMovementStrategy.getInstance();
+    }
 }

@@ -109,9 +109,15 @@ public final class ConsoleGameObserver implements GameMessageObserver {
             case EFFECT_ROLL_TOO_SMALL ->
                     "  -> " + message.getPieceLabel()
                             + "'s Sick effect halved this roll to zero cells and cannot move.";
+            case BETA_RESTRICTION_APPLIED ->
+                    "  -> " + message.getPieceLabel()
+                            + " cannot move for the next 4 rounds (Beta restriction).";
             case BETA_RESTRICTION_TRIGGERED ->
                     "  -> " + message.getPieceLabel()
                             + " rolled a 3 two rounds in a row while Beta-restricted and is sent back to Base!";
+            case PIECE_DIRECTION_REVERSED ->
+                    "  -> " + message.getPieceLabel() + " landed on Gamma and reversed direction - now moving "
+                            + message.getMovementDirectionLabel() + ".";
             case BOARD_STATE_REPORTED -> describeBoardState(message.getRoundNumber());
         };
     }

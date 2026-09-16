@@ -30,9 +30,11 @@ public final class BetaRestrictedState implements PieceRestrictionState {
         return roundsRemaining;
     }
 
+    // T-13: the landing round already spent its move reaching Beta, so all 4 blocked rounds
+    // must fall on the rounds AFTER creation - expiry only fires once nothing is left to consume.
     @Override
     public PieceRestrictionState afterRoundElapses() {
-        if (roundsRemaining <= 1) {
+        if (roundsRemaining <= 0) {
             return NoRestrictionState.getInstance();
         }
         return new BetaRestrictedState(roundsRemaining - 1, consecutiveTriggerRollCount);

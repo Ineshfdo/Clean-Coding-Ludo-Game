@@ -221,6 +221,20 @@ public final class GameMessage {
                 null, null, null, null, null);
     }
 
+    // T-13: announces that a just-teleported piece/block cannot move for the next 4 rounds.
+    public static GameMessage betaRestrictionApplied(String pieceLabel) {
+        return new GameMessage(
+                GameMessageType.BETA_RESTRICTION_APPLIED, null, 0, 0, 0, 0, pieceLabel, null, null,
+                null, null, null, null, null);
+    }
+
+    // T-14: a Gamma teleport reversed this piece/block's direction (Clockwise <-> Counter-Clockwise).
+    public static GameMessage pieceDirectionReversed(String pieceLabel, String newDirectionLabel) {
+        return new GameMessage(
+                GameMessageType.PIECE_DIRECTION_REVERSED, null, 0, 0, 0, 0, pieceLabel, null, null,
+                null, newDirectionLabel, null, null, null);
+    }
+
     public GameMessageType getType() {
         return type;
     }
