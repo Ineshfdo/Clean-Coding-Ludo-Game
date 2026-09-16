@@ -14,6 +14,7 @@ public final class Piece {
     private int homeStraightIndex;
     private MovementDirectionStrategy movementDirectionStrategy;
     private MovementDirectionStrategy originalMovementDirectionStrategy;
+    private int adoptedForBlockSize;
     private int approachPassCount;
     private int captureCount;
     private MovementEffect individualEffect = MovementEffect.none();
@@ -108,9 +109,17 @@ public final class Piece {
         this.originalMovementDirectionStrategy = movementDirectionStrategy;
     }
 
-    // T-5: temporarily borrows a block's shared direction while grouped with teammates.
-    void adoptBlockDirection(MovementDirectionStrategy blockDirection) {
+    // T-4/T-5: temporarily borrows a block's shared direction while grouped with teammates,
+    // and records how many members the block had when that direction was decided - so a
+    // later arrival changing the block's size can be detected and re-compared fairly,
+    // without recalculating on every ordinary round where membership hasn't changed.
+    void adoptBlockDirection(MovementDirectionStrategy blockDirection, int blockSize) {
         this.movementDirectionStrategy = blockDirection;
+        this.adoptedForBlockSize = blockSize;
+    }
+
+    int getAdoptedForBlockSize() {
+        return adoptedForBlockSize;
     }
 
     // T-5: resumes the direction assigned when this piece left Base.
@@ -191,6 +200,7 @@ public final class Piece {
         this.captureCount = 0;
         this.movementDirectionStrategy = null;
         this.originalMovementDirectionStrategy = null;
+        this.adoptedForBlockSize = 0;
         this.individualEffect = MovementEffect.none();
         this.blockEffect = MovementEffect.none();
         this.restrictionState = NoRestrictionState.getInstance();

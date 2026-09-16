@@ -131,8 +131,7 @@ public final class MovementRule implements TurnRule {
         if (!piece.isOnTrack()) {
             return piece.getMovementDirectionStrategy();
         }
-        return blockDirectionStrategy.resolveDominantPiece(blockPieces, board)
-                .getOriginalMovementDirectionStrategy();
+        return blockDirectionStrategy.resolveTravelDirection(blockPieces, board);
     }
 
     // T-3/T-4/T-12/Rule 10: block-size division, then Energized/Sick, then blockade capping.

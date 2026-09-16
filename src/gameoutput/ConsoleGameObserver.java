@@ -229,11 +229,12 @@ public final class ConsoleGameObserver implements GameMessageObserver {
             block.append(' ').append(describePiece(piece));
         }
         if (blockedPieces.get(0).isOnTrack()) {
-            Piece dominantPiece = blockDirectionStrategy.resolveDominantPiece(blockedPieces, board);
+            MovementDirectionStrategy travelDirection =
+                    blockDirectionStrategy.resolveTravelDirection(blockedPieces, board);
+            Piece naturalMember = findNaturalMemberFor(blockedPieces, travelDirection);
             block.append(" BlockType:").append(BlockDirectionType.classify(blockedPieces).getLabel());
-            block.append(" BlockDirection:")
-                    .append(dominantPiece.getOriginalMovementDirectionStrategy().getLabel());
-            block.append(" BlockApproachCellPasses:").append(dominantPiece.getApproachPassCount());
+            block.append(" BlockDirection:").append(travelDirection.getLabel());
+            block.append(" BlockApproachCellPasses:").append(naturalMember.getApproachPassCount());
         }
         // T-12: every member shares this identical value, so it is shown once for the whole block.
         MovementEffect blockEffect = blockedPieces.get(0).getBlockEffect();
@@ -242,6 +243,15 @@ public final class ConsoleGameObserver implements GameMessageObserver {
         }
         block.append(']');
         return block.toString();
+    }
+
+    // T-4/T-5: the member whose OWN direction matches the block's chosen travel direction -
+    // its approach-pass count is what BlockApproachCellPasses reports.
+    private static Piece findNaturalMemberFor(List<Piece> blockedPieces, MovementDirectionStrategy travelDirection) {
+        return blockedPieces.stream()
+                .filter(piece -> piece.getOriginalMovementDirectionStrategy() == travelDirection)
+                .findFirst()
+                .orElse(blockedPieces.get(0));
     }
 
     // T-9: each piece shows its OWN capture count - HomeStraightEligibilityRule gates on this, not the team total.
@@ -274,7 +284,7 @@ public final class ConsoleGameObserver implements GameMessageObserver {
         }
         MovementDirectionStrategy direction = piece.getMovementDirectionStrategy();
         MovementDirectionStrategy originalDirection = piece.getOriginalMovementDirectionStrategy();
-        return ", " + direction.getLabel() + ", OriginalDirection:" + originalDirection.getLabel()
+        return ", CurrentDirection:" + direction.getLabel() + ", OriginalDirection:" + originalDirection.getLabel()
                 + ", ApproachCellPasses:" + piece.getApproachPassCount();
     }
 

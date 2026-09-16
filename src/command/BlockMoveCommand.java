@@ -41,7 +41,7 @@ public final class BlockMoveCommand implements Command {
         int fromPosition = representative.isOnTrack()
                 ? representative.getTrackPosition() : NO_PREVIOUS_POSITION;
         for (Piece piece : blockPieces) {
-            player.adoptBlockDirection(piece, travelDirection);
+            player.adoptBlockDirection(piece, travelDirection, blockPieces.size());
             player.moveForward(piece, effectiveDiceValue, board, homeStraightEntryRule, travelDirection);
         }
         messages.publish(describeOutcome(fromPosition));

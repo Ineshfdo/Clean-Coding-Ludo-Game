@@ -62,7 +62,7 @@ import turn.TurnProcessor;
 // messages; ConsoleGameObserver decides the wording.
 public final class GameFacade {
 
-    private static final int TEST_ROUND_COUNT = 385;
+    private static final int TEST_ROUND_COUNT = 25;
 
     // T-4: shared so a block's direction is resolved the same way for movement and display.
     private static final BlockDirectionStrategy BLOCK_DIRECTION_STRATEGY =
