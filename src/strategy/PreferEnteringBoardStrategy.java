@@ -9,7 +9,7 @@ import java.util.List;
 public final class PreferEnteringBoardStrategy implements PlayerStrategy {
 
     @Override
-    public Command choose(List<Command> legalOptions) {
+    public Command choose(List<Command> legalOptions, StrategyContext context) {
         return legalOptions.stream()
             .filter(option -> option.getType() == CommandType.ENTER_BOARD)
             .findFirst()

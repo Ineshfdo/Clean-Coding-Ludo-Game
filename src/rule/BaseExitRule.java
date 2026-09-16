@@ -22,13 +22,14 @@ public final class BaseExitRule implements TurnRule {
     }
 
     @Override
-    public Optional<Command> resolve(
+    public List<Command> resolve(
             Player player, int rollValue, Board board, List<Player> allPlayers) {
         if (rollValue != BASE_EXIT_ROLL_VALUE) {
-            return Optional.empty();
+            return List.of();
         }
         return findBasePiece(player)
-                .map(piece -> new EnterBoardCommand(player, piece, board, coinToss));
+                .<List<Command>>map(piece -> List.of(new EnterBoardCommand(player, piece, board, coinToss)))
+                .orElse(List.of());
     }
 
     private static Optional<Piece> findBasePiece(Player player) {

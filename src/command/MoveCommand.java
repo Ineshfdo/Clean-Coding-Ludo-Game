@@ -1,5 +1,7 @@
 package command;
 
+import java.util.Optional;
+
 import direction.MovementDirectionStrategy;
 import gamemessage.GameMessage;
 import gamemessage.GameMessagePublisher;
@@ -61,5 +63,10 @@ public final class MoveCommand implements Command {
     @Override
     public Piece getAffectedPiece() {
         return piece;
+    }
+
+    @Override
+    public Optional<Integer> previewLandingPosition() {
+        return TrackLandingPreview.resolve(piece, effectiveDiceValue, board, travelDirection);
     }
 }

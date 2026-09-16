@@ -8,5 +8,5 @@ import command.Command;
 // roll allows more than one.
 public interface PlayerStrategy {
 
-    Command choose(List<Command> legalOptions);
+    Command choose(List<Command> legalOptions, StrategyContext context);
 }

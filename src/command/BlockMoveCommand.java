@@ -1,6 +1,7 @@
 package command;
 
 import java.util.List;
+import java.util.Optional;
 
 import direction.MovementDirectionStrategy;
 import gamemessage.GameMessage;
@@ -84,5 +85,10 @@ public final class BlockMoveCommand implements Command {
     @Override
     public Piece getAffectedPiece() {
         return blockPieces.get(0);
+    }
+
+    @Override
+    public Optional<Integer> previewLandingPosition() {
+        return TrackLandingPreview.resolve(blockPieces.get(0), effectiveDiceValue, board, travelDirection);
     }
 }

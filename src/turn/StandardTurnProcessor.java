@@ -8,18 +8,18 @@ import rule.CaptureRule;
 import rule.MysteryCellTeleportRule;
 import rule.RollValidityRule;
 import rule.TurnRule;
-import strategy.PlayerStrategy;
+import strategy.PlayerStrategyRegistry;
 
 public final class StandardTurnProcessor extends TurnProcessor {
 
     private static final int BONUS_ROLL_TRIGGER_VALUE = 6;
 
     public StandardTurnProcessor(
-            List<TurnRule> turnRules, PlayerStrategy strategy,
+            List<TurnRule> turnRules, PlayerStrategyRegistry strategyRegistry,
             RollValidityRule rollValidityRule, CaptureRule captureRule,
             BlockadeBreakRule blockadeBreakRule, MysteryCellTeleportRule mysteryCellTeleportRule,
             BetaRestrictionRule betaRestrictionRule) {
-        super(turnRules, strategy, rollValidityRule, captureRule, blockadeBreakRule,
+        super(turnRules, strategyRegistry, rollValidityRule, captureRule, blockadeBreakRule,
                 mysteryCellTeleportRule, betaRestrictionRule);
     }
 

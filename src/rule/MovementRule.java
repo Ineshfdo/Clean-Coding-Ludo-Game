@@ -1,7 +1,9 @@
 package rule;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import command.BlockMoveCommand;
@@ -43,27 +45,38 @@ public final class MovementRule implements TurnRule {
         this.blockDirectionStrategy = blockDirectionStrategy;
     }
 
+    // T-16: every distinct piece/block gets its own option, so a Strategy can genuinely
+    // choose among them - not just react to whichever one a fixed scan order tried first.
     @Override
-    public Optional<Command> resolve(
+    public List<Command> resolve(
             Player player, int rollValue, Board board, List<Player> allPlayers) {
         List<Piece> candidates = findMovableCandidates(player);
         if (candidates.isEmpty()) {
-            return Optional.empty();
+            return List.of();
         }
 
-        // Try this player's pieces in order; a blockade on one must not stop another.
+        List<Command> moveOptions = new ArrayList<>();
+        Set<Piece> coveredPieces = new HashSet<>();
         for (Piece piece : candidates) {
+            if (coveredPieces.contains(piece)) {
+                continue;
+            }
             List<Piece> blockPieces = findOwnBlock(piece, candidates);
+            coveredPieces.addAll(blockPieces);
+
             MovementDirectionStrategy travelDirection = resolveTravelDirection(piece, blockPieces, board);
             int effectiveSteps =
                     effectiveSteps(player, piece, rollValue, board, allPlayers, blockPieces, travelDirection);
             if (effectiveSteps > 0) {
-                return Optional.of(buildMoveCommand(
+                moveOptions.add(buildMoveCommand(
                         player, piece, blockPieces, effectiveSteps, board, travelDirection));
             }
         }
 
-        return Optional.of(buildNoMoveCommand(candidates.get(0), candidates, rollValue));
+        if (moveOptions.isEmpty()) {
+            return List.of(buildNoMoveCommand(candidates.get(0), candidates, rollValue));
+        }
+        return moveOptions;
     }
 
     // Rule 10/T-4/T-12: a stalled piece needs the message matching why it cannot move.

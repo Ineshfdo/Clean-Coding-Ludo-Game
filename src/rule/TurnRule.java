@@ -1,15 +1,14 @@
 package rule;
 
 import java.util.List;
-import java.util.Optional;
 
 import command.Command;
 import ludoboard.Board;
 import player.Player;
 
-// Each rule decides if it applies to this roll;
+// Each rule reports every option it finds legal for this roll;
 // GameFacade collects every answer.
 public interface TurnRule {
 
-    Optional<Command> resolve(Player player, int rollValue, Board board, List<Player> allPlayers);
+    List<Command> resolve(Player player, int rollValue, Board board, List<Player> allPlayers);
 }

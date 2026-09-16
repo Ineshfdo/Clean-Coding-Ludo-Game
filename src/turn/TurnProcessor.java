@@ -21,13 +21,15 @@ import rule.MysteryCellTeleportRule;
 import rule.RollValidityRule;
 import rule.TurnRule;
 import strategy.PlayerStrategy;
+import strategy.PlayerStrategyRegistry;
+import strategy.StrategyContext;
 
 // Template Method: the fixed skeleton for playing a turn;
 // subclasses only decide one hook.
 public abstract class TurnProcessor {
 
     private final List<TurnRule> turnRules;
-    private final PlayerStrategy strategy;
+    private final PlayerStrategyRegistry strategyRegistry;
     private final RollValidityRule rollValidityRule;
     private final CaptureRule captureRule;
     private final BlockadeBreakRule blockadeBreakRule;
@@ -35,12 +37,12 @@ public abstract class TurnProcessor {
     private final BetaRestrictionRule betaRestrictionRule;
 
     protected TurnProcessor(
-            List<TurnRule> turnRules, PlayerStrategy strategy,
+            List<TurnRule> turnRules, PlayerStrategyRegistry strategyRegistry,
             RollValidityRule rollValidityRule, CaptureRule captureRule,
             BlockadeBreakRule blockadeBreakRule, MysteryCellTeleportRule mysteryCellTeleportRule,
             BetaRestrictionRule betaRestrictionRule) {
         this.turnRules = turnRules;
-        this.strategy = strategy;
+        this.strategyRegistry = strategyRegistry;
         this.rollValidityRule = rollValidityRule;
         this.captureRule = captureRule;
         this.blockadeBreakRule = blockadeBreakRule;
@@ -94,7 +96,9 @@ public abstract class TurnProcessor {
             return false;
         }
 
-        Command chosenCommand = strategy.choose(legalOptions);
+        PlayerStrategy strategy = strategyRegistry.getStrategyFor(player.getColor());
+        StrategyContext context = new StrategyContext(player, allPlayers, board);
+        Command chosenCommand = strategy.choose(legalOptions, context);
         chosenCommand.execute(messages);
 
         boolean capturedOpponent = applyCapture(player, chosenCommand, allPlayers, messages);
@@ -119,7 +123,7 @@ public abstract class TurnProcessor {
             Player player, List<Player> allPlayers, int rollValue, Board board) {
         List<Command> legalOptions = new ArrayList<>();
         for (TurnRule rule : turnRules) {
-            rule.resolve(player, rollValue, board, allPlayers).ifPresent(legalOptions::add);
+            legalOptions.addAll(rule.resolve(player, rollValue, board, allPlayers));
         }
         return legalOptions;
     }

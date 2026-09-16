@@ -11,6 +11,7 @@ import gamemessage.GameMessageType;
 import gameoutput.ConsoleGameObserver;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import ludoboard.Board;
 import ludoboard.LudoBoard;
 import ludoboard.PlayerColor;
@@ -50,7 +51,9 @@ import rule.RollValidityRule;
 import rule.ThirdSixBlockadeBreakRule;
 import rule.TurnRule;
 import strategy.PlayerStrategy;
+import strategy.PlayerStrategyRegistry;
 import strategy.PreferEnteringBoardStrategy;
+import strategy.RedStrategy;
 import turn.StandardTurnProcessor;
 import turn.TurnProcessor;
 
@@ -192,7 +195,12 @@ public final class GameFacade {
                 new MovementRule(
                         blockadeRule, homeStraightEntryRule, exactHomeRule, blockMovementRule,
                         BLOCK_DIRECTION_STRATEGY));
-        PlayerStrategy strategy = new PreferEnteringBoardStrategy();
+        // T-16: Red gets its own aggressive, capture-focused decision-making; every other
+        // color keeps the default behavior.
+        PlayerStrategy defaultStrategy = new PreferEnteringBoardStrategy();
+        Map<PlayerColor, PlayerStrategy> strategiesByColor = Map.of(PlayerColor.RED, new RedStrategy());
+        PlayerStrategyRegistry strategyRegistry =
+                new PlayerStrategyRegistry(strategiesByColor, defaultStrategy);
         RollValidityRule rollValidityRule = new ConsecutiveSixVoidRule();
         CaptureRule captureRule = new BlockCaptureRule();
         captureRule.setNext(new OpponentCaptureRule());
@@ -211,7 +219,7 @@ public final class GameFacade {
         // T-13: checks every roll for the Beta restriction's consecutive-3 return-to-base condition.
         BetaRestrictionRule betaRestrictionRule = new BetaRestrictionRule();
         return new StandardTurnProcessor(
-                turnRules, strategy, rollValidityRule, captureRule, blockadeBreakRule,
+                turnRules, strategyRegistry, rollValidityRule, captureRule, blockadeBreakRule,
                 mysteryCellTeleportRule, betaRestrictionRule);
     }
 }
