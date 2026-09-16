@@ -146,9 +146,11 @@ public final class MovementRule implements TurnRule {
         return representative.getIndividualEffect();
     }
 
+    // T-13: a Beta-restricted piece/block is excluded entirely, the same as one at Base or Home.
     private static List<Piece> findMovableCandidates(Player player) {
         return player.getPieces().stream()
                 .filter(piece -> piece.isOnTrack() || piece.isOnHomeStraight())
+                .filter(piece -> !piece.getRestrictionState().forbidsMovement())
                 .collect(Collectors.toList());
     }
 }

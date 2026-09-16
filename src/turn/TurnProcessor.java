@@ -14,6 +14,7 @@ import gamemessage.GameMessageType;
 import ludoboard.Board;
 import player.Piece;
 import player.Player;
+import rule.BetaRestrictionRule;
 import rule.BlockadeBreakRule;
 import rule.CaptureRule;
 import rule.MysteryCellTeleportRule;
@@ -31,17 +32,20 @@ public abstract class TurnProcessor {
     private final CaptureRule captureRule;
     private final BlockadeBreakRule blockadeBreakRule;
     private final MysteryCellTeleportRule mysteryCellTeleportRule;
+    private final BetaRestrictionRule betaRestrictionRule;
 
     protected TurnProcessor(
             List<TurnRule> turnRules, PlayerStrategy strategy,
             RollValidityRule rollValidityRule, CaptureRule captureRule,
-            BlockadeBreakRule blockadeBreakRule, MysteryCellTeleportRule mysteryCellTeleportRule) {
+            BlockadeBreakRule blockadeBreakRule, MysteryCellTeleportRule mysteryCellTeleportRule,
+            BetaRestrictionRule betaRestrictionRule) {
         this.turnRules = turnRules;
         this.strategy = strategy;
         this.rollValidityRule = rollValidityRule;
         this.captureRule = captureRule;
         this.blockadeBreakRule = blockadeBreakRule;
         this.mysteryCellTeleportRule = mysteryCellTeleportRule;
+        this.betaRestrictionRule = betaRestrictionRule;
     }
 
     public final void playTurn(
@@ -69,6 +73,10 @@ public abstract class TurnProcessor {
                 messages.publish(GameMessage.of(GameMessageType.THIRD_SIX_VOIDED));
                 return;
             }
+
+            // T-13: this round's roll may force a still-Beta-restricted piece/block back to Base.
+            betaRestrictionRule.resolve(player, rollNumber, rollValue)
+                    .ifPresent(command -> command.execute(messages));
 
             boolean capturedOpponent = resolveAndPlay(player, allPlayers, rollValue, board, messages);
 

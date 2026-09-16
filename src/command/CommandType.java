@@ -6,5 +6,6 @@ public enum CommandType {
     ENTER_BOARD,
     MOVE_FORWARD,
     CAPTURE,
-    BLOCKED
+    BLOCKED,
+    RETURN_TO_BASE
 }

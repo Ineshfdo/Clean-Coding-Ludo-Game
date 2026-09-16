@@ -8,6 +8,7 @@ import gamemessage.GameMessagePublisher;
 import ludoboard.Board;
 import mysterycell.AlphaEffectRule;
 import mysterycell.MysteryCellDestinationType;
+import player.BetaRestrictedState;
 import player.Piece;
 import player.Player;
 
@@ -53,6 +54,14 @@ public final class TeleportCommand implements Command {
         // T-12: only Alpha assigns an Energized/Sick effect.
         if (destinationType == MysteryCellDestinationType.ALPHA) {
             alphaEffectRule.applyTo(player, teleportedPieces, messages);
+        }
+
+        // T-13: only Beta restricts movement and starts the consecutive-3 tracking.
+        if (destinationType == MysteryCellDestinationType.BETA) {
+            BetaRestrictedState restriction = new BetaRestrictedState();
+            for (Piece piece : teleportedPieces) {
+                player.applyRestriction(piece, restriction);
+            }
         }
     }
 

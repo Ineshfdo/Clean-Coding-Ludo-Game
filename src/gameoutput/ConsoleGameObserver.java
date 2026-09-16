@@ -109,6 +109,9 @@ public final class ConsoleGameObserver implements GameMessageObserver {
             case EFFECT_ROLL_TOO_SMALL ->
                     "  -> " + message.getPieceLabel()
                             + "'s Sick effect halved this roll to zero cells and cannot move.";
+            case BETA_RESTRICTION_TRIGGERED ->
+                    "  -> " + message.getPieceLabel()
+                            + " rolled a 3 two rounds in a row while Beta-restricted and is sent back to Base!";
             case BOARD_STATE_REPORTED -> describeBoardState(message.getRoundNumber());
         };
     }
@@ -238,7 +241,8 @@ public final class ConsoleGameObserver implements GameMessageObserver {
     // T-9: each piece shows its OWN capture count - HomeStraightEligibilityRule gates on this, not the team total.
     private String describePiece(Piece piece) {
         return piece + "(" + describeLocation(piece) + describeDirection(piece)
-                + ", IndividualCaptureCount:" + piece.getCaptureCount() + describeIndividualEffect(piece) + ")";
+                + ", IndividualCaptureCount:" + piece.getCaptureCount() + describeIndividualEffect(piece)
+                + describeRestriction(piece) + ")";
     }
 
     // T-12: only shown while this piece's own Energized/Sick status is active - most pieces never have one.
@@ -247,6 +251,14 @@ public final class ConsoleGameObserver implements GameMessageObserver {
             return "";
         }
         return ", IndividualEffect:" + piece.getIndividualEffect().getLabel();
+    }
+
+    // T-13: only shown while this piece is still Beta-restricted - most pieces never have one.
+    private static String describeRestriction(Piece piece) {
+        if (!piece.getRestrictionState().forbidsMovement()) {
+            return "";
+        }
+        return ", BetaRestrictionRoundsLeft:" + piece.getRestrictionState().getRoundsRemaining();
     }
 
     // T-1/T-5: shown only after a coin toss assigns direction - never for Base or Home.

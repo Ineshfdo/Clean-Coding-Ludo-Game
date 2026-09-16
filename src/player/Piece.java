@@ -18,6 +18,7 @@ public final class Piece {
     private int captureCount;
     private MovementEffect individualEffect = MovementEffect.none();
     private MovementEffect blockEffect = MovementEffect.none();
+    private PieceRestrictionState restrictionState = NoRestrictionState.getInstance();
 
     Piece(PlayerColor color, int pieceNumber) {
         this.color = color;
@@ -91,6 +92,11 @@ public final class Piece {
         return blockEffect;
     }
 
+    // T-13: this piece's current movement-restriction state, e.g. Beta-restricted after a teleport.
+    public PieceRestrictionState getRestrictionState() {
+        return restrictionState;
+    }
+
     void leaveBase(int entryCellPosition) {
         this.location = PieceLocation.TRACK;
         this.trackPosition = entryCellPosition;
@@ -138,6 +144,21 @@ public final class Piece {
         this.blockEffect = blockEffect.afterRoundElapses();
     }
 
+    // T-13: assigned once, at the moment this piece is teleported to Beta.
+    void applyRestriction(PieceRestrictionState restrictionState) {
+        this.restrictionState = restrictionState;
+    }
+
+    // T-13: called once per round so a 4-round Beta restriction eventually expires.
+    void tickRestriction() {
+        this.restrictionState = restrictionState.afterRoundElapses();
+    }
+
+    // T-13: records this round's roll toward the Beta restriction's consecutive-3 condition.
+    void recordRestrictionRoll(int rollValue) {
+        this.restrictionState = restrictionState.afterRollRecorded(rollValue);
+    }
+
     void moveTo(int newTrackPosition) {
         this.location = PieceLocation.TRACK;
         this.trackPosition = newTrackPosition;
@@ -152,7 +173,8 @@ public final class Piece {
         this.location = PieceLocation.HOME;
     }
 
-    // T-9/T-12: every field returns to its Base default, including any temporary movement effect.
+    // T-9/T-12/T-13: every field returns to its Base default, including any temporary
+    // movement effect or Beta restriction.
     void returnToBase() {
         this.location = PieceLocation.BASE;
         this.trackPosition = 0;
@@ -163,6 +185,7 @@ public final class Piece {
         this.originalMovementDirectionStrategy = null;
         this.individualEffect = MovementEffect.none();
         this.blockEffect = MovementEffect.none();
+        this.restrictionState = NoRestrictionState.getInstance();
     }
 
     private void requireLocation(PieceLocation requiredLocation) {

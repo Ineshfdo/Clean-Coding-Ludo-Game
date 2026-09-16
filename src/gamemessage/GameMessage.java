@@ -190,7 +190,7 @@ public final class GameMessage {
     public static GameMessage pieceTeleported(String pieceLabel, String destinationLabel, int newPosition) {
         return new GameMessage(
                 GameMessageType.PIECE_TELEPORTED, null, 0, 0, 0, newPosition, pieceLabel, null,
-                null, null, null, destinationLabel, null, null);
+                null, null, null, null, destinationLabel, null);
     }
 
     // T-12: a coin toss assigns this piece its own Energized/Sick status.
@@ -211,6 +211,13 @@ public final class GameMessage {
     public static GameMessage effectRollTooSmall(String pieceLabel) {
         return new GameMessage(
                 GameMessageType.EFFECT_ROLL_TOO_SMALL, null, 0, 0, 0, 0, pieceLabel, null, null,
+                null, null, null, null, null);
+    }
+
+    // T-13: two consecutive rounds of rolling a 3 forced this Beta-restricted piece/block to Base.
+    public static GameMessage betaRestrictionTriggered(String pieceLabel) {
+        return new GameMessage(
+                GameMessageType.BETA_RESTRICTION_TRIGGERED, null, 0, 0, 0, 0, pieceLabel, null, null,
                 null, null, null, null, null);
     }
 

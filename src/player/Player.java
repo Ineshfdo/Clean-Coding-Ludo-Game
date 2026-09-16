@@ -75,6 +75,39 @@ public abstract class Player {
         }
     }
 
+    // T-13: places this piece into the Beta-restricted state after a Mystery Cell Beta teleport.
+    public void applyRestriction(Piece piece, PieceRestrictionState restrictionState) {
+        requireOwnership(piece);
+        piece.applyRestriction(restrictionState);
+    }
+
+    // T-13: expires one round of every piece's movement restriction.
+    public void tickRestrictions() {
+        for (Piece piece : pieces) {
+            piece.tickRestriction();
+        }
+    }
+
+    // T-13: records this round's roll against every currently restricted piece's tracking.
+    public void recordRestrictionRoll(int rollValue) {
+        for (Piece piece : pieces) {
+            if (piece.getRestrictionState().forbidsMovement()) {
+                piece.recordRestrictionRoll(rollValue);
+            }
+        }
+    }
+
+    // T-13: every piece whose Beta restriction has now triggered the consecutive-roll condition.
+    public List<Piece> findPiecesTriggeredForReturnToBase() {
+        List<Piece> triggeredPieces = new ArrayList<>();
+        for (Piece piece : pieces) {
+            if (piece.getRestrictionState().hasTriggeredReturnToBase()) {
+                triggeredPieces.add(piece);
+            }
+        }
+        return triggeredPieces;
+    }
+
     // T-1: assigns the coin toss's chosen direction to a piece that just left Base.
     public void assignMovementDirection(Piece piece, MovementDirectionStrategy movementDirection) {
         requireOwnership(piece);

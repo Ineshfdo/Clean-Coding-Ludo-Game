@@ -30,6 +30,7 @@ import player.Player;
 import player.RedPlayer;
 import player.YellowPlayer;
 import rule.BaseExitRule;
+import rule.BetaRestrictionRule;
 import rule.BlockCaptureRule;
 import rule.BlockMovementRule;
 import rule.BlockadeBreakRule;
@@ -97,9 +98,11 @@ public final class GameFacade {
         for (int roundNumber = 1; roundNumber <= TEST_ROUND_COUNT; roundNumber++) {
             messages.publish(GameMessage.roundStarted(roundNumber));
             mysteryCellManager.onRoundStarted(roundNumber, players, messages);
-            // T-12: expires one round of every piece's Energized/Sick status before this round's turns.
+            // T-12/T-13: expires one round of every piece's Energized/Sick status and Beta
+            // restriction before this round's turns.
             for (Player player : turnOrder) {
                 player.tickMovementEffects();
+                player.tickRestrictions();
             }
             for (Player player : turnOrder) {
                 turnProcessor.playTurn(player, players, dice, board, messages);
@@ -195,8 +198,10 @@ public final class GameFacade {
         // T-11: shares the same seeded random source as everything else, for reproducibility.
         MysteryCellTeleportRule mysteryCellTeleportRule = new MysteryCellTeleportRule(
                 mysteryCellManager, SeededRandomNumberGenerator.getInstance(), board, alphaEffectRule);
+        // T-13: checks every roll for the Beta restriction's consecutive-3 return-to-base condition.
+        BetaRestrictionRule betaRestrictionRule = new BetaRestrictionRule();
         return new StandardTurnProcessor(
                 turnRules, strategy, rollValidityRule, captureRule, blockadeBreakRule,
-                mysteryCellTeleportRule);
+                mysteryCellTeleportRule, betaRestrictionRule);
     }
 }
