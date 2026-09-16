@@ -53,4 +53,10 @@ public final class BreakBlockCommand implements Command {
                 .map(Command::getAffectedPiece)
                 .collect(Collectors.toList());
     }
+
+    // T-17: this command IS the "leave the block" action GreenStrategy avoids unless forced.
+    @Override
+    public boolean breaksExistingBlock() {
+        return true;
+    }
 }

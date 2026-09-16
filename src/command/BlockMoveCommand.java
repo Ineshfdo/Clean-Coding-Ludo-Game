@@ -91,4 +91,16 @@ public final class BlockMoveCommand implements Command {
     public Optional<Integer> previewLandingPosition() {
         return TrackLandingPreview.resolve(blockPieces.get(0), effectiveDiceValue, board, travelDirection);
     }
+
+    @Override
+    public boolean reachesHome() {
+        return HomeArrivalPreview.resolve(
+                blockPieces.get(0), effectiveDiceValue, board, homeStraightEntryRule, travelDirection);
+    }
+
+    // T-4/T-17: this command IS the "move as a block" action GreenStrategy prefers.
+    @Override
+    public boolean movesExistingBlock() {
+        return true;
+    }
 }

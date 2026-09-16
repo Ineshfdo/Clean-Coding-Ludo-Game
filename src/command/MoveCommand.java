@@ -69,4 +69,9 @@ public final class MoveCommand implements Command {
     public Optional<Integer> previewLandingPosition() {
         return TrackLandingPreview.resolve(piece, effectiveDiceValue, board, travelDirection);
     }
+
+    @Override
+    public boolean reachesHome() {
+        return HomeArrivalPreview.resolve(piece, effectiveDiceValue, board, homeStraightEntryRule, travelDirection);
+    }
 }

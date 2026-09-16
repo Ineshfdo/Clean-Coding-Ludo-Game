@@ -27,4 +27,19 @@ public interface Command {
     default Optional<Integer> previewLandingPosition() {
         return Optional.empty();
     }
+
+    // T-17: would this move send the piece Home? Used by GreenStrategy's Home-first priority.
+    default boolean reachesHome() {
+        return false;
+    }
+
+    // T-17: does this move keep an EXISTING 2+ piece block moving together (T-4)?
+    default boolean movesExistingBlock() {
+        return false;
+    }
+
+    // T-17: does this move represent a piece breaking away from (leaving) its block?
+    default boolean breaksExistingBlock() {
+        return false;
+    }
 }

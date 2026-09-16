@@ -50,6 +50,7 @@ import rule.OpponentCaptureRule;
 import rule.RollValidityRule;
 import rule.ThirdSixBlockadeBreakRule;
 import rule.TurnRule;
+import strategy.GreenStrategy;
 import strategy.PlayerStrategy;
 import strategy.PlayerStrategyRegistry;
 import strategy.PreferEnteringBoardStrategy;
@@ -61,7 +62,7 @@ import turn.TurnProcessor;
 // messages; ConsoleGameObserver decides the wording.
 public final class GameFacade {
 
-    private static final int TEST_ROUND_COUNT = 25;
+    private static final int TEST_ROUND_COUNT = 385;
 
     // T-4: shared so a block's direction is resolved the same way for movement and display.
     private static final BlockDirectionStrategy BLOCK_DIRECTION_STRATEGY =
@@ -195,10 +196,12 @@ public final class GameFacade {
                 new MovementRule(
                         blockadeRule, homeStraightEntryRule, exactHomeRule, blockMovementRule,
                         BLOCK_DIRECTION_STRATEGY));
-        // T-16: Red gets its own aggressive, capture-focused decision-making; every other
-        // color keeps the default behavior.
+        // T-16/T-17: Red and Green each get their own decision-making; every other color
+        // keeps the default behavior.
         PlayerStrategy defaultStrategy = new PreferEnteringBoardStrategy();
-        Map<PlayerColor, PlayerStrategy> strategiesByColor = Map.of(PlayerColor.RED, new RedStrategy());
+        Map<PlayerColor, PlayerStrategy> strategiesByColor = Map.of(
+                PlayerColor.RED, new RedStrategy(),
+                PlayerColor.GREEN, new GreenStrategy());
         PlayerStrategyRegistry strategyRegistry =
                 new PlayerStrategyRegistry(strategiesByColor, defaultStrategy);
         RollValidityRule rollValidityRule = new ConsecutiveSixVoidRule();
