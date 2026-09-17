@@ -23,6 +23,7 @@ public final class ConsoleGameObserver implements GameMessageObserver {
             { PlayerColor.GREEN, PlayerColor.YELLOW, PlayerColor.BLUE, PlayerColor.RED };
     private static final String MYSTERY_CELL_BANNER_BORDER = "=".repeat(40);
     private static final String GAME_OVER_BANNER_BORDER = "=".repeat(50);
+    private static final String BOARD_STATE_BANNER_BORDER = "=".repeat(37);
 
     private final List<Player> players;
     private final Board board;
@@ -243,14 +244,15 @@ public final class ConsoleGameObserver implements GameMessageObserver {
         StringBuilder report = new StringBuilder();
         report.append(describeRoundStatusSummary());
         report.append("\nRound ").append(roundNumber).append(" Current Board State\n");
-        report.append("-------------------------------\n\n");
-        
+        report.append(BOARD_STATE_BANNER_BORDER).append('\n');
 
+        List<String> playerRows = new ArrayList<>();
         for (PlayerColor color : BOARD_STATE_DISPLAY_ORDER) {
-            report.append(describePlayerRow(findPlayer(color))).append("\n\n");
+            playerRows.add(describePlayerRow(findPlayer(color)));
         }
+        report.append(String.join("\n\n", playerRows));
 
-        report.append("-------------------------------");
+        report.append('\n').append(BOARD_STATE_BANNER_BORDER);
         return report.toString();
     }
 
