@@ -100,11 +100,14 @@ public final class GameMessage {
                 null, null, null, null, null, 0, 0);
     }
 
-    // T-13: shows both endpoints of the move, not just the destination.
-    public static GameMessage pieceMoved(String pieceLabel, int fromPosition, int newPosition) {
+    // Requirement 2: a solo standard-path move reports the dice value and travel direction
+    // that produced it, alongside both endpoints - T-13's fromPosition/newPosition.
+    public static GameMessage pieceMoved(
+            PlayerColor color, String pieceLabel, int fromPosition, int newPosition, int diceValue,
+            String movementDirectionLabel) {
         return new GameMessage(
-                GameMessageType.PIECE_MOVED, null, 0, 0, fromPosition, newPosition, pieceLabel, null,
-                null, null, null, null, null, null, null, null, 0, 0);
+                GameMessageType.PIECE_MOVED, color, diceValue, 0, fromPosition, newPosition, pieceLabel,
+                null, null, null, movementDirectionLabel, null, null, null, null, null, 0, 0);
     }
 
     // T-4/T-13: a block move also reports its chosen direction, classification, and both endpoints.

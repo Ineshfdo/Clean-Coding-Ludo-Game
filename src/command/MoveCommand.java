@@ -52,7 +52,9 @@ public final class MoveCommand implements Command {
                             .toString();
             return GameMessage.pieceEnteredHomeStraight(piece.toString(), cellLabel);
         }
-        return GameMessage.pieceMoved(piece.toString(), fromPosition, piece.getTrackPosition());
+        return GameMessage.pieceMoved(
+                player.getColor(), piece.toString(), fromPosition, piece.getTrackPosition(),
+                effectiveDiceValue, travelDirection.getLabel());
     }
 
     @Override

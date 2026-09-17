@@ -172,14 +172,29 @@ public final class ConsoleGameObserver implements GameMessageObserver {
     }
 
     // T-4/T-13: a block move also names its BlockType and BlockDirection; a solo move does not.
-    private static String describePieceMoved(GameMessage message) {
-        String outcome = "  -> Moved " + message.getPieceLabel() + " from cell "
-                + message.getFromPosition() + " to cell " + message.getNewPosition() + ".";
-        if (message.getBlockTypeLabel() == null) {
-            return outcome;
+    // Requirement 2: a solo standard-path move names the dice value and travel direction that
+    // produced it; a block move keeps its own BlockType/BlockDirection wording (T-4/T-13) instead.
+    private String describePieceMoved(GameMessage message) {
+        if (message.getBlockTypeLabel() != null) {
+            return "  -> Moved " + message.getPieceLabel() + " from cell "
+                    + message.getFromPosition() + " to cell " + message.getNewPosition() + "."
+                    + " [BlockType:" + message.getBlockTypeLabel()
+                    + " BlockDirection:" + message.getMovementDirectionLabel() + "]";
         }
-        return outcome + " [BlockType:" + message.getBlockTypeLabel()
-                + " BlockDirection:" + message.getMovementDirectionLabel() + "]";
+        return "  -> " + message.getColor().getDisplayName() + " moves piece " + message.getPieceLabel()
+                + " from location " + describeCellLabel(message.getFromPosition())
+                + " to " + describeCellLabel(message.getNewPosition())
+                + " by " + message.getRollValue() + " units in "
+                + message.getMovementDirectionLabel() + " direction.";
+    }
+
+    // Names a track cell the way the board-state report does - "Approach(X)" only for a color's
+    // Approach cell, "Cell(X)" otherwise.
+    private String describeCellLabel(int position) {
+        if (isApproachCell(position)) {
+            return "Approach(" + position + ")";
+        }
+        return "Cell(" + position + ")";
     }
 
     // Reports the piece leaving Base for the starting point, then the player's updated
