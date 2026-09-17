@@ -80,14 +80,15 @@ public abstract class TurnProcessor {
             betaRestrictionRule.resolve(player, rollNumber, rollValue)
                     .ifPresent(command -> command.execute(messages));
 
-            boolean capturedOpponent = resolveAndPlay(player, allPlayers, rollValue, board, messages);
+            boolean capturedOpponent =
+                    resolveAndPlay(player, allPlayers, rollNumber, rollValue, board, messages);
 
             turnContinues = grantsAnotherRoll(rollValue, capturedOpponent);
         }
     }
 
     private boolean resolveAndPlay(
-            Player player, List<Player> allPlayers, int rollValue, Board board,
+            Player player, List<Player> allPlayers, int rollNumber, int rollValue, Board board,
             GameMessagePublisher messages) {
         List<Command> legalOptions = findLegalOptions(player, allPlayers, rollValue, board);
 
@@ -97,7 +98,8 @@ public abstract class TurnProcessor {
         }
 
         PlayerStrategy strategy = strategyRegistry.getStrategyFor(player.getColor());
-        StrategyContext context = new StrategyContext(player, allPlayers, board);
+        StrategyContext context = new StrategyContext(
+                player, allPlayers, board, mysteryCellTeleportRule.getMysteryCellLocation(), rollNumber);
         Command chosenCommand = strategy.choose(legalOptions, context);
         chosenCommand.execute(messages);
 

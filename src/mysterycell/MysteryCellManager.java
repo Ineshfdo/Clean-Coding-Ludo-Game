@@ -11,7 +11,7 @@ import player.Player;
 
 // T-10: tracks the mystery cell's spawn timing, lifespan, and relocation.
 // Publishes through GameMessagePublisher only - never prints directly (Observer's job).
-public final class MysteryCellManager {
+public final class MysteryCellManager implements MysteryCellLocation {
 
     private static final int REQUIRED_ROUNDS_BEFORE_SPAWN = 2;
     private static final int ROUNDS_PER_LOCATION = 4;
@@ -31,11 +31,14 @@ public final class MysteryCellManager {
         this.randomNumberGenerator = randomNumberGenerator;
     }
 
+    @Override
     public int getCurrentCellPosition() {
         return currentCellPosition;
     }
 
-    // T-11: lets other rules check whether a piece can land on an active Mystery Cell.
+    // T-11/T-19: lets other rules and strategies check whether a piece can land on an active
+    // Mystery Cell.
+    @Override
     public boolean isActive() {
         return isActive;
     }

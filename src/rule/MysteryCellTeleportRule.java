@@ -9,6 +9,7 @@ import command.TeleportCommand;
 import ludoboard.Board;
 import mysterycell.MysteryCellDestinationType;
 import mysterycell.MysteryCellEffects;
+import mysterycell.MysteryCellLocation;
 import mysterycell.MysteryCellManager;
 import numbergenerator.RandomNumberGenerator;
 import player.Piece;
@@ -33,6 +34,12 @@ public final class MysteryCellTeleportRule {
         this.randomNumberGenerator = randomNumberGenerator;
         this.board = board;
         this.effects = effects;
+    }
+
+    // T-19: lets a PlayerStrategy (e.g. BlueStrategy) preview the Mystery Cell's current
+    // location without depending on this whole rule or the manager's full responsibilities.
+    public MysteryCellLocation getMysteryCellLocation() {
+        return mysteryCellManager;
     }
 
     public Optional<Command> resolve(Player mover, Piece landedPiece) {
