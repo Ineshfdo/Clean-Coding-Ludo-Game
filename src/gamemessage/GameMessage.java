@@ -24,12 +24,15 @@ public final class GameMessage {
     private final String effectLabel;
     private final List<PlayerColor> finalStandings;
     private final List<String> pieceLabels;
+    private final int piecesOnBoard;
+    private final int piecesAtBase;
 
     private GameMessage(GameMessageType type, PlayerColor color, int rollValue,
             int roundNumber, int fromPosition, int newPosition, String pieceLabel,
             String homeStraightCellLabel, String capturedPieceLabel, String coinTossResultLabel,
             String movementDirectionLabel, String blockTypeLabel, String destinationLabel,
-            String effectLabel, List<PlayerColor> finalStandings, List<String> pieceLabels) {
+            String effectLabel, List<PlayerColor> finalStandings, List<String> pieceLabels,
+            int piecesOnBoard, int piecesAtBase) {
         this.type = type;
         this.color = color;
         this.rollValue = rollValue;
@@ -46,59 +49,62 @@ public final class GameMessage {
         this.effectLabel = effectLabel;
         this.finalStandings = finalStandings;
         this.pieceLabels = pieceLabels;
+        this.piecesOnBoard = piecesOnBoard;
+        this.piecesAtBase = piecesAtBase;
     }
 
     public static GameMessage of(GameMessageType type) {
-        return new GameMessage(type, null, 0, 0, 0, 0, null, null, null, null, null, null, null, null, null, null);
+        return new GameMessage(
+                type, null, 0, 0, 0, 0, null, null, null, null, null, null, null, null, null, null, 0, 0);
     }
 
     public static GameMessage diceRolled(PlayerColor color, int rollValue) {
         return new GameMessage(
                 GameMessageType.DICE_ROLLED, color, rollValue, 0, 0, 0, null, null, null, null, null,
-                null, null, null, null, null);
+                null, null, null, null, null, 0, 0);
     }
 
     public static GameMessage tossWon(PlayerColor color, int rollValue) {
         return new GameMessage(
                 GameMessageType.TOSS_WON, color, rollValue, 0, 0, 0, null, null, null, null, null,
-                null, null, null, null, null);
+                null, null, null, null, null, 0, 0);
     }
 
     public static GameMessage tossTied(int rollValue) {
         return new GameMessage(
                 GameMessageType.TOSS_TIED, null, rollValue, 0, 0, 0, null, null, null, null, null,
-                null, null, null, null, null);
+                null, null, null, null, null, 0, 0);
     }
 
     public static GameMessage roundStarted(int roundNumber) {
         return new GameMessage(
                 GameMessageType.ROUND_STARTED, null, 0, roundNumber, 0, 0, null, null, null, null,
-                null, null, null, null, null, null);
+                null, null, null, null, null, null, 0, 0);
     }
 
     public static GameMessage turnStarted(PlayerColor color) {
         return new GameMessage(
                 GameMessageType.TURN_STARTED, color, 0, 0, 0, 0, null, null, null, null, null,
-                null, null, null, null, null);
+                null, null, null, null, null, 0, 0);
     }
 
     public static GameMessage turnRolled(PlayerColor color, int rollValue) {
         return new GameMessage(
                 GameMessageType.TURN_ROLLED, color, rollValue, 0, 0, 0, null, null, null, null, null,
-                null, null, null, null, null);
+                null, null, null, null, null, 0, 0);
     }
 
     public static GameMessage noPieceMovable() {
         return new GameMessage(
                 GameMessageType.NO_PIECE_MOVABLE, null, 0, 0, 0, 0, null, null, null, null, null,
-                null, null, null, null, null);
+                null, null, null, null, null, 0, 0);
     }
 
     // T-13: shows both endpoints of the move, not just the destination.
     public static GameMessage pieceMoved(String pieceLabel, int fromPosition, int newPosition) {
         return new GameMessage(
                 GameMessageType.PIECE_MOVED, null, 0, 0, fromPosition, newPosition, pieceLabel, null,
-                null, null, null, null, null, null, null, null);
+                null, null, null, null, null, null, null, null, 0, 0);
     }
 
     // T-4/T-13: a block move also reports its chosen direction, classification, and both endpoints.
@@ -107,88 +113,91 @@ public final class GameMessage {
             String movementDirectionLabel) {
         return new GameMessage(
                 GameMessageType.PIECE_MOVED, null, 0, 0, fromPosition, newPosition, pieceLabel, null,
-                null, null, movementDirectionLabel, blockTypeLabel, null, null, null, null);
+                null, null, movementDirectionLabel, blockTypeLabel, null, null, null, null, 0, 0);
     }
 
-    public static GameMessage pieceEnteredBoard(String pieceLabel, int newPosition) {
+    // Observer pattern: reports the color, the piece that just left Base, and the player's
+    // current on-board/at-base tally so ConsoleGameObserver can render both without recomputing.
+    public static GameMessage pieceEnteredBoard(
+            PlayerColor color, String pieceLabel, int newPosition, int piecesOnBoard, int piecesAtBase) {
         return new GameMessage(
-                GameMessageType.PIECE_ENTERED_BOARD, null, 0, 0, 0, newPosition, pieceLabel, null,
-                null, null, null, null, null, null, null, null);
+                GameMessageType.PIECE_ENTERED_BOARD, color, 0, 0, 0, newPosition, pieceLabel, null,
+                null, null, null, null, null, null, null, null, piecesOnBoard, piecesAtBase);
     }
 
     public static GameMessage pieceDirectionAssigned(
             String pieceLabel, String coinTossResultLabel, String movementDirectionLabel) {
         return new GameMessage(
                 GameMessageType.PIECE_DIRECTION_ASSIGNED, null, 0, 0, 0, 0, pieceLabel, null, null,
-                coinTossResultLabel, movementDirectionLabel, null, null, null, null, null);
+                coinTossResultLabel, movementDirectionLabel, null, null, null, null, null, 0, 0);
     }
 
     public static GameMessage pieceEnteredHomeStraight(String pieceLabel, String cellLabel) {
         return new GameMessage(
                 GameMessageType.PIECE_ENTERED_HOME_STRAIGHT, null, 0, 0, 0, 0, pieceLabel, cellLabel,
-                null, null, null, null, null, null, null, null);
+                null, null, null, null, null, null, null, null, 0, 0);
     }
 
     public static GameMessage pieceReachedHome(String pieceLabel) {
         return new GameMessage(
                 GameMessageType.PIECE_REACHED_HOME, null, 0, 0, 0, 0, pieceLabel, null, null,
-                null, null, null, null, null, null, null);
+                null, null, null, null, null, null, null, 0, 0);
     }
 
     public static GameMessage pieceCaptured(String capturingPieceLabel, String capturedPieceLabel) {
         return new GameMessage(
                 GameMessageType.PIECE_CAPTURED, null, 0, 0, 0, 0, capturingPieceLabel, null,
-                capturedPieceLabel, null, null, null, null, null, null, null);
+                capturedPieceLabel, null, null, null, null, null, null, null, 0, 0);
     }
 
     public static GameMessage blockCaptured(String capturingBlockLabel, String capturedBlockLabel) {
         return new GameMessage(
                 GameMessageType.BLOCK_CAPTURED, null, 0, 0, 0, 0, capturingBlockLabel, null,
-                capturedBlockLabel, null, null, null, null, null, null, null);
+                capturedBlockLabel, null, null, null, null, null, null, null, 0, 0);
     }
 
     public static GameMessage boardStateReported(int roundNumber) {
         return new GameMessage(
                 GameMessageType.BOARD_STATE_REPORTED, null, 0, roundNumber, 0, 0, null, null,
-                null, null, null, null, null, null, null, null);
+                null, null, null, null, null, null, null, null, 0, 0);
     }
 
     public static GameMessage pieceBlocked(String pieceLabel) {
         return new GameMessage(
                 GameMessageType.PIECE_BLOCKED, null, 0, 0, 0, 0, pieceLabel, null, null, null,
-                null, null, null, null, null, null);
+                null, null, null, null, null, null, 0, 0);
     }
 
     public static GameMessage pieceNeedsExactRoll(String pieceLabel) {
         return new GameMessage(
                 GameMessageType.PIECE_NEEDS_EXACT_ROLL, null, 0, 0, 0, 0, pieceLabel, null, null,
-                null, null, null, null, null, null, null);
+                null, null, null, null, null, null, null, 0, 0);
     }
 
     public static GameMessage blockRollTooSmall(String pieceLabel) {
         return new GameMessage(
                 GameMessageType.BLOCK_ROLL_TOO_SMALL, null, 0, 0, 0, 0, pieceLabel, null, null,
-                null, null, null, null, null, null, null);
+                null, null, null, null, null, null, null, 0, 0);
     }
 
     public static GameMessage pieceLeftBlock(String pieceLabel) {
         return new GameMessage(
                 GameMessageType.PIECE_LEFT_BLOCK, null, 0, 0, 0, 0, pieceLabel, null, null, null,
-                null, null, null, null, null, null);
+                null, null, null, null, null, null, 0, 0);
     }
 
     // T-10: the mystery cell's first spawn, at a random empty standard-path cell.
     public static GameMessage mysteryCellAppeared(int cellPosition) {
         return new GameMessage(
                 GameMessageType.MYSTERY_CELL_APPEARED, null, 0, 0, 0, cellPosition, null, null,
-                null, null, null, null, null, null, null, null);
+                null, null, null, null, null, null, null, null, 0, 0);
     }
 
     // T-10: the mystery cell relocating after its four rounds at the previous cell.
     public static GameMessage mysteryCellRelocated(int cellPosition) {
         return new GameMessage(
                 GameMessageType.MYSTERY_CELL_RELOCATED, null, 0, 0, 0, cellPosition, null, null,
-                null, null, null, null, null, null, null, null);
+                null, null, null, null, null, null, null, null, 0, 0);
     }
 
     // T-11: landing on the Mystery Cell teleports to a randomly chosen destination.
@@ -196,56 +205,56 @@ public final class GameMessage {
     public static GameMessage pieceTeleported(String pieceLabel, String destinationLabel, int newPosition) {
         return new GameMessage(
                 GameMessageType.PIECE_TELEPORTED, null, 0, 0, 0, newPosition, pieceLabel, null,
-                null, null, null, null, destinationLabel, null, null, null);
+                null, null, null, null, destinationLabel, null, null, null, 0, 0);
     }
 
     // T-12: a coin toss assigns this piece its own Energized/Sick status.
     public static GameMessage individualEffectAssigned(String pieceLabel, String effectLabel) {
         return new GameMessage(
                 GameMessageType.INDIVIDUAL_EFFECT_ASSIGNED, null, 0, 0, 0, 0, pieceLabel, null,
-                null, null, null, null, null, effectLabel, null, null);
+                null, null, null, null, null, effectLabel, null, null, 0, 0);
     }
 
     // T-12: a coin toss assigns the whole teleported block a shared Energized/Sick status.
     public static GameMessage blockEffectAssigned(String blockLabel, String effectLabel) {
         return new GameMessage(
                 GameMessageType.BLOCK_EFFECT_ASSIGNED, null, 0, 0, 0, 0, blockLabel, null,
-                null, null, null, null, null, effectLabel, null, null);
+                null, null, null, null, null, effectLabel, null, null, 0, 0);
     }
 
     // T-12: a Sick effect halved this roll down to zero cells.
     public static GameMessage effectRollTooSmall(String pieceLabel) {
         return new GameMessage(
                 GameMessageType.EFFECT_ROLL_TOO_SMALL, null, 0, 0, 0, 0, pieceLabel, null, null,
-                null, null, null, null, null, null, null);
+                null, null, null, null, null, null, null, 0, 0);
     }
 
     // T-13: two consecutive rounds of rolling a 3 forced this Beta-restricted piece/block to Base.
     public static GameMessage betaRestrictionTriggered(String pieceLabel) {
         return new GameMessage(
                 GameMessageType.BETA_RESTRICTION_TRIGGERED, null, 0, 0, 0, 0, pieceLabel, null, null,
-                null, null, null, null, null, null, null);
+                null, null, null, null, null, null, null, 0, 0);
     }
 
     // T-13: announces that a just-teleported piece/block cannot move for the next 4 rounds.
     public static GameMessage betaRestrictionApplied(String pieceLabel) {
         return new GameMessage(
                 GameMessageType.BETA_RESTRICTION_APPLIED, null, 0, 0, 0, 0, pieceLabel, null, null,
-                null, null, null, null, null, null, null);
+                null, null, null, null, null, null, null, 0, 0);
     }
 
     // T-14: a Gamma teleport reversed this piece/block's direction (Clockwise <-> Counter-Clockwise).
     public static GameMessage pieceDirectionReversed(String pieceLabel, String newDirectionLabel) {
         return new GameMessage(
                 GameMessageType.PIECE_DIRECTION_REVERSED, null, 0, 0, 0, 0, pieceLabel, null, null,
-                null, newDirectionLabel, null, null, null, null, null);
+                null, newDirectionLabel, null, null, null, null, null, 0, 0);
     }
 
     // 3.1: announces one player's full piece roster before the game begins.
     public static GameMessage playerRosterAnnounced(PlayerColor color, List<String> pieceLabels) {
         return new GameMessage(
                 GameMessageType.PLAYER_ROSTER_ANNOUNCED, color, 0, 0, 0, 0, null, null, null, null,
-                null, null, null, null, null, pieceLabels);
+                null, null, null, null, null, pieceLabels, 0, 0);
     }
 
     // GAME_OVER: the game ends once 3 of the 4 players have every piece Home - finalStandings
@@ -253,7 +262,7 @@ public final class GameMessage {
     public static GameMessage gameOver(List<PlayerColor> finalStandings) {
         return new GameMessage(
                 GameMessageType.GAME_OVER, null, 0, 0, 0, 0, null, null, null, null, null, null,
-                null, null, finalStandings, null);
+                null, null, finalStandings, null, 0, 0);
     }
 
     public GameMessageType getType() {
@@ -318,5 +327,13 @@ public final class GameMessage {
 
     public List<String> getPieceLabels() {
         return pieceLabels;
+    }
+
+    public int getPiecesOnBoard() {
+        return piecesOnBoard;
+    }
+
+    public int getPiecesAtBase() {
+        return piecesAtBase;
     }
 }

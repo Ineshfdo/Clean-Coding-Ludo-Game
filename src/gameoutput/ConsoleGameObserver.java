@@ -61,10 +61,7 @@ public final class ConsoleGameObserver implements GameMessageObserver {
                     message.getColor().getDisplayName() + " player rolled " + message.getRollValue();
             case NO_PIECE_MOVABLE -> "  -> No pieces on the board could be moved.";
             case PIECE_MOVED -> describePieceMoved(message);
-            case PIECE_ENTERED_BOARD ->
-                    "  -> " + message.getPieceLabel()
-                            + " left Base and entered the board at (X) position cell "
-                            + message.getNewPosition() + ".";
+            case PIECE_ENTERED_BOARD -> describePieceEnteredBoard(message);
             case PIECE_DIRECTION_ASSIGNED ->
                     "  -> Coin toss for " + message.getPieceLabel() + ": "
                             + message.getCoinTossResultLabel() + " - it will move "
@@ -183,6 +180,17 @@ public final class ConsoleGameObserver implements GameMessageObserver {
         }
         return outcome + " [BlockType:" + message.getBlockTypeLabel()
                 + " BlockDirection:" + message.getMovementDirectionLabel() + "]";
+    }
+
+    // Reports the piece leaving Base for the starting point, then the player's updated
+    // on-board/at-base tally, both sourced from the GameMessage's counts, not recomputed here.
+    private static String describePieceEnteredBoard(GameMessage message) {
+        String colorName = message.getColor().getDisplayName();
+        String movedLine = "  -> " + colorName + " player moves piece " + message.getPieceLabel()
+                + " to the starting point.";
+        String tallyLine = "  -> " + colorName + " player now has " + message.getPiecesOnBoard()
+                + "/4 pieces on the board and " + message.getPiecesAtBase() + "/4 pieces on the base.";
+        return movedLine + "\n" + tallyLine;
     }
 
     // T-10: the mystery cell spawn/relocate wording is bordered so it stands out on the console.

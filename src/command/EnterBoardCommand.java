@@ -29,7 +29,9 @@ public final class EnterBoardCommand implements Command {
     @Override
     public void execute(GameMessagePublisher messages) {
         player.leaveBase(piece, board);
-        messages.publish(GameMessage.pieceEnteredBoard(piece.toString(), piece.getTrackPosition()));
+        messages.publish(GameMessage.pieceEnteredBoard(
+                player.getColor(), piece.toString(), piece.getTrackPosition(),
+                player.countPiecesOnBoard(), player.countPiecesAtBase()));
 
         CoinTossResult tossResult = coinToss.flip();
         MovementDirectionStrategy direction = resolveDirection(tossResult);

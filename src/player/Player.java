@@ -38,6 +38,15 @@ public abstract class Player {
         return pieces.stream().allMatch(Piece::isHome);
     }
 
+    // Observer pattern reporting: "on the board" means past Base and not yet Home.
+    public int countPiecesOnBoard() {
+        return (int) pieces.stream().filter(piece -> !piece.isAtBase() && !piece.isHome()).count();
+    }
+
+    public int countPiecesAtBase() {
+        return (int) pieces.stream().filter(Piece::isAtBase).count();
+    }
+
     public void recordCapture(Piece piece) {
         requireOwnership(piece);
         piece.recordCapture();
