@@ -45,19 +45,20 @@ public final class ConsoleGameObserver implements GameMessageObserver {
             case PLAYER_ROSTER_ANNOUNCED ->
                     describePlayerRoster(message.getColor(), message.getPieceLabels());
             case GAME_STARTING -> "\nStarting the Ludo game!\n";
-            case TOSS_STARTING -> "Rolling dice to determine who goes first...";
+            case TOSS_STARTING -> "Rolling The Dice To Determine Who Goes First\n--------------------------------------------\n";
             case DICE_ROLLED ->
-                    message.getColor() + " Player rolled a " + message.getRollValue();
+                    message.getColor() + " Player rolls a " + message.getRollValue();
             case TOSS_TIED ->
-                    "There was a tie for the highest roll (" + message.getRollValue()
-                            + ")! Everyone rerolls...\n";
+                    "There Was A Tie For The Highest Roll (" + message.getRollValue()
+                            + ")! EVERYONE REROLLS...\n";
             case TOSS_WON ->
-                    message.getColor() + " Player won the toss with a "
-                            + message.getRollValue() + " and goes first!";
+                    message.getColor() + " Player Won The Toss With A "
+                            + message.getRollValue() + " And Goes First!";
             case ROUND_STARTED ->
                     "\n" + message.getRoundNumber() + ". Round " + message.getRoundNumber();
             case TURN_STARTED -> "- " + message.getColor() + " Player's Turn -";
-            case TURN_ROLLED -> "  -> Rolled a " + message.getRollValue();
+            case TURN_ROLLED ->
+                    message.getColor().getDisplayName() + " player rolled " + message.getRollValue();
             case NO_PIECE_MOVABLE -> "  -> No pieces on the board could be moved.";
             case PIECE_MOVED -> describePieceMoved(message);
             case PIECE_ENTERED_BOARD ->
