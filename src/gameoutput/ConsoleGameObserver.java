@@ -223,8 +223,23 @@ public final class ConsoleGameObserver implements GameMessageObserver {
         return "\n" + MYSTERY_CELL_BANNER_BORDER + "\n" + messageText + "\n" + MYSTERY_CELL_BANNER_BORDER;
     }
 
+    // Requirement 5: a simple on-board/at-base tally per player, printed just before the
+    // detailed per-round board-state dump - same tally line style as describePieceEnteredBoard.
+    private String describeRoundStatusSummary() {
+        StringBuilder summary = new StringBuilder("\n-------------------------------\n");
+        for (PlayerColor color : BOARD_STATE_DISPLAY_ORDER) {
+            Player player = findPlayer(color);
+            summary.append(color.getDisplayName()).append(" player now has ")
+                    .append(player.countPiecesOnBoard()).append("/4 pieces on the board and ")
+                    .append(player.countPiecesAtBase()).append("/4 pieces on the base.\n");
+        }
+        summary.append("-------------------------------\n");
+        return summary.toString();
+    }
+
     private String describeBoardState(int roundNumber) {
         StringBuilder report = new StringBuilder();
+        report.append(describeRoundStatusSummary());
         report.append("\nRound ").append(roundNumber).append(" Current Board State\n");
         report.append("-------------------------------\n\n");
         
