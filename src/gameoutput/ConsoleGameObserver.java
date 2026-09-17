@@ -56,7 +56,7 @@ public final class ConsoleGameObserver implements GameMessageObserver {
                             + message.getRollValue() + " And Goes First!";
             case ROUND_STARTED ->
                     "\n" + message.getRoundNumber() + ". Round " + message.getRoundNumber();
-            case TURN_STARTED -> "- " + message.getColor() + " Player's Turn -";
+            case TURN_STARTED -> "\n- " + message.getColor() + " Player's Turn -";
             case TURN_ROLLED ->
                     message.getColor().getDisplayName() + " player rolled " + message.getRollValue();
             case NO_PIECE_MOVABLE -> "  -> No pieces on the board could be moved.";
@@ -193,8 +193,8 @@ public final class ConsoleGameObserver implements GameMessageObserver {
     private String describeBoardState(int roundNumber) {
         StringBuilder report = new StringBuilder();
         report.append("\nRound ").append(roundNumber).append(" Current Board State\n");
-        report.append("==================\n");
-        report.append("-------------------------------\n");
+        report.append("-------------------------------\n\n");
+        
 
         for (PlayerColor color : BOARD_STATE_DISPLAY_ORDER) {
             report.append(describePlayerRow(findPlayer(color))).append("\n\n");
