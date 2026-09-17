@@ -91,9 +91,11 @@ public final class ConsoleGameObserver implements GameMessageObserver {
             case THIRD_SIX_VOIDED ->
                     "  -> Three sixes in a row! This roll is void - turn passes to the next player.";
             case MYSTERY_CELL_APPEARED -> describeMysteryCellBanner(
-                    "A Mystery Cell has appeared at cell " + message.getNewPosition() + "!");
+                    "A Mystery Cell has appeared at cell " + message.getNewPosition()
+                            + " will be here and will be at that location for the next 4 rounds.");
             case MYSTERY_CELL_RELOCATED -> describeMysteryCellBanner(
-                    "The Mystery Cell has relocated to cell " + message.getNewPosition() + ".");
+                    "The Mystery Cell has relocated to cell " + message.getNewPosition()
+                            + " will be here and will be at that location for the next 4 rounds.");
             case PIECE_TELEPORTED -> describePieceTeleported(message);
             case INDIVIDUAL_EFFECT_ASSIGNED ->
                     "  -> " + message.getPieceLabel() + " is now " + message.getEffectLabel()
