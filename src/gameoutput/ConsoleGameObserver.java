@@ -22,6 +22,7 @@ public final class ConsoleGameObserver implements GameMessageObserver {
     private static final PlayerColor[] BOARD_STATE_DISPLAY_ORDER =
             { PlayerColor.GREEN, PlayerColor.YELLOW, PlayerColor.BLUE, PlayerColor.RED };
     private static final String MYSTERY_CELL_BANNER_BORDER = "=".repeat(40);
+    private static final String GAME_OVER_BANNER_BORDER = "=".repeat(50);
 
     private final List<Player> players;
     private final Board board;
@@ -119,7 +120,25 @@ public final class ConsoleGameObserver implements GameMessageObserver {
                     "  -> " + message.getPieceLabel() + " landed on Gamma and reversed direction - now moving "
                             + message.getMovementDirectionLabel() + ".";
             case BOARD_STATE_REPORTED -> describeBoardState(message.getRoundNumber());
+            case GAME_OVER -> describeGameOver(message.getFinalStandings());
         };
+    }
+
+    // GAME_OVER: ranks 1st..4th in finishing order - the one player who never completed all 4
+    // pieces Home is last, since the game stops once the other 3 have finished.
+    private static String describeGameOver(List<PlayerColor> finalStandings) {
+        String[] placeLabels = { "1st", "2nd", "3rd", "4th" };
+        StringBuilder banner = new StringBuilder();
+        banner.append('\n').append(GAME_OVER_BANNER_BORDER).append('\n');
+        banner.append("                   GAME OVER!\n");
+        banner.append(GAME_OVER_BANNER_BORDER).append('\n');
+        banner.append("FINAL STANDINGS:\n");
+        for (int rank = 0; rank < finalStandings.size(); rank++) {
+            banner.append(placeLabels[rank]).append(" Place: ")
+                    .append(finalStandings.get(rank).name()).append('\n');
+        }
+        banner.append(GAME_OVER_BANNER_BORDER);
+        return banner.toString();
     }
 
     // T-11: a Base destination has no track cell to report - every other destination does.

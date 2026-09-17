@@ -33,6 +33,11 @@ public abstract class Player {
         return pieces.stream().mapToInt(Piece::getCaptureCount).sum();
     }
 
+    // GAME_OVER: this player has won once every one of its 4 pieces has reached Home.
+    public boolean hasAllPiecesHome() {
+        return pieces.stream().allMatch(Piece::isHome);
+    }
+
     public void recordCapture(Piece piece) {
         requireOwnership(piece);
         piece.recordCapture();

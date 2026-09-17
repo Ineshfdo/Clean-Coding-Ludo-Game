@@ -64,7 +64,9 @@ import turn.TurnProcessor;
 // messages; ConsoleGameObserver decides the wording.
 public final class GameFacade {
 
-    private static final int TEST_ROUND_COUNT = 164; //164
+    // GAME_OVER: the game ends once this many players have every piece Home - the one
+    // remaining player is automatically last place, so a 4th finisher is never needed.
+    private static final int REQUIRED_FINISHERS_TO_END_GAME = 3;
 
     // T-4: shared so a block's direction is resolved the same way for movement and display.
     private static final BlockDirectionStrategy BLOCK_DIRECTION_STRATEGY =
@@ -105,7 +107,12 @@ public final class GameFacade {
         // T-11: this game's turn processor needs its own MysteryCellManager, so it is built per game.
         TurnProcessor turnProcessor = buildTurnProcessor(mysteryCellManager);
 
-        for (int roundNumber = 1; roundNumber <= TEST_ROUND_COUNT; roundNumber++) {
+        // GAME_OVER: tracks the order in which players finish (every piece Home); the game
+        // keeps running rounds until enough players have finished to decide the standings.
+        List<PlayerColor> finishOrder = new ArrayList<>();
+        int roundNumber = 0;
+        while (finishOrder.size() < REQUIRED_FINISHERS_TO_END_GAME) {
+            roundNumber++;
             messages.publish(GameMessage.roundStarted(roundNumber));
             mysteryCellManager.onRoundStarted(roundNumber, players, messages);
             // T-12/T-13: expires one round of every piece's Energized/Sick status and Beta
@@ -116,10 +123,35 @@ public final class GameFacade {
             }
             for (Player player : turnOrder) {
                 turnProcessor.playTurn(player, players, dice, board, messages);
+                recordFinisherIfNewlyDone(player, finishOrder);
             }
             mysteryCellManager.onRoundCompleted(roundNumber, players);
             messages.publish(GameMessage.boardStateReported(roundNumber));
         }
+
+        messages.publish(GameMessage.gameOver(buildFinalStandings(finishOrder, players)));
+    }
+
+    // GAME_OVER: a player is recorded the moment its 4th piece reaches Home - checked right
+    // after that player's own turn, so finishing order stays accurate even when two players
+    // finish within the same round.
+    private static void recordFinisherIfNewlyDone(Player player, List<PlayerColor> finishOrder) {
+        if (player.hasAllPiecesHome() && !finishOrder.contains(player.getColor())) {
+            finishOrder.add(player.getColor());
+        }
+    }
+
+    // GAME_OVER: ranks the players who finished first, then appends whichever single player
+    // never finished - guaranteed to be exactly one, since the game stops as soon as 3 have.
+    private static List<PlayerColor> buildFinalStandings(
+            List<PlayerColor> finishOrder, List<Player> players) {
+        List<PlayerColor> finalStandings = new ArrayList<>(finishOrder);
+        for (Player player : players) {
+            if (!finalStandings.contains(player.getColor())) {
+                finalStandings.add(player.getColor());
+            }
+        }
+        return finalStandings;
     }
 
     private static List<Player> buildPlayers() {
