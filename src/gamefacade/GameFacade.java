@@ -31,6 +31,7 @@ import player.HomeStraightEligibilityRule;
 import player.HomeStraightEntryRule;
 import player.LongestDistanceBlockDirectionStrategy;
 import player.OvershootHomeRule;
+import player.Piece;
 import player.Player;
 import player.RedPlayer;
 import player.YellowPlayer;
@@ -84,15 +85,12 @@ public final class GameFacade {
         GameMessagePublisher messages = GameMessageCenter.getInstance();
         messages.addObserver(new ConsoleGameObserver(players, board, BLOCK_DIRECTION_STRATEGY));
 
-        messages.publish(GameMessage.of(GameMessageType.GAME_INITIALIZING));
         SeededRandomNumberGenerator.getInstance().setSeed(seed);
 
-        messages.publish(GameMessage.of(GameMessageType.BOARD_INITIALIZED));
-
         Dice dice = SixSidedDice.getInstance();
-        messages.publish(GameMessage.of(GameMessageType.DICE_INITIALIZED));
 
-        messages.publish(GameMessage.of(GameMessageType.PLAYERS_CREATED));
+        // 3.1: before the game begins, the Observer reports every player's own pieces.
+        announcePlayerRoster(players, messages);
 
         messages.publish(GameMessage.of(GameMessageType.GAME_STARTING));
 
@@ -152,6 +150,17 @@ public final class GameFacade {
             }
         }
         return finalStandings;
+    }
+
+    // 3.1: publishes one roster message per player, naming that player's own four pieces.
+    private static void announcePlayerRoster(List<Player> players, GameMessagePublisher messages) {
+        for (Player player : players) {
+            messages.publish(GameMessage.playerRosterAnnounced(player.getColor(), buildPieceLabels(player)));
+        }
+    }
+
+    private static List<String> buildPieceLabels(Player player) {
+        return player.getPieces().stream().map(Piece::toString).toList();
     }
 
     private static List<Player> buildPlayers() {

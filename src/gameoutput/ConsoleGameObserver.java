@@ -42,11 +42,9 @@ public final class ConsoleGameObserver implements GameMessageObserver {
 
     private String describe(GameMessage message) {
         return switch (message.getType()) {
-            case GAME_INITIALIZING -> "Initializing Game Facade...";
-            case BOARD_INITIALIZED -> "Board initialized.";
-            case DICE_INITIALIZED -> "Dice initialized.";
-            case PLAYERS_CREATED -> "Players created.";
-            case GAME_STARTING -> "Starting the Ludo game!\n";
+            case PLAYER_ROSTER_ANNOUNCED ->
+                    describePlayerRoster(message.getColor(), message.getPieceLabels());
+            case GAME_STARTING -> "\nStarting the Ludo game!\n";
             case TOSS_STARTING -> "Rolling dice to determine who goes first...";
             case DICE_ROLLED ->
                     message.getColor() + " Player rolled a " + message.getRollValue();
@@ -122,6 +120,30 @@ public final class ConsoleGameObserver implements GameMessageObserver {
             case BOARD_STATE_REPORTED -> describeBoardState(message.getRoundNumber());
             case GAME_OVER -> describeGameOver(message.getFinalStandings());
         };
+    }
+
+    // 3.1: "The red player has four (04) pieces named R1, R2, R3, and R4."
+    private static String describePlayerRoster(PlayerColor color, List<String> pieceLabels) {
+        return "The " + color.name().toLowerCase() + " player has "
+                + describePieceCountInWords(pieceLabels.size()) + " ("
+                + String.format("%02d", pieceLabels.size()) + ") pieces named "
+                + joinWithAnd(pieceLabels) + ".";
+    }
+
+    private static String describePieceCountInWords(int pieceCount) {
+        return switch (pieceCount) {
+            case 4 -> "four";
+            default -> String.valueOf(pieceCount);
+        };
+    }
+
+    // "R1, R2, R3, and R4" - every label is comma-separated except the last, which gets "and".
+    private static String joinWithAnd(List<String> labels) {
+        if (labels.size() == 1) {
+            return labels.get(0);
+        }
+        String allButLast = String.join(", ", labels.subList(0, labels.size() - 1));
+        return allButLast + ", and " + labels.get(labels.size() - 1);
     }
 
     // GAME_OVER: ranks 1st..4th in finishing order - the one player who never completed all 4

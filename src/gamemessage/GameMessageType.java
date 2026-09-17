@@ -1,10 +1,7 @@
 package gamemessage;
 
 public enum GameMessageType {
-    GAME_INITIALIZING,
-    BOARD_INITIALIZED,
-    DICE_INITIALIZED,
-    PLAYERS_CREATED,
+    PLAYER_ROSTER_ANNOUNCED,
     GAME_STARTING,
     TOSS_STARTING,
     DICE_ROLLED,
