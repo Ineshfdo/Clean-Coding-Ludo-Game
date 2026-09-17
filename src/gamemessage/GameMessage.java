@@ -147,10 +147,16 @@ public final class GameMessage {
                 null, null, null, null, null, null, null, 0, 0);
     }
 
-    public static GameMessage pieceCaptured(String capturingPieceLabel, String capturedPieceLabel) {
+    // Requirement 4: reports where the capture happened, the captured piece's color, and that
+    // player's updated on-board/at-base tally after returning to Base - same tally shape as
+    // pieceEnteredBoard.
+    public static GameMessage pieceCaptured(
+            String capturingPieceLabel, int capturePosition, String capturedPieceLabel,
+            PlayerColor capturedPlayerColor, int piecesOnBoard, int piecesAtBase) {
         return new GameMessage(
-                GameMessageType.PIECE_CAPTURED, null, 0, 0, 0, 0, capturingPieceLabel, null,
-                capturedPieceLabel, null, null, null, null, null, null, null, 0, 0);
+                GameMessageType.PIECE_CAPTURED, capturedPlayerColor, 0, 0, 0, capturePosition,
+                capturingPieceLabel, null, capturedPieceLabel, null, null, null, null, null, null, null,
+                piecesOnBoard, piecesAtBase);
     }
 
     public static GameMessage blockCaptured(String capturingBlockLabel, String capturedBlockLabel) {

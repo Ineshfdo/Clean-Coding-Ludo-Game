@@ -71,9 +71,7 @@ public final class ConsoleGameObserver implements GameMessageObserver {
                             + message.getHomeStraightCellLabel() + ".";
             case PIECE_REACHED_HOME ->
                     "  -> " + message.getPieceLabel() + " reached Home and is removed from play!";
-            case PIECE_CAPTURED ->
-                    "  -> " + message.getPieceLabel() + " captured " + message.getCapturedPieceLabel()
-                            + "! " + message.getCapturedPieceLabel() + " returns to Base.";
+            case PIECE_CAPTURED -> describePieceCaptured(message);
             case BLOCK_CAPTURED ->
                     "  -> Blockade " + message.getPieceLabel() + " captured Blockade "
                             + message.getCapturedPieceLabel() + "! All of "
@@ -195,6 +193,18 @@ public final class ConsoleGameObserver implements GameMessageObserver {
             return "Approach(" + position + ")";
         }
         return "Cell(" + position + ")";
+    }
+
+    // Requirement 4: names the landing square, then the captured player's updated on-board/at-base
+    // tally - same tally shape as describePieceEnteredBoard.
+    private static String describePieceCaptured(GameMessage message) {
+        String captureLine = "  -> " + message.getPieceLabel() + " piece lands on square "
+                + message.getNewPosition() + ", captures " + message.getCapturedPieceLabel()
+                + " and returns it to the base.";
+        String tallyLine = "  -> " + message.getColor().getDisplayName() + " player now has "
+                + message.getPiecesOnBoard() + "/4 pieces on the board and " + message.getPiecesAtBase()
+                + "/4 pieces on the base.";
+        return captureLine + "\n" + tallyLine;
     }
 
     // Reports the piece leaving Base for the starting point, then the player's updated
