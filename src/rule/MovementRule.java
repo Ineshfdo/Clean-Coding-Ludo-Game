@@ -92,7 +92,7 @@ public final class MovementRule implements TurnRule {
         if (resolveActiveEffect(blockPieces).applyTo(blockAdjustedSteps) == 0) {
             return new EffectRollTooSmallCommand(representative);
         }
-        return new BlockedMoveCommand(representative);
+        return new BlockedMoveCommand(blockPieces);
     }
 
     // T-3/T-1/T-5: a block moves together; a lone piece breaks away if a restore is owed.
