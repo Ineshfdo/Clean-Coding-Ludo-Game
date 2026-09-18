@@ -7,15 +7,14 @@ import java.util.Optional;
 import command.Command;
 import command.CommandType;
 import ludoboard.Board;
-import ludoboard.PlayerColor;
 import player.Piece;
 import player.Player;
 
 // T-16: Red is an aggressive, capture-focused player. It prioritizes capturing an opponent
 // piece over any other move - preferring, among several available captures, the opponent
-// closest to Red's own Home - only brings a new piece out of Base once no capture is
-// available, and otherwise avoids landing on its own pieces to form a new block unless that
-// is unavoidable.
+// piece closest to ITS OWN Home (the most advanced, most valuable piece to send back to
+// Base) - only brings a new piece out of Base once no capture is available, and otherwise
+// avoids landing on its own pieces to form a new block unless that is unavoidable.
 public final class RedStrategy implements PlayerStrategy {
 
     @Override
@@ -34,11 +33,12 @@ public final class RedStrategy implements PlayerStrategy {
     }
 
     // Rule (1): among every option that would actually capture an opponent, prefer the one
-    // capturing the opponent piece closest to Red's own Home.
+    // capturing the opponent piece closest to ITS OWN Home - the opponent piece with the
+    // least distance left to travel, i.e. the most advanced and most costly one to send back.
     private static Optional<Command> findBestCapture(List<Command> legalOptions, StrategyContext context) {
         return legalOptions.stream()
                 .flatMap(option -> findCapture(option, context).stream())
-                .min(Comparator.comparingInt(capture -> distanceToRedHome(capture.capturedPiece, context.getBoard())))
+                .min(Comparator.comparingInt(capture -> distanceToOwnHome(capture.capturedPiece, context.getBoard())))
                 .map(capture -> capture.option);
     }
 
@@ -48,9 +48,9 @@ public final class RedStrategy implements PlayerStrategy {
                 .map(capturedPiece -> new Capture(option, capturedPiece));
     }
 
-    private static int distanceToRedHome(Piece opponentPiece, Board board) {
+    private static int distanceToOwnHome(Piece opponentPiece, Board board) {
         return board.getForwardDistance(
-                opponentPiece.getTrackPosition(), board.getApproachCellPosition(PlayerColor.RED));
+                opponentPiece.getTrackPosition(), board.getApproachCellPosition(opponentPiece.getColor()));
     }
 
     // Rule (2): Red only brings a new piece out of Base once no capture was available above.

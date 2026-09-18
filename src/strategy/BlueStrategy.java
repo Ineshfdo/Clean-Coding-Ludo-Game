@@ -35,20 +35,35 @@ public final class BlueStrategy implements PlayerStrategy {
         return chosenCommand;
     }
 
+    // T-19: Rules (2) and (3) both say "the piece to be moved" - the rotation's own choice
+    // from Rule (1) - so both react to THAT piece first, only reaching for a different piece
+    // when the rotation's own choice doesn't already satisfy the rule. This keeps Rule (1)'s
+    // "always" cyclic order dominant, with the Mystery Cell rules as narrow overrides rather
+    // than an unconditional search that could keep skipping the rotation turn after turn.
     private Command chooseCommand(List<Command> legalOptions, StrategyContext context) {
-        // Rule (2): a counter-clockwise piece landing on the Mystery Cell always wins.
-        Optional<Command> counterClockwiseMysteryLanding = findFirst(legalOptions,
-                option -> isCounterClockwise(option) && landsOnMysteryCell(option, context));
-        if (counterClockwiseMysteryLanding.isPresent()) {
-            return counterClockwiseMysteryLanding.get();
-        }
-
         // Rule (1): the piece the fixed rotation is considering this turn.
         Command cyclicChoice = findOptionFor(legalOptions, consideredPieceForCurrentTurn)
                 .orElse(legalOptions.get(0));
+        boolean cyclicChoiceLandsOnMysteryCell = landsOnMysteryCell(cyclicChoice, context);
 
-        // Rule (3): a clockwise piece avoids the Mystery Cell when a legal alternative exists.
-        return avoidMysteryCellIfClockwise(cyclicChoice, legalOptions, context);
+        if (isCounterClockwise(cyclicChoice) && cyclicChoiceLandsOnMysteryCell) {
+            // Rule (2): the rotation's own piece already lands on the Mystery Cell while
+            // moving counter-clockwise - exactly what Rule (2) prefers, so keep it.
+            return cyclicChoice;
+        }
+
+        if (isClockwise(cyclicChoice) && cyclicChoiceLandsOnMysteryCell) {
+            // Rule (3): the rotation's own piece is clockwise and would land on the Mystery
+            // Cell - avoid it by switching to any legal alternative that does not, if one exists.
+            return findFirst(legalOptions, option -> !landsOnMysteryCell(option, context))
+                    .orElse(cyclicChoice);
+        }
+
+        // Rule (2): the rotation's own piece doesn't land on the Mystery Cell at all - only
+        // now look at the other legal options for a counter-clockwise piece that does.
+        return findFirst(legalOptions,
+                option -> isCounterClockwise(option) && landsOnMysteryCell(option, context))
+                .orElse(cyclicChoice);
     }
 
     // T-19/Iterator: resumes the rotation right after whichever piece last actually moved, then
@@ -71,15 +86,6 @@ public final class BlueStrategy implements PlayerStrategy {
         // Every legal option always names one of this player's own 4 pieces, so this is
         // unreachable - kept only so the method has a well-typed result.
         return firstInRotation;
-    }
-
-    private static Command avoidMysteryCellIfClockwise(
-            Command cyclicChoice, List<Command> legalOptions, StrategyContext context) {
-        if (!isClockwise(cyclicChoice) || !landsOnMysteryCell(cyclicChoice, context)) {
-            return cyclicChoice;
-        }
-        return findFirst(legalOptions, option -> !landsOnMysteryCell(option, context))
-                .orElse(cyclicChoice);
     }
 
     // T-1: a Base piece has no assigned direction yet - direction is only set on Base exit -

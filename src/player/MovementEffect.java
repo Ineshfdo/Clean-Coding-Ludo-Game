@@ -29,13 +29,19 @@ public final class MovementEffect {
         return type.getLabel();
     }
 
+    // T-12: active by type, not by the counter - matches PieceRestrictionState's use of
+    // object identity for its own forbidsMovement() (T-13), so both "next four rounds"
+    // effects expire on the same schedule (see afterRoundElapses).
     public boolean isActive() {
-        return roundsRemaining > 0;
+        return type != MovementEffectType.NONE;
     }
 
-    // T-12: called once per round; reverts to None once its rounds run out.
+    // T-12: called once per round. Only converts to None once roundsRemaining was ALREADY at
+    // or below zero on entry - the same lazy-transition timing BetaRestrictedState.
+    // afterRoundElapses() (T-13) uses - so a piece stays affected for four full rounds after
+    // the round it was assigned, not three.
     public MovementEffect afterRoundElapses() {
-        if (roundsRemaining <= 1) {
+        if (roundsRemaining <= 0) {
             return NONE;
         }
         return new MovementEffect(type, roundsRemaining - 1);
