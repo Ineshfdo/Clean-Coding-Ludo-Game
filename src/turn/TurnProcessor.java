@@ -28,6 +28,8 @@ import strategy.StrategyContext;
 // subclasses only decide one hook.
 public abstract class TurnProcessor {
 
+    private static final int SIX_ROLL_VALUE = 6;
+
     private final List<TurnRule> turnRules;
     private final PlayerStrategyRegistry strategyRegistry;
     private final RollValidityRule rollValidityRule;
@@ -56,22 +58,27 @@ public abstract class TurnProcessor {
         messages.publish(GameMessage.turnStarted(player.getColor()));
 
         int rollNumber = 0;
+        // Rule 4/T-6: counts sixes rolled back-to-back, separately from rollNumber - a T-2
+        // capture bonus roll that isn't itself a six resets this to 0, so it can never be
+        // mistaken for part of a six streak.
+        int consecutiveSixCount = 0;
         boolean turnContinues = true;
 
         while (turnContinues) {
             rollNumber++;
             int rollValue = dice.roll();
+            consecutiveSixCount = rollValue == SIX_ROLL_VALUE ? consecutiveSixCount + 1 : 0;
             messages.publish(GameMessage.turnRolled(player.getColor(), rollValue));
 
             Optional<Command> forcedBreak =
-                    blockadeBreakRule.resolve(player, rollNumber, rollValue, board, allPlayers);
+                    blockadeBreakRule.resolve(player, consecutiveSixCount, rollValue, board, allPlayers);
             if (forcedBreak.isPresent()) {
                 forcedBreak.get().execute(messages);
                 applyCapture(player, forcedBreak.get(), allPlayers, messages);
                 return;
             }
 
-            if (rollValidityRule.isVoided(rollNumber, rollValue)) {
+            if (rollValidityRule.isVoided(consecutiveSixCount, rollValue)) {
                 messages.publish(GameMessage.of(GameMessageType.THIRD_SIX_VOIDED));
                 return;
             }

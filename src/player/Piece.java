@@ -19,6 +19,7 @@ public final class Piece {
     private int captureCount;
     private MovementEffect individualEffect = MovementEffect.none();
     private MovementEffect blockEffect = MovementEffect.none();
+    private int blockEffectAssignedForBlockSize;
     private PieceRestrictionState restrictionState = NoRestrictionState.getInstance();
 
     Piece(PlayerColor color, int pieceNumber) {
@@ -88,9 +89,18 @@ public final class Piece {
     }
 
     // T-12: the shared Energized/Sick status of the block this piece was teleported into -
-    // overrides its individual effect for as long as it stays grouped.
+    // only meaningful while hasActiveBlockEffectForSize() confirms it still matches the
+    // CURRENT block; use that to decide whether to trust this value.
     public MovementEffect getBlockEffect() {
         return blockEffect;
+    }
+
+    // T-12: true only if this piece's stored block effect was genuinely assigned to a group
+    // of exactly this size. Guards against a stale effect leaking into a later, unrelated
+    // regrouping of the same size - the same size-membership check T-4/T-5 already use for
+    // adoptedForBlockSize, applied here to the effect instead of the direction.
+    public boolean hasActiveBlockEffectForSize(int currentBlockSize) {
+        return blockEffect.isActive() && blockEffectAssignedForBlockSize == currentBlockSize;
     }
 
     // T-13: this piece's current movement-restriction state, e.g. Beta-restricted after a teleport.
@@ -148,8 +158,11 @@ public final class Piece {
         this.individualEffect = effect;
     }
 
-    void applyBlockEffect(MovementEffect effect) {
+    // T-12: records which block size this effect was assigned to, so a later regrouping of a
+    // different size (or different members) can tell it no longer applies.
+    void applyBlockEffect(MovementEffect effect, int blockSize) {
         this.blockEffect = effect;
+        this.blockEffectAssignedForBlockSize = blockSize;
     }
 
     // T-12: called once per round so a 4-round effect eventually expires back to None.
@@ -203,6 +216,7 @@ public final class Piece {
         this.adoptedForBlockSize = 0;
         this.individualEffect = MovementEffect.none();
         this.blockEffect = MovementEffect.none();
+        this.blockEffectAssignedForBlockSize = 0;
         this.restrictionState = NoRestrictionState.getInstance();
     }
 

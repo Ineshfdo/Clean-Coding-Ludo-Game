@@ -17,16 +17,16 @@ public abstract class BlockadeBreakRule {
     }
 
     public final Optional<Command> resolve(
-            Player player, int rollNumber, int rollValue, Board board, List<Player> allPlayers) {
-        Optional<Command> command = identify(player, rollNumber, rollValue, board, allPlayers);
+            Player player, int consecutiveSixCount, int rollValue, Board board, List<Player> allPlayers) {
+        Optional<Command> command = identify(player, consecutiveSixCount, rollValue, board, allPlayers);
         if (command.isPresent()) {
             return command;
         }
         return nextRule == null
             ? Optional.empty()
-            : nextRule.resolve(player, rollNumber, rollValue, board, allPlayers);
+            : nextRule.resolve(player, consecutiveSixCount, rollValue, board, allPlayers);
     }
 
     protected abstract Optional<Command> identify(
-        Player player, int rollNumber, int rollValue, Board board, List<Player> allPlayers);
+        Player player, int consecutiveSixCount, int rollValue, Board board, List<Player> allPlayers);
 }

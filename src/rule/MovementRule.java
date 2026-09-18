@@ -149,13 +149,20 @@ public final class MovementRule implements TurnRule {
         return exactHomeRule.forbidsMove(piece, adjustedRollValue) ? 0 : adjustedRollValue;
     }
 
-    // T-12: a block's shared effect overrides every member's own individual effect while grouped.
+    // T-12: a genuinely-assigned block effect (from teleporting to Alpha together) overrides
+    // every member's own individual effect while grouped. A normal blockade formed by
+    // ordinary movement never gets one, so it falls back to plain diceRoll/blockSize (T-4) -
+    // individual Energized/Sick effects never affect blockade movement, and are never lost:
+    // they stay stored on each piece and simply resume once it moves solo again.
     private static MovementEffect resolveActiveEffect(List<Piece> blockPieces) {
         Piece representative = blockPieces.get(0);
-        if (blockPieces.size() >= BLOCKADE_PIECE_COUNT) {
-            return representative.getBlockEffect();
+        int currentBlockSize = blockPieces.size();
+        if (currentBlockSize < BLOCKADE_PIECE_COUNT) {
+            return representative.getIndividualEffect();
         }
-        return representative.getIndividualEffect();
+        return representative.hasActiveBlockEffectForSize(currentBlockSize)
+                ? representative.getBlockEffect()
+                : MovementEffect.none();
     }
 
     // T-13: a Beta-restricted piece/block is excluded entirely, the same as one at Base or Home.

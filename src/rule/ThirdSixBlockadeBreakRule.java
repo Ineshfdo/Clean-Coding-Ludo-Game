@@ -16,9 +16,9 @@ import player.Player;
 // T-6: a third consecutive six forces an existing blockade to break instead of being voided.
 public final class ThirdSixBlockadeBreakRule extends BlockadeBreakRule {
 
-    private static final int FORCING_ROLL_NUMBER = 3;
+    private static final int FORCING_CONSECUTIVE_SIX_COUNT = 3;
     private static final int FORCING_ROLL_VALUE = 6;
-    private static final int FORCED_MOVE_STEPS = 6;
+    private static final int TOTAL_FORCED_MOVE_STEPS = 6;
     private static final int BLOCKADE_PIECE_COUNT = 2;
 
     private final HomeStraightEntryRule homeStraightEntryRule;
@@ -29,28 +29,31 @@ public final class ThirdSixBlockadeBreakRule extends BlockadeBreakRule {
 
     @Override
     protected Optional<Command> identify(
-            Player player, int rollNumber, int rollValue, Board board, List<Player> allPlayers) {
-        if (rollNumber != FORCING_ROLL_NUMBER || rollValue != FORCING_ROLL_VALUE) {
+            Player player, int consecutiveSixCount, int rollValue, Board board, List<Player> allPlayers) {
+        if (consecutiveSixCount != FORCING_CONSECUTIVE_SIX_COUNT || rollValue != FORCING_ROLL_VALUE) {
             return Optional.empty();
         }
         return findBlockade(player).map(blockadePieces -> buildBreakCommand(player, blockadePieces, board));
     }
 
-    // T-6: the lowest-numbered member stays; the rest are released to move by their own direction.
+    // T-6: the lowest-numbered member stays; the rest are released, sharing the 6 cells
+    // between them, and move by their own direction.
     private Command buildBreakCommand(Player player, List<Piece> blockadePieces, Board board) {
         List<Piece> releasedPieces = blockadePieces.subList(1, blockadePieces.size());
+        int stepsPerReleasedPiece = TOTAL_FORCED_MOVE_STEPS / releasedPieces.size();
         List<Command> releasedPieceMoves = releasedPieces.stream()
-                .map(piece -> buildReleasedMove(player, piece, board))
+                .map(piece -> buildReleasedMove(player, piece, board, stepsPerReleasedPiece))
                 .collect(Collectors.toList());
 
         return new BreakBlockCommand(player, blockadePieces, releasedPieceMoves);
     }
 
-    // T-6/T-5: each released piece moves 6 cells using its own original direction, not the block's.
-    private Command buildReleasedMove(Player player, Piece piece, Board board) {
+    // T-6/T-5: each released piece moves its share of the 6 cells using its own original
+    // direction, not the block's.
+    private Command buildReleasedMove(Player player, Piece piece, Board board, int steps) {
         MovementDirectionStrategy ownDirection = piece.getOriginalMovementDirectionStrategy();
         return new MoveCommand(
-                player, piece, FORCED_MOVE_STEPS, board, homeStraightEntryRule, ownDirection);
+                player, piece, steps, board, homeStraightEntryRule, ownDirection);
     }
 
     // T-3: a blockade is 2+ of the player's own pieces sharing a track cell.

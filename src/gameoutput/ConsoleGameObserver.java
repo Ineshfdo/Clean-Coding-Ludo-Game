@@ -11,7 +11,6 @@ import ludoboard.Board;
 import ludoboard.PlayerColor;
 import player.BlockDirectionStrategy;
 import player.BlockDirectionType;
-import player.MovementEffect;
 import player.Piece;
 import player.Player;
 
@@ -330,10 +329,12 @@ public final class ConsoleGameObserver implements GameMessageObserver {
             block.append(" BlockDirection:").append(travelDirection.getLabel());
             block.append(" BlockApproachCellPasses:").append(naturalMember.getApproachPassCount());
         }
-        // T-12: every member shares this identical value, so it is shown once for the whole block.
-        MovementEffect blockEffect = blockedPieces.get(0).getBlockEffect();
-        if (blockEffect.isActive()) {
-            block.append(" BlockEffect:").append(blockEffect.getLabel());
+        // T-12: every member shares this identical value, so it is shown once for the whole
+        // block - only while it was genuinely assigned to this exact group (see
+        // hasActiveBlockEffectForSize), never for an ordinary blockade formed by movement.
+        Piece blockRepresentative = blockedPieces.get(0);
+        if (blockRepresentative.hasActiveBlockEffectForSize(blockedPieces.size())) {
+            block.append(" BlockEffect:").append(blockRepresentative.getBlockEffect().getLabel());
         }
         block.append(']');
         return block.toString();

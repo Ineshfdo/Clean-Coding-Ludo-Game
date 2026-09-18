@@ -11,12 +11,12 @@ public abstract class RollValidityRule {
         return nextRule;
     }
 
-    public final boolean isVoided(int rollNumber, int rollValue) {
-        if (appliesTo(rollNumber, rollValue)) {
+    public final boolean isVoided(int consecutiveSixCount, int rollValue) {
+        if (appliesTo(consecutiveSixCount, rollValue)) {
             return true;
         }
-        return nextRule != null && nextRule.isVoided(rollNumber, rollValue);
+        return nextRule != null && nextRule.isVoided(consecutiveSixCount, rollValue);
     }
 
-    protected abstract boolean appliesTo(int rollNumber, int rollValue);
+    protected abstract boolean appliesTo(int consecutiveSixCount, int rollValue);
 }

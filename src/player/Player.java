@@ -75,10 +75,11 @@ public abstract class Player {
         piece.applyIndividualEffect(effect);
     }
 
-    // T-12: assigns the shared Energized/Sick status for the block this piece teleported with.
-    public void applyBlockEffect(Piece piece, MovementEffect effect) {
+    // T-12: assigns the shared Energized/Sick status for the block this piece teleported
+    // with, recorded against that block's exact size.
+    public void applyBlockEffect(Piece piece, MovementEffect effect, int blockSize) {
         requireOwnership(piece);
-        piece.applyBlockEffect(effect);
+        piece.applyBlockEffect(effect, blockSize);
     }
 
     // T-12: expires every piece's temporary movement effects by one round.

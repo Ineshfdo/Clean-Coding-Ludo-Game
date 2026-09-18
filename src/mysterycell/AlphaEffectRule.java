@@ -37,10 +37,12 @@ public final class AlphaEffectRule {
             return;
         }
 
-        // T-12: as long as they stay grouped, this shared block effect overrides each piece's own.
+        // T-12: as long as they stay grouped, this shared block effect overrides each piece's
+        // own - recorded against this exact group's size so it stops applying the moment the
+        // group's membership changes.
         MovementEffect blockEffect = rollEffect();
         for (Piece piece : teleportedPieces) {
-            player.applyBlockEffect(piece, blockEffect);
+            player.applyBlockEffect(piece, blockEffect, teleportedPieces.size());
         }
         messages.publish(
                 GameMessage.blockEffectAssigned(describeBlock(teleportedPieces), blockEffect.getLabel()));
