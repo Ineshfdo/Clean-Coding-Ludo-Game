@@ -40,15 +40,15 @@ import model.player.rule.roll.RollValidityRule;
 import model.player.rule.turn.EnterBoardRule;
 import model.player.rule.turn.MovePiecesRule;
 import model.player.rule.turn.TurnRule;
-import model.player.strategy.BlockDirectionStrategy;
-import model.player.strategy.BlueStrategy;
-import model.player.strategy.GreenStrategy;
-import model.player.strategy.LongestDistanceBlockDirectionStrategy;
 import model.player.strategy.PlayerStrategy;
 import model.player.strategy.PlayerStrategyRegistry;
-import model.player.strategy.PreferEnteringBoardStrategy;
-import model.player.strategy.RedStrategy;
-import model.player.strategy.YellowStrategy;
+import model.player.strategy.blockdirection.BlockTravelDirectionStrategy;
+import model.player.strategy.blockdirection.LongestDistanceDirectionStrategy;
+import model.player.strategy.playstyle.BlueStrategy;
+import model.player.strategy.playstyle.EnterBoardFirstStrategy;
+import model.player.strategy.playstyle.GreenStrategy;
+import model.player.strategy.playstyle.RedStrategy;
+import model.player.strategy.playstyle.YellowStrategy;
 import service.result.GameMessage;
 import utils.random.CoinToss;
 import utils.random.Dice;
@@ -65,8 +65,8 @@ public final class GameFacade {
     private static final int REQUIRED_FINISHERS_TO_END_GAME = 3;
 
     // T-4: shared so movement and display agree on block direction.
-    private static final BlockDirectionStrategy BLOCK_DIRECTION_STRATEGY =
-        new LongestDistanceBlockDirectionStrategy();
+    private static final BlockTravelDirectionStrategy BLOCK_TRAVEL_DIRECTION_STRATEGY =
+        new LongestDistanceDirectionStrategy();
 
     private GameFacade() {}
 
@@ -77,7 +77,7 @@ public final class GameFacade {
 
         GameMessageCenter.getInstance().clearObservers();
         GameMessagePublisher messages = GameMessageCenter.getInstance();
-        messages.addObserver(new ConsoleGameObserver(players, board, BLOCK_DIRECTION_STRATEGY));
+        messages.addObserver(new ConsoleGameObserver(players, board, BLOCK_TRAVEL_DIRECTION_STRATEGY));
 
         SeededRandomNumberGenerator.getInstance().setSeed(seed);
 
@@ -232,10 +232,10 @@ public final class GameFacade {
             new EnterBoardRule(coinToss),
             new MovePiecesRule(
                 blockadeLimitRule, homeStraightEntryRule, exactRollRule, blockStepsRule,
-                BLOCK_DIRECTION_STRATEGY));
+                BLOCK_TRAVEL_DIRECTION_STRATEGY));
 
         // T-16-19: each color gets its own strategy; default is fallback.
-        PlayerStrategy defaultStrategy = new PreferEnteringBoardStrategy();
+        PlayerStrategy defaultStrategy = new EnterBoardFirstStrategy();
         Map<PlayerColor, PlayerStrategy> strategiesByColor = Map.of(
             PlayerColor.RED, new RedStrategy(),
             PlayerColor.GREEN, new GreenStrategy(),

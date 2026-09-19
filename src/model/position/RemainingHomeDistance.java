@@ -6,7 +6,7 @@ import model.board.Board;
 
 // T-4/T-16/T-18: how many cells (including any still-needed extra laps around the board and
 // the HomeStraight itself) a piece has left before reaching Home, using its own direction.
-// Shared by LongestDistanceBlockDirectionStrategy (find the block's longest journey) and
+// Shared by LongestDistanceDirectionStrategy (find the block's longest journey) and
 // YellowStrategy (find the shortest one).
 public final class RemainingHomeDistance {
 

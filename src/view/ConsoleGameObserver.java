@@ -11,8 +11,8 @@ import java.util.Set;
 import model.board.Board;
 import config.enums.PlayerColor;
 import model.player.PlayerColorLabels;
-import model.player.strategy.BlockDirectionClassifier;
-import model.player.strategy.BlockDirectionStrategy;
+import model.player.strategy.blockdirection.BlockDirectionClassifier;
+import model.player.strategy.blockdirection.BlockTravelDirectionStrategy;
 import model.piece.Piece;
 import model.player.Player;
 
@@ -27,13 +27,13 @@ public final class ConsoleGameObserver implements GameMessageObserver {
 
     private final List<Player> players;
     private final Board board;
-    private final BlockDirectionStrategy blockDirectionStrategy;
+    private final BlockTravelDirectionStrategy blockTravelDirectionStrategy;
 
     public ConsoleGameObserver(
-            List<Player> players, Board board, BlockDirectionStrategy blockDirectionStrategy) {
+            List<Player> players, Board board, BlockTravelDirectionStrategy blockTravelDirectionStrategy) {
         this.players = players;
         this.board = board;
-        this.blockDirectionStrategy = blockDirectionStrategy;
+        this.blockTravelDirectionStrategy = blockTravelDirectionStrategy;
     }
 
     @Override
@@ -324,7 +324,7 @@ public final class ConsoleGameObserver implements GameMessageObserver {
         }
         if (blockedPieces.get(0).isOnTrack()) {
             MovementDirectionStrategy travelDirection =
-                    blockDirectionStrategy.resolveTravelDirection(blockedPieces, board);
+                    blockTravelDirectionStrategy.resolveTravelDirection(blockedPieces, board);
             Piece naturalMember = findNaturalMemberFor(blockedPieces, travelDirection);
             block.append(" BlockType:")
                     .append(BlockDirectionClassifier.labelOf(BlockDirectionClassifier.classify(blockedPieces)));

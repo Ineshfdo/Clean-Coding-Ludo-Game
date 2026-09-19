@@ -1,17 +1,16 @@
 package model.player.strategy;
 
 import java.util.List;
-
 import model.board.Board;
 import model.effect.mysterycell.MysteryCellLocation;
 import model.player.Player;
 
-// T-16/T-19: bundles the read-only context a PlayerStrategy needs to evaluate legal options,
-// so choose() does not keep growing extra parameters as strategies get smarter.
+// Read-only context a PlayerStrategy needs to evaluate legal options.
 public final class StrategyContext {
 
     private final Player player;
     private final List<Player> allPlayers;
+
     private final Board board;
     private final MysteryCellLocation mysteryCellLocation;
     private final int rollNumber;
@@ -38,14 +37,12 @@ public final class StrategyContext {
         return board;
     }
 
-    // T-19: lets BlueStrategy preview whether a candidate move would land on the Mystery Cell.
+    // Lets Blue preview whether a move would land on the Mystery Cell.
     public MysteryCellLocation getMysteryCellLocation() {
         return mysteryCellLocation;
     }
 
-    // T-19: which roll this is within the player's current turn - lets BlueStrategy tell a
-    // bonus roll (from a 6 or a capture) apart from the first roll of a brand-new turn, so its
-    // cyclic piece rotation advances once per turn, not once per roll.
+    // Which roll this is in the current turn; tells a bonus roll from a new turn.
     public int getRollNumber() {
         return rollNumber;
     }

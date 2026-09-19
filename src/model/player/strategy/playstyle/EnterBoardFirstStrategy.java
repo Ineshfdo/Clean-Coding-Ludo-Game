@@ -1,12 +1,13 @@
-package model.player.strategy;
+package model.player.strategy.playstyle;
 
-import model.player.command.Command;
 import config.enums.CommandType;
 import java.util.List;
+import model.player.command.Command;
+import model.player.strategy.PlayerStrategy;
+import model.player.strategy.StrategyContext;
 
-// Default strategy: prefer bringing a new piece onto the
-// board over moving one in play.
-public final class PreferEnteringBoardStrategy implements PlayerStrategy {
+// Default strategy: prefers bringing a new piece onto the board.
+public final class EnterBoardFirstStrategy implements PlayerStrategy {
 
     @Override
     public Command choose(List<Command> legalOptions, StrategyContext context) {

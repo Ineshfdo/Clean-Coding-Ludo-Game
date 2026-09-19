@@ -1,12 +1,9 @@
 package model.player.strategy;
 
+import config.enums.PlayerColor;
 import java.util.Map;
 
-import config.enums.PlayerColor;
-
-// T-16: looks up each player's own decision-making Strategy by color, falling back to a
-// shared default for any color without a specific one - a future color-specific strategy
-// only means adding one more map entry, not changing GameEngine.
+// Looks up each color's strategy, falling back to a shared default.
 public final class PlayerStrategyRegistry {
 
     private final Map<PlayerColor, PlayerStrategy> strategiesByColor;

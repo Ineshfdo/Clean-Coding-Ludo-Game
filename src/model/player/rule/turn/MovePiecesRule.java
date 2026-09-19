@@ -22,7 +22,7 @@ import model.player.rule.block.BlockStepsRule;
 import model.player.rule.block.BlockadeLimitRule;
 import model.player.rule.home.ExactRollRule;
 import model.player.rule.home.HomeStraightEntryRule;
-import model.player.strategy.BlockDirectionStrategy;
+import model.player.strategy.blockdirection.BlockTravelDirectionStrategy;
 import model.position.MovementDirectionStrategy;
 
 // Rule 1: moves a piece by the dice value, capped by blockades (T-3).
@@ -32,17 +32,17 @@ public final class MovePiecesRule implements TurnRule {
     private final HomeStraightEntryRule homeStraightEntryRule;
     private final ExactRollRule exactRollRule;
     private final BlockStepsRule blockStepsRule;
-    private final BlockDirectionStrategy blockDirectionStrategy;
+    private final BlockTravelDirectionStrategy blockTravelDirectionStrategy;
 
     public MovePiecesRule(
             BlockadeLimitRule blockadeLimitRule, HomeStraightEntryRule homeStraightEntryRule,
             ExactRollRule exactRollRule, BlockStepsRule blockStepsRule,
-            BlockDirectionStrategy blockDirectionStrategy) {
+            BlockTravelDirectionStrategy blockTravelDirectionStrategy) {
         this.blockadeLimitRule = blockadeLimitRule;
         this.homeStraightEntryRule = homeStraightEntryRule;
         this.exactRollRule = exactRollRule;
         this.blockStepsRule = blockStepsRule;
-        this.blockDirectionStrategy = blockDirectionStrategy;
+        this.blockTravelDirectionStrategy = blockTravelDirectionStrategy;
     }
 
     // T-16: every distinct piece or block gets its own option.
@@ -144,7 +144,7 @@ public final class MovePiecesRule implements TurnRule {
             return piece.getMovementDirectionStrategy();
         }
 
-        return blockDirectionStrategy.resolveTravelDirection(blockPieces, board);
+        return blockTravelDirectionStrategy.resolveTravelDirection(blockPieces, board);
     }
 
     // T-3/T-4/T-12/Rule 10: block division, then Energized/Sick, then blockade cap.
