@@ -59,7 +59,7 @@ public final class ConsoleGameObserver implements GameMessageObserver {
                     message.getColor() + " Player Won The Toss With A "
                             + message.getRollValue() + " And Goes First!";
             case ROUND_STARTED ->
-                    "\n" + message.getRoundNumber() + ". Round " + message.getRoundNumber();
+                    "\n\n" + message.getRoundNumber() + ". Round " + message.getRoundNumber();
             case TURN_STARTED -> "\n- " + message.getColor() + " Player's Turn -";
             case TURN_ROLLED ->
                     PlayerColorNames.displayNameOf(message.getColor()) + " player rolled " + message.getRollValue();
