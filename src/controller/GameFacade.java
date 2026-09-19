@@ -68,8 +68,7 @@ public final class GameFacade {
     private static final BlockDirectionStrategy BLOCK_DIRECTION_STRATEGY =
         new LongestDistanceBlockDirectionStrategy();
 
-    private GameFacade() {
-    }
+    private GameFacade() {}
 
     public static void startGame(long seed) {
 
@@ -99,7 +98,7 @@ public final class GameFacade {
             new MysteryCellManager(board, SeededRandomNumberGenerator.getInstance());
 
         // T-11: each game needs its own MysteryCellManager instance.
-        TurnEngine turnEngine = buildTurnEngine(mysteryCellManager);
+        GameEngine gameEngine = buildGameEngine(mysteryCellManager);
 
         // GAME_OVER: tracks finish order until enough players finish.
         List<PlayerColor> finishOrder = new ArrayList<>();
@@ -117,7 +116,7 @@ public final class GameFacade {
             }
 
             for (Player player : roundTracker.getTurnOrder()) {
-                turnEngine.playTurn(player, players, dice, board, messages);
+                gameEngine.playTurn(player, players, dice, board, messages);
                 recordFinisherIfNewlyDone(player, finishOrder);
             }
 
@@ -219,7 +218,7 @@ public final class GameFacade {
             .orElseThrow();
     }
 
-    private static TurnEngine buildTurnEngine(MysteryCellManager mysteryCellManager) {
+    private static GameEngine buildGameEngine(MysteryCellManager mysteryCellManager) {
         Board board = LudoBoard.getInstance();
 
         BlockadeRule blockadeRule = new OpponentBlockadeRule();
@@ -268,7 +267,7 @@ public final class GameFacade {
         // T-13: checks each roll for Beta's consecutive-3 return trigger.
         BetaRestrictionRule betaRestrictionRule = new BetaRestrictionRule();
 
-        return new StandardTurnEngine(
+        return new GameEngine(
             turnRules, strategyRegistry, rollValidityRule, captureRule, blockadeBreakRule,
             mysteryCellTeleportRule, betaRestrictionRule
         );
