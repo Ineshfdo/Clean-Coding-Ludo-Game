@@ -1,24 +1,25 @@
-package model.player.command.movement;
-import model.player.command.Command;
-import config.enums.CommandType;
+package model.player.command.move;
 
-import utils.random.CoinToss;
-import utils.random.CoinTossLabels;
 import config.enums.CoinTossResult;
+import config.enums.CommandType;
+import model.board.Board;
+import model.piece.Piece;
+import model.player.Player;
+import model.player.command.Command;
 import model.position.ClockwiseMovementStrategy;
 import model.position.CounterClockwiseMovementStrategy;
 import model.position.MovementDirectionStrategy;
 import service.result.GameMessage;
+import utils.random.CoinToss;
+import utils.random.CoinTossLabels;
 import view.observer.GameMessagePublisher;
-import model.board.Board;
-import model.piece.Piece;
-import model.player.Player;
 
-// Rule 2 as a command: Base -> Entry ("X"), then T-1's coin toss sets direction.
+// Rule 2: Base -> Entry, then a coin toss sets direction (T-1).
 public final class EnterBoardCommand implements Command {
 
     private final Player player;
     private final Piece piece;
+
     private final Board board;
     private final CoinToss coinToss;
 
@@ -32,6 +33,7 @@ public final class EnterBoardCommand implements Command {
     @Override
     public void execute(GameMessagePublisher messages) {
         player.leaveBase(piece, board);
+
         messages.publish(GameMessage.pieceEnteredBoard(
                 player.getColor(), piece.toString(), piece.getTrackPosition(),
                 player.countPiecesOnBoard(), player.countPiecesAtBase()));
@@ -39,6 +41,7 @@ public final class EnterBoardCommand implements Command {
         CoinTossResult tossResult = coinToss.flip();
         MovementDirectionStrategy direction = resolveDirection(tossResult);
         player.assignMovementDirection(piece, direction);
+
         messages.publish(GameMessage.pieceDirectionAssigned(
                 piece.toString(), CoinTossLabels.labelOf(tossResult), direction.getLabel()));
     }

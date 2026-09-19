@@ -1,18 +1,15 @@
-package model.player.command.movement;
+package model.player.command.move;
 
 import java.util.Optional;
-
-import model.position.MovementDirectionStrategy;
 import model.board.Board;
 import model.piece.Piece;
+import model.position.MovementDirectionStrategy;
 
-// T-16: shared by MoveCommand/BlockMoveCommand to preview a track landing before executing -
-// used by RedStrategy's capture/block-avoidance heuristics. A piece that would step onto or
-// past its Approach cell has no single predictable landing cell (it may enter HomeStraight
-// instead), so this returns empty for that case.
-final class TrackLandingPreview {
+// T-16: previews a track landing cell without moving (used by RedStrategy).
+// Empty if the piece would reach or pass its Approach cell.
+final class TrackLandingFinder {
 
-    private TrackLandingPreview() {
+    private TrackLandingFinder() {
     }
 
     static Optional<Integer> resolve(
@@ -20,10 +17,13 @@ final class TrackLandingPreview {
         if (!piece.isOnTrack()) {
             return Optional.empty();
         }
+
         int stepsToApproach = travelDirection.stepsToApproach(piece.getTrackPosition(), piece.getColor(), board);
+
         if (steps > stepsToApproach) {
             return Optional.empty();
         }
+
         return Optional.of(travelDirection.nextPosition(piece.getTrackPosition(), steps, board));
     }
 }

@@ -23,7 +23,7 @@ public final class MoveBlockedByBlockadeCommand implements Command {
         messages.publish(GameMessage.pieceBlocked(describeLabel()));
     }
 
-    // T-3: names the whole block (e.g. G1+G2), like BlockMoveCommand.
+    // T-3: names the whole block (e.g. G1+G2), like MoveBlockCommand.
     private String describeLabel() {
         StringBuilder label = new StringBuilder();
 

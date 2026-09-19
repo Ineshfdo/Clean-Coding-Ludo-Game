@@ -6,7 +6,7 @@ import java.util.Optional;
 import utils.random.CoinToss;
 import config.constant.DiceConstants;
 import model.player.command.Command;
-import model.player.command.movement.EnterBoardCommand;
+import model.player.command.move.EnterBoardCommand;
 import model.board.Board;
 import model.piece.Piece;
 import model.player.Player;

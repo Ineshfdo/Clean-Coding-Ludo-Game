@@ -6,9 +6,9 @@ import java.util.stream.Collectors;
 
 import config.constant.BlockadeConstants;
 import config.constant.DiceConstants;
-import model.player.command.movement.BreakBlockCommand;
+import model.player.command.move.BreakBlockCommand;
 import model.player.command.Command;
-import model.player.command.movement.MoveCommand;
+import model.player.command.move.MovePieceCommand;
 import model.position.MovementDirectionStrategy;
 import model.board.Board;
 import model.piece.Piece;
@@ -51,7 +51,7 @@ public final class ThirdSixBlockadeBreakRule extends BlockadeBreakRule {
     // direction, not the block's.
     private Command buildReleasedMove(Player player, Piece piece, Board board, int steps) {
         MovementDirectionStrategy ownDirection = piece.getOriginalMovementDirectionStrategy();
-        return new MoveCommand(
+        return new MovePieceCommand(
                 player, piece, steps, board, homeStraightEntryRule, ownDirection);
     }
 

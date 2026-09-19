@@ -7,13 +7,13 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import config.constant.BlockadeConstants;
-import model.player.command.movement.BlockMoveCommand;
 import model.player.command.cannotmove.BlockRollTooSmallCommand;
-import model.player.command.movement.BreakBlockCommand;
+import model.player.command.move.BreakBlockCommand;
 import model.player.command.Command;
 import model.player.command.cannotmove.ExactRollRequiredCommand;
+import model.player.command.move.MoveBlockCommand;
 import model.player.command.cannotmove.MoveBlockedByBlockadeCommand;
-import model.player.command.movement.MoveCommand;
+import model.player.command.move.MovePieceCommand;
 import model.player.command.cannotmove.SickRollTooSmallCommand;
 import model.position.MovementDirectionStrategy;
 import model.board.Board;
@@ -97,10 +97,10 @@ public final class MovementRule implements TurnRule {
             Player player, Piece piece, List<Piece> blockPieces, int effectiveSteps, Board board,
             MovementDirectionStrategy travelDirection) {
         if (blockPieces.size() >= BlockadeConstants.MINIMUM_BLOCKADE_SIZE) {
-            return new BlockMoveCommand(
+            return new MoveBlockCommand(
                     player, blockPieces, effectiveSteps, board, homeStraightEntryRule, travelDirection);
         }
-        Command moveCommand = new MoveCommand(
+        Command moveCommand = new MovePieceCommand(
                 player, piece, effectiveSteps, board, homeStraightEntryRule, travelDirection);
         if (piece.hasAdoptedBlockDirection()) {
             return new BreakBlockCommand(player, List.of(piece), List.of(moveCommand));
