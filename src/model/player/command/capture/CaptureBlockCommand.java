@@ -1,20 +1,20 @@
 package model.player.command.capture;
-import model.player.command.Command;
-import config.enums.CommandType;
 
+import config.enums.CommandType;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import service.result.GameMessage;
-import view.observer.GameMessagePublisher;
 import model.piece.Piece;
 import model.player.Player;
+import model.player.command.Command;
+import service.result.GameMessage;
+import view.observer.GameMessagePublisher;
 
-// T-8: an equal-sized blockade captures the opposing blockade; every capturing piece gains one.
+// T-8: a blockade captures an equal-sized blockade; each capturer gains one.
 public final class CaptureBlockCommand implements Command {
 
     private final Player capturingPlayer;
     private final List<Piece> capturingBlock;
+
     private final Player capturedPlayer;
     private final List<Piece> capturedBlock;
 
@@ -32,9 +32,11 @@ public final class CaptureBlockCommand implements Command {
         for (Piece capturedPiece : capturedBlock) {
             capturedPlayer.returnToBase(capturedPiece);
         }
+
         for (Piece capturingPiece : capturingBlock) {
             capturingPlayer.recordCapture(capturingPiece);
         }
+
         messages.publish(GameMessage.blockCaptured(describeBlock(capturingBlock), describeBlock(capturedBlock)));
     }
 

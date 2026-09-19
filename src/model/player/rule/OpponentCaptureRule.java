@@ -1,7 +1,7 @@
 package model.player.rule;
 
 import config.constant.BlockadeConstants;
-import model.player.command.capture.CaptureCommand;
+import model.player.command.capture.CapturePieceCommand;
 import model.player.command.Command;
 import java.util.List;
 import java.util.Optional;
@@ -27,7 +27,7 @@ public final class OpponentCaptureRule extends CaptureRule {
             Optional<Piece> capturedPiece = findPieceAt(opponent, movedPiece.getTrackPosition());
             if (capturedPiece.isPresent()) {
                 return Optional.of(
-                        new CaptureCommand(mover, movedPiece, opponent, capturedPiece.get()));
+                        new CapturePieceCommand(mover, movedPiece, opponent, capturedPiece.get()));
             }
         }
 
