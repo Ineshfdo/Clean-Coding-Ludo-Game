@@ -61,6 +61,9 @@ public final class ConsoleGameObserver implements GameMessageObserver {
             case TURN_STARTED -> "\n- " + message.getColor() + " Player's Turn -";
             case TURN_ROLLED ->
                     PlayerColorNames.displayNameOf(message.getColor()) + " player rolled " + message.getRollValue();
+            case HOME_GATE_OPENED ->
+                    "The home gate opens for the " + PlayerColorNames.displayNameOf(message.getColor())
+                            + " player: no opponent pieces remain to capture.";
             case NO_PIECE_MOVABLE -> "  -> No pieces on the board could be moved.";
             case PIECE_MOVED -> describePieceMoved(message);
             case PIECE_ENTERED_BOARD -> describePieceEnteredBoard(message);
@@ -148,7 +151,7 @@ public final class ConsoleGameObserver implements GameMessageObserver {
         return allButLast + ", and " + labels.get(labels.size() - 1);
     }
 
-    // GAME_OVER: ranks 1st..4th; the player who never finished is last.
+    // GAME_OVER: ranks 1st..4th in finishing order.
     private static String describeGameOver(List<PlayerColor> finalStandings) {
         String[] placeLabels = { "1st", "2nd", "3rd", "4th" };
         StringBuilder banner = new StringBuilder();

@@ -261,6 +261,13 @@ public final class GameMessage {
                 null, newDirectionLabel, null, null, null, null, null, 0, 0);
     }
 
+    // Home gate: no opponent pieces remain, so the T-7 capture requirement is waived.
+    public static GameMessage homeGateOpened(PlayerColor color) {
+        return new GameMessage(
+                GameMessageType.HOME_GATE_OPENED, color, 0, 0, 0, 0, null, null, null, null, null,
+                null, null, null, null, null, 0, 0);
+    }
+
     // 3.1: announces a player's pieces before the game begins.
     public static GameMessage playerRosterAnnounced(PlayerColor color, List<String> pieceLabels) {
         return new GameMessage(
@@ -268,7 +275,7 @@ public final class GameMessage {
                 null, null, null, null, null, pieceLabels, 0, 0);
     }
 
-    // GAME_OVER: standings ranked 1st..4th; the unfinished player is last.
+    // GAME_OVER: standings ranked 1st..4th in finishing order.
     public static GameMessage gameOver(List<PlayerColor> finalStandings) {
         return new GameMessage(
                 GameMessageType.GAME_OVER, null, 0, 0, 0, 0, null, null, null, null, null, null,

@@ -33,6 +33,7 @@ import model.player.rule.capture.CaptureCheckRule;
 import model.player.rule.capture.PieceCaptureRule;
 import model.player.rule.home.ApproachPassCountRule;
 import model.player.rule.home.ExactRollRule;
+import model.player.rule.home.HomeGateStatus;
 import model.player.rule.home.HomeStraightEligibilityRule;
 import model.player.rule.home.HomeStraightEntryRule;
 import model.player.rule.home.OvershootHomeRule;
@@ -60,9 +61,6 @@ import utils.randomgenerator.SeededRandomNumberGenerator;
 import view.ConsoleGameObserver;
 
 public final class GameFacade {
-
-    // GAME_OVER: game ends once 3 finish - 4th is automatic.
-    private static final int REQUIRED_FINISHERS_TO_END_GAME = 3;
 
     // T-4: shared so movement and display agree on block direction.
     private static final BlockTravelDirectionStrategy BLOCK_TRAVEL_DIRECTION_STRATEGY =
@@ -100,11 +98,11 @@ public final class GameFacade {
         // T-11: each game needs its own MysteryCellManager instance.
         GameEngine gameEngine = buildGameEngine(mysteryCellManager);
 
-        // GAME_OVER: tracks finish order until enough players finish.
+        // GAME_OVER: the game ends only once every player has all pieces Home.
         List<PlayerColor> finishOrder = new ArrayList<>();
         RoundTracker roundTracker = new RoundTracker(turnOrder);
 
-        while (finishOrder.size() < REQUIRED_FINISHERS_TO_END_GAME) {
+        while (!allPlayersFinished(players)) {
             int roundNumber = roundTracker.startNextRound();
             messages.publish(GameMessage.roundStarted(roundNumber));
             mysteryCellManager.onRoundStarted(roundNumber, players, messages);
@@ -116,6 +114,11 @@ public final class GameFacade {
             }
 
             for (Player player : roundTracker.getTurnOrder()) {
+                // Finished players take no turn: no roll, no message.
+                if (player.hasAllPiecesHome()) {
+                    continue;
+                }
+
                 gameEngine.playTurn(player, players, dice, board, messages);
                 recordFinisherIfNewlyDone(player, finishOrder);
             }
@@ -124,7 +127,11 @@ public final class GameFacade {
             messages.publish(GameMessage.boardStateReported(roundNumber));
         }
 
-        messages.publish(GameMessage.gameOver(buildFinalStandings(finishOrder, players)));
+        messages.publish(GameMessage.gameOver(finishOrder));
+    }
+
+    private static boolean allPlayersFinished(List<Player> players) {
+        return players.stream().allMatch(Player::hasAllPiecesHome);
     }
 
     // GAME_OVER: record a player the moment its 4th piece reaches Home.
@@ -132,18 +139,6 @@ public final class GameFacade {
         if (player.hasAllPiecesHome() && !finishOrder.contains(player.getColor())) {
             finishOrder.add(player.getColor());
         }
-    }
-
-    // GAME_OVER: ranks finishers, then appends the one unfinished player.
-    private static List<PlayerColor> buildFinalStandings(
-            List<PlayerColor> finishOrder, List<Player> players) {
-        List<PlayerColor> finalStandings = new ArrayList<>(finishOrder);
-        for (Player player : players) {
-            if (!finalStandings.contains(player.getColor())) {
-                finalStandings.add(player.getColor());
-            }
-        }
-        return finalStandings;
     }
 
     // Message per player, naming its pieces.
@@ -221,9 +216,11 @@ public final class GameFacade {
     private static GameEngine buildGameEngine(MysteryCellManager mysteryCellManager) {
         Board board = LudoBoard.getInstance();
 
+        // T-7: one tracker, shared by the engine (updates it) and the capture rule (reads it).
+        HomeGateTracker homeGateTracker = new HomeGateTracker();
+
         BlockadeLimitRule blockadeLimitRule = new PassingBlockadeRule();
-        HomeStraightEntryRule homeStraightEntryRule = new ApproachPassCountRule();
-        homeStraightEntryRule.setNext(new HomeStraightEligibilityRule());
+        HomeStraightEntryRule homeStraightEntryRule = buildHomeStraightEntryRule(homeGateTracker);
         ExactRollRule exactRollRule = new OvershootHomeRule();
         BlockStepsRule blockStepsRule = new DivideByBlockSizeRule();
 
@@ -247,7 +244,9 @@ public final class GameFacade {
         RollValidityRule rollValidityRule = new ConsecutiveSixVoidRule();
         CaptureCheckRule captureCheckRule = new BlockCaptureRule();
         captureCheckRule.setNext(new PieceCaptureRule());
-        BlockadeBreakRule blockadeBreakRule = new ThirdSixBlockadeBreakRule(homeStraightEntryRule);
+        // A forced blockade break never uses the open gate, so it gets an always-closed chain.
+        HomeStraightEntryRule forcedBreakEntryRule = buildHomeStraightEntryRule(color -> false);
+        BlockadeBreakRule blockadeBreakRule = new ThirdSixBlockadeBreakRule(forcedBreakEntryRule);
 
         // T-12: reuses T-1's same seeded coin toss for effects.
         AlphaEffectRule alphaEffectRule = new AlphaEffectRule(SeededCoinToss.getInstance());
@@ -269,7 +268,14 @@ public final class GameFacade {
 
         return new GameEngine(
             turnRules, strategyRegistry, rollValidityRule, captureCheckRule, blockadeBreakRule,
-            mysteryCellTeleportRule, betaRestrictionRule
+            mysteryCellTeleportRule, betaRestrictionRule, homeGateTracker
         );
+    }
+
+    private static HomeStraightEntryRule buildHomeStraightEntryRule(HomeGateStatus homeGate) {
+        HomeStraightEntryRule entryRule = new ApproachPassCountRule();
+        entryRule.setNext(new HomeStraightEligibilityRule(homeGate));
+
+        return entryRule;
     }
 }

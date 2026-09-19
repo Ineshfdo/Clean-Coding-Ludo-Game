@@ -33,12 +33,13 @@ public final class GameEngine {
     private final BlockadeBreakRule blockadeBreakRule;
     private final MysteryCellTeleportRule mysteryCellTeleportRule;
     private final BetaRestrictionRule betaRestrictionRule;
+    private final HomeGateTracker homeGateTracker;
 
     public GameEngine(
             List<TurnRule> turnRules, PlayerStrategyRegistry strategyRegistry,
             RollValidityRule rollValidityRule, CaptureCheckRule captureCheckRule,
             BlockadeBreakRule blockadeBreakRule, MysteryCellTeleportRule mysteryCellTeleportRule,
-            BetaRestrictionRule betaRestrictionRule) {
+            BetaRestrictionRule betaRestrictionRule, HomeGateTracker homeGateTracker) {
         this.turnRules = turnRules;
         this.strategyRegistry = strategyRegistry;
         this.rollValidityRule = rollValidityRule;
@@ -46,6 +47,7 @@ public final class GameEngine {
         this.blockadeBreakRule = blockadeBreakRule;
         this.mysteryCellTeleportRule = mysteryCellTeleportRule;
         this.betaRestrictionRule = betaRestrictionRule;
+        this.homeGateTracker = homeGateTracker;
     }
 
     public void playTurn(
@@ -79,6 +81,9 @@ public final class GameEngine {
                 return;
             }
 
+            // Runs before legal options, so strategy previews and the real move agree.
+            updateHomeGate(player, allPlayers, messages);
+
             // T-13: forces still-restricted Beta piece back to Base.
             betaRestrictionRule.resolve(player, rollNumber, rollValue)
                     .ifPresent(command -> command.execute(messages));
@@ -87,6 +92,16 @@ public final class GameEngine {
                     resolveAndPlay(player, allPlayers, rollNumber, rollValue, board, messages);
 
             turnContinues = grantsAnotherRoll(rollValue, capturedOpponent);
+        }
+    }
+
+    // T-7 home gate: counts this roll and announces it once, on the roll that opens the gate.
+    private void updateHomeGate(
+            Player player, List<Player> allPlayers, GameMessagePublisher messages) {
+        boolean gateOpenedOnThisRoll = homeGateTracker.recordRoll(player, allPlayers);
+
+        if (gateOpenedOnThisRoll) {
+            messages.publish(GameMessage.homeGateOpened(player.getColor()));
         }
     }
 

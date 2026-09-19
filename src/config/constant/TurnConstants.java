@@ -6,5 +6,8 @@ public final class TurnConstants {
     
     public static final int FIRST_ROLL_OF_TURN = 1;
 
+    // Rolls in a row, with every opponent already Home, before the home gate opens.
+    public static final int CONSECUTIVE_ROLLS_TO_OPEN_HOME_GATE = 3;
+
     private TurnConstants() {}
 }
