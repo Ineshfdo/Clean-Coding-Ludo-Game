@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Set;
 import model.board.Board;
 import config.enums.PlayerColor;
-import model.player.PlayerColorLabels;
+import model.player.PlayerColorNames;
 import model.player.strategy.blockdirection.BlockDirectionClassifier;
 import model.player.strategy.blockdirection.BlockTravelDirectionStrategy;
 import model.piece.Piece;
@@ -59,7 +59,7 @@ public final class ConsoleGameObserver implements GameMessageObserver {
                     "\n" + message.getRoundNumber() + ". Round " + message.getRoundNumber();
             case TURN_STARTED -> "\n- " + message.getColor() + " Player's Turn -";
             case TURN_ROLLED ->
-                    PlayerColorLabels.displayNameOf(message.getColor()) + " player rolled " + message.getRollValue();
+                    PlayerColorNames.displayNameOf(message.getColor()) + " player rolled " + message.getRollValue();
             case NO_PIECE_MOVABLE -> "  -> No pieces on the board could be moved.";
             case PIECE_MOVED -> describePieceMoved(message);
             case PIECE_ENTERED_BOARD -> describePieceEnteredBoard(message);
@@ -182,7 +182,7 @@ public final class ConsoleGameObserver implements GameMessageObserver {
                     + " [BlockType:" + message.getBlockTypeLabel()
                     + " BlockDirection:" + message.getMovementDirectionLabel() + "]";
         }
-        return "  -> " + PlayerColorLabels.displayNameOf(message.getColor()) + " moves piece " + message.getPieceLabel()
+        return "  -> " + PlayerColorNames.displayNameOf(message.getColor()) + " moves piece " + message.getPieceLabel()
                 + " from location " + describeCellLabel(message.getFromPosition())
                 + " to " + describeCellLabel(message.getNewPosition())
                 + " by " + message.getRollValue() + " units in "
@@ -204,7 +204,7 @@ public final class ConsoleGameObserver implements GameMessageObserver {
         String captureLine = "  -> " + message.getPieceLabel() + " piece lands on square "
                 + message.getNewPosition() + ", captures " + message.getCapturedPieceLabel()
                 + " and returns it to the base.";
-        String tallyLine = "  -> " + PlayerColorLabels.displayNameOf(message.getColor()) + " player now has "
+        String tallyLine = "  -> " + PlayerColorNames.displayNameOf(message.getColor()) + " player now has "
                 + message.getPiecesOnBoard() + "/4 pieces on the board and " + message.getPiecesAtBase()
                 + "/4 pieces on the base.";
         return captureLine + "\n" + tallyLine;
@@ -213,7 +213,7 @@ public final class ConsoleGameObserver implements GameMessageObserver {
     // Reports the piece leaving Base for the starting point, then the player's updated
     // on-board/at-base tally, both sourced from the GameMessage's counts, not recomputed here.
     private static String describePieceEnteredBoard(GameMessage message) {
-        String colorName = PlayerColorLabels.displayNameOf(message.getColor());
+        String colorName = PlayerColorNames.displayNameOf(message.getColor());
         String movedLine = "  -> " + colorName + " player moves piece " + message.getPieceLabel()
                 + " to the starting point.";
         String tallyLine = "  -> " + colorName + " player now has " + message.getPiecesOnBoard()
@@ -232,7 +232,7 @@ public final class ConsoleGameObserver implements GameMessageObserver {
         StringBuilder summary = new StringBuilder("\n-------------------------------\n");
         for (PlayerColor color : BOARD_STATE_DISPLAY_ORDER) {
             Player player = findPlayer(color);
-            summary.append(PlayerColorLabels.displayNameOf(color)).append(" player now has ")
+            summary.append(PlayerColorNames.displayNameOf(color)).append(" player now has ")
                     .append(player.countPiecesOnBoard()).append("/4 pieces on the board and ")
                     .append(player.countPiecesAtBase()).append("/4 pieces on the base.\n");
         }

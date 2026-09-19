@@ -2,15 +2,15 @@ package model.player;
 
 import config.enums.PlayerColor;
 
-// Display text derived from a PlayerColor - kept out of PlayerColor itself so the enum stays
-// a pure list of constants.
-public final class PlayerColorLabels {
+// Display text for a PlayerColor, kept out of the enum.
+public final class PlayerColorNames {
 
-    private PlayerColorLabels() {
+    private PlayerColorNames() {
     }
 
     public static String displayNameOf(PlayerColor color) {
         String lowerCaseName = color.name().toLowerCase();
+
         return Character.toUpperCase(lowerCaseName.charAt(0)) + lowerCaseName.substring(1);
     }
 

@@ -5,7 +5,7 @@ import config.enums.PlayerColor;
 import model.effect.movement.MovementEffect;
 import model.effect.restriction.NoRestrictionState;
 import model.effect.restriction.PieceRestrictionState;
-import model.player.PlayerColorLabels;
+import model.player.PlayerColorNames;
 import model.position.MovementDirectionStrategy;
 
 // Rule 6: a piece travels Base -> track -> HomeStraight -> Home, then stops.
@@ -233,6 +233,6 @@ public final class Piece {
 
     @Override
     public String toString() {
-        return PlayerColorLabels.shortCodeOf(color) + pieceNumber;
+        return PlayerColorNames.shortCodeOf(color) + pieceNumber;
     }
 }

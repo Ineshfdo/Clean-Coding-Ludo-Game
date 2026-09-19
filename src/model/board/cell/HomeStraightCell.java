@@ -2,7 +2,7 @@ package model.board.cell;
 
 import config.constant.BoardConstants;
 import config.enums.PlayerColor;
-import model.player.PlayerColorLabels;
+import model.player.PlayerColorNames;
 
 // One of the 5 color-owned cells between a color's Approach cell and its Home.
 public final class HomeStraightCell {
@@ -29,6 +29,6 @@ public final class HomeStraightCell {
 
     @Override
     public String toString() {
-        return PlayerColorLabels.displayNameOf(color) + "HomePath" + indexFromApproach;
+        return PlayerColorNames.displayNameOf(color) + "HomePath" + indexFromApproach;
     }
 }
