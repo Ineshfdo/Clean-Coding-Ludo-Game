@@ -97,25 +97,30 @@ public final class GameFacade {
         // T-10: reuses the same seeded random source for reproducibility.
         MysteryCellManager mysteryCellManager =
             new MysteryCellManager(board, SeededRandomNumberGenerator.getInstance());
+
         // T-11: each game needs its own MysteryCellManager instance.
         TurnEngine turnEngine = buildTurnEngine(mysteryCellManager);
 
         // GAME_OVER: tracks finish order until enough players finish.
         List<PlayerColor> finishOrder = new ArrayList<>();
-        int roundNumber = 0;
+        RoundTracker roundTracker = new RoundTracker(turnOrder);
+
         while (finishOrder.size() < REQUIRED_FINISHERS_TO_END_GAME) {
-            roundNumber++;
+            int roundNumber = roundTracker.startNextRound();
             messages.publish(GameMessage.roundStarted(roundNumber));
             mysteryCellManager.onRoundStarted(roundNumber, players, messages);
+
             // T-12/T-13: expire this round's effects and Beta restriction first.
-            for (Player player : turnOrder) {
+            for (Player player : roundTracker.getTurnOrder()) {
                 player.tickMovementEffects();
                 player.tickRestrictions();
             }
-            for (Player player : turnOrder) {
+
+            for (Player player : roundTracker.getTurnOrder()) {
                 turnEngine.playTurn(player, players, dice, board, messages);
                 recordFinisherIfNewlyDone(player, finishOrder);
             }
+
             mysteryCellManager.onRoundCompleted(roundNumber, players);
             messages.publish(GameMessage.boardStateReported(roundNumber));
         }
@@ -216,17 +221,20 @@ public final class GameFacade {
 
     private static TurnEngine buildTurnEngine(MysteryCellManager mysteryCellManager) {
         Board board = LudoBoard.getInstance();
+
         BlockadeRule blockadeRule = new OpponentBlockadeRule();
         HomeStraightEntryRule homeStraightEntryRule = new ApproachPassCountRule();
         homeStraightEntryRule.setNext(new HomeStraightEligibilityRule());
         ExactHomeRule exactHomeRule = new OvershootHomeRule();
         BlockMovementRule blockMovementRule = new DivideByBlockSizeRule();
+
         CoinToss coinToss = SeededCoinToss.getInstance();
         List<TurnRule> turnRules = List.of(
             new BaseExitRule(coinToss),
             new MovementRule(
                 blockadeRule, homeStraightEntryRule, exactHomeRule, blockMovementRule,
                 BLOCK_DIRECTION_STRATEGY));
+
         // T-16-19: each color gets its own strategy; default is fallback.
         PlayerStrategy defaultStrategy = new PreferEnteringBoardStrategy();
         Map<PlayerColor, PlayerStrategy> strategiesByColor = Map.of(
@@ -236,30 +244,33 @@ public final class GameFacade {
             PlayerColor.BLUE, new BlueStrategy());
         PlayerStrategyRegistry strategyRegistry =
             new PlayerStrategyRegistry(strategiesByColor, defaultStrategy);
+
         RollValidityRule rollValidityRule = new ConsecutiveSixVoidRule();
         CaptureRule captureRule = new BlockCaptureRule();
         captureRule.setNext(new OpponentCaptureRule());
         BlockadeBreakRule blockadeBreakRule = new ThirdSixBlockadeBreakRule(homeStraightEntryRule);
-        
+
         // T-12: reuses T-1's same seeded coin toss for effects.
         AlphaEffectRule alphaEffectRule = new AlphaEffectRule(SeededCoinToss.getInstance());
-        
+
         // T-14: reverses direction, or forwards to Beta, on Gamma.
         GammaDirectionRule gammaDirectionRule = new GammaDirectionRule(board);
-        
+
         // T-15: effects only activate after genuine Mystery Cell teleport.
         EffectActivationRule effectActivationRule = new MysteryTeleportActivationRule();
         MysteryCellEffects mysteryCellEffects =
             new MysteryCellEffects(alphaEffectRule, gammaDirectionRule, effectActivationRule);
-        
+
         // T-11: reuses the same seeded random source for reproducibility.
         MysteryCellTeleportRule mysteryCellTeleportRule = new MysteryCellTeleportRule(
             mysteryCellManager, SeededRandomNumberGenerator.getInstance(), board, mysteryCellEffects);
-        
+
         // T-13: checks each roll for Beta's consecutive-3 return trigger.
         BetaRestrictionRule betaRestrictionRule = new BetaRestrictionRule();
+
         return new StandardTurnEngine(
             turnRules, strategyRegistry, rollValidityRule, captureRule, blockadeBreakRule,
-            mysteryCellTeleportRule, betaRestrictionRule);
+            mysteryCellTeleportRule, betaRestrictionRule
+        );
     }
 }
