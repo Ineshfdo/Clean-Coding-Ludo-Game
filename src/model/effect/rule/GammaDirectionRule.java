@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import model.player.command.Command;
-import model.player.command.mysterycell.TeleportCommand;
+import model.player.command.mystery.MysteryCellTeleportCommand;
 import model.position.MovementDirectionStrategy;
 import service.result.GameMessage;
 import view.observer.GameMessagePublisher;
@@ -53,7 +53,7 @@ public final class GammaDirectionRule {
     private void forwardToBeta(
             Player player, List<Piece> teleportedPieces, GameMessagePublisher messages,
             MysteryCellEffects effects) {
-        Command forwardToBeta = new TeleportCommand(
+        Command forwardToBeta = new MysteryCellTeleportCommand(
                 player, teleportedPieces, MysteryCellDestinationType.BETA, board, effects);
 
         forwardToBeta.execute(messages);

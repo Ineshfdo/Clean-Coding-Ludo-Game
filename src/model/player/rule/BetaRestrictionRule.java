@@ -5,7 +5,7 @@ import java.util.Optional;
 
 import config.constant.TurnConstants;
 import model.player.command.Command;
-import model.player.command.mysterycell.ReturnToBaseCommand;
+import model.player.command.mystery.BetaReturnToBaseCommand;
 import model.piece.Piece;
 import model.player.Player;
 
@@ -23,6 +23,6 @@ public final class BetaRestrictionRule {
         if (triggeredPieces.isEmpty()) {
             return Optional.empty();
         }
-        return Optional.of(new ReturnToBaseCommand(player, triggeredPieces));
+        return Optional.of(new BetaReturnToBaseCommand(player, triggeredPieces));
     }
 }

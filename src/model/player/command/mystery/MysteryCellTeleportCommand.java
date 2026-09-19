@@ -1,34 +1,34 @@
-package model.player.command.mysterycell;
-import model.player.command.Command;
-import config.enums.CommandType;
-
-import java.util.List;
-import java.util.stream.Collectors;
+package model.player.command.mystery;
 
 import config.constant.BoardConstants;
-import service.result.GameMessage;
-import view.observer.GameMessagePublisher;
+import config.enums.CommandType;
+import config.enums.MysteryCellDestinationType;
+import java.util.List;
+import java.util.stream.Collectors;
 import model.board.Board;
 import model.effect.activation.MysteryCellArrival;
-import config.enums.MysteryCellDestinationType;
 import model.effect.mysterycell.MysteryCellDestinationLabels;
-import model.effect.rule.MysteryCellEffects;
 import model.effect.restriction.BetaRestrictedState;
+import model.effect.rule.MysteryCellEffects;
 import model.piece.Piece;
 import model.player.Player;
+import model.player.command.Command;
+import service.result.GameMessage;
+import view.observer.GameMessagePublisher;
 
-// T-11: teleports every piece that landed on the Mystery Cell to the randomly chosen destination.
-public final class TeleportCommand implements Command {
+// T-11: teleports pieces from the Mystery Cell to a random destination.
+public final class MysteryCellTeleportCommand implements Command {
 
     private final Player player;
     private final List<Piece> teleportedPieces;
+
     private final MysteryCellDestinationType destinationType;
     private final Board board;
     private final MysteryCellEffects effects;
 
-    public TeleportCommand(
-            Player player, List<Piece> teleportedPieces, MysteryCellDestinationType destinationType,
-            Board board, MysteryCellEffects effects) {
+    public MysteryCellTeleportCommand(
+        Player player, List<Piece> teleportedPieces, MysteryCellDestinationType destinationType,
+        Board board, MysteryCellEffects effects) {
         this.player = player;
         this.teleportedPieces = teleportedPieces;
         this.destinationType = destinationType;
@@ -42,41 +42,48 @@ public final class TeleportCommand implements Command {
             for (Piece piece : teleportedPieces) {
                 player.returnToBase(piece);
             }
+
             messages.publish(GameMessage.pieceTeleported(
-                    describeLabel(), MysteryCellDestinationLabels.labelOf(destinationType),
-                    BoardConstants.NO_TRACK_POSITION));
+                describeLabel(), MysteryCellDestinationLabels.labelOf(destinationType),
+                BoardConstants.NO_TRACK_POSITION));
             return;
         }
 
         int targetPosition = resolveTrackPosition();
+
         for (Piece piece : teleportedPieces) {
             player.teleportTo(piece, targetPosition);
         }
-        messages.publish(GameMessage.pieceTeleported(
-                describeLabel(), MysteryCellDestinationLabels.labelOf(destinationType), targetPosition));
 
-        // T-15: Alpha/Beta/Gamma effects activate only after this validated, genuine teleport.
+        messages.publish(GameMessage.pieceTeleported(
+            describeLabel(), MysteryCellDestinationLabels.labelOf(destinationType), targetPosition
+        ));
+
+        // T-15: effects activate only after a genuine teleport.
         boolean effectPermitted = effects.getEffectActivationRule()
-                .permitsActivation(new MysteryCellArrival(destinationType));
+            .permitsActivation(new MysteryCellArrival(destinationType));
+
         if (!effectPermitted) {
             return;
         }
 
-        // T-12: only Alpha assigns an Energized/Sick effect.
+        // T-12: only Alpha assigns Energized/Sick.
         if (destinationType == MysteryCellDestinationType.ALPHA) {
             effects.getAlphaEffectRule().applyTo(player, teleportedPieces, messages);
         }
 
-        // T-13: only Beta restricts movement and starts the consecutive-3 tracking.
+        // T-13: only Beta restricts movement.
         if (destinationType == MysteryCellDestinationType.BETA) {
             BetaRestrictedState restriction = new BetaRestrictedState();
+
             for (Piece piece : teleportedPieces) {
                 player.applyRestriction(piece, restriction);
             }
+
             messages.publish(GameMessage.betaRestrictionApplied(describeLabel()));
         }
 
-        // T-14: only Gamma reverses direction, or forwards on to Beta if already reversed.
+        // T-14: only Gamma reverses direction (or forwards to Beta).
         if (destinationType == MysteryCellDestinationType.GAMMA) {
             effects.getGammaDirectionRule().applyTo(player, teleportedPieces, messages, effects);
         }

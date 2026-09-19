@@ -1,22 +1,21 @@
-package model.player.command.mysterycell;
-import model.player.command.Command;
-import config.enums.CommandType;
+package model.player.command.mystery;
 
+import config.enums.CommandType;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import service.result.GameMessage;
-import view.observer.GameMessagePublisher;
 import model.piece.Piece;
 import model.player.Player;
+import model.player.command.Command;
+import service.result.GameMessage;
+import view.observer.GameMessagePublisher;
 
-// T-13: sends a Beta-restricted piece/block to Base after two consecutive rounds of rolling a 3.
-public final class ReturnToBaseCommand implements Command {
+// T-13: consecutive 3s send a Beta-restricted piece/block back to Base.
+public final class BetaReturnToBaseCommand implements Command {
 
     private final Player player;
     private final List<Piece> returningPieces;
 
-    public ReturnToBaseCommand(Player player, List<Piece> returningPieces) {
+    public BetaReturnToBaseCommand(Player player, List<Piece> returningPieces) {
         this.player = player;
         this.returningPieces = returningPieces;
     }
@@ -26,6 +25,7 @@ public final class ReturnToBaseCommand implements Command {
         for (Piece piece : returningPieces) {
             player.returnToBase(piece);
         }
+
         messages.publish(GameMessage.betaRestrictionTriggered(describeLabel()));
     }
 

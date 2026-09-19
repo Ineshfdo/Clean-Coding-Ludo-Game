@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Optional;
 
 import model.player.command.Command;
-import model.player.command.mysterycell.TeleportCommand;
+import model.player.command.mystery.MysteryCellTeleportCommand;
 import model.board.Board;
 import config.enums.MysteryCellDestinationType;
 import model.effect.rule.MysteryCellEffects;
@@ -49,7 +49,7 @@ public final class MysteryCellTeleportRule {
 
         List<Piece> teleportedGroup = findOwnPiecesAt(mover, landedPiece.getTrackPosition());
         MysteryCellDestinationType destinationType = chooseRandomDestination();
-        return Optional.of(new TeleportCommand(mover, teleportedGroup, destinationType, board, effects));
+        return Optional.of(new MysteryCellTeleportCommand(mover, teleportedGroup, destinationType, board, effects));
     }
 
     private boolean landsOnMysteryCell(Piece piece) {
