@@ -1,9 +1,8 @@
-package utils.random;
+package utils.randomgenerator;
 
 import java.util.Random;
 
-// Singleton: every component needing randomness draws from this
-// same seeded sequence for reproducibility.
+// Singleton: all randomness draws from one seeded sequence, for reproducibility.
 public final class SeededRandomNumberGenerator implements SeedableRandomNumberGenerator {
 
     private static final SeededRandomNumberGenerator SHARED_INSTANCE =
@@ -27,6 +26,7 @@ public final class SeededRandomNumberGenerator implements SeedableRandomNumberGe
     @Override
     public int nextIntInRange(int minInclusive, int maxInclusive) {
         int rangeSize = maxInclusive - minInclusive + 1;
+
         return minInclusive + randomSource.nextInt(rangeSize);
     }
 }

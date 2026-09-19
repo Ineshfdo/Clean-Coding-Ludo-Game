@@ -8,7 +8,7 @@ import message.GameMessage;
 import model.board.Board;
 import model.piece.Piece;
 import model.player.Player;
-import utils.random.RandomNumberGenerator;
+import utils.randomgenerator.RandomNumberGenerator;
 import view.observer.GameMessagePublisher;
 
 // T-10: tracks Mystery Cell spawn, lifespan and relocation.

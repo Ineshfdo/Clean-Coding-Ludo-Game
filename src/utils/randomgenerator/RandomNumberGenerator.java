@@ -1,7 +1,6 @@
-package utils.random;
+package utils.randomgenerator;
 
-// Kept seed-free (ISP) so consumers like Dice only depend on
-// drawing a number.
+// Seed-free (ISP): consumers only depend on drawing a number.
 public interface RandomNumberGenerator {
 
     int nextIntInRange(int minInclusive, int maxInclusive);

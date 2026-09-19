@@ -8,7 +8,7 @@ import model.piece.Piece;
 import model.player.Player;
 import model.player.command.Command;
 import model.player.command.move.EnterBoardCommand;
-import utils.random.CoinToss;
+import utils.coin.CoinToss;
 
 // Rule 2: a piece may leave Base only on a 6.
 public final class EnterBoardRule implements TurnRule {

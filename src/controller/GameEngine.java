@@ -21,7 +21,7 @@ import model.player.rule.turn.TurnRule;
 import model.player.strategy.PlayerStrategy;
 import model.player.strategy.PlayerStrategyRegistry;
 import model.player.strategy.StrategyContext;
-import utils.random.Dice;
+import utils.dice.Dice;
 import view.observer.GameMessagePublisher;
 
 public final class GameEngine {

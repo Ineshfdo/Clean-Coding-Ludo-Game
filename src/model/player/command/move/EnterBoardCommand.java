@@ -10,8 +10,8 @@ import model.direction.MovementDirectionStrategy;
 import model.piece.Piece;
 import model.player.Player;
 import model.player.command.Command;
-import utils.random.CoinToss;
-import utils.random.CoinTossLabels;
+import utils.coin.CoinToss;
+import utils.coin.CoinTossLabels;
 import view.observer.GameMessagePublisher;
 
 // Rule 2: Base -> Entry, then a coin toss sets direction (T-1).

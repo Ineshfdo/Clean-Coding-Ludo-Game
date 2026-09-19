@@ -1,9 +1,8 @@
-package utils.random;
+package utils.coin;
 
 import config.enums.CoinTossResult;
 
-// T-1: display text for a coin toss result - kept out of CoinTossResult itself so the enum
-// stays a pure list of constants.
+// T-1: display text for a coin toss result, kept out of the enum.
 public final class CoinTossLabels {
 
     private CoinTossLabels() {

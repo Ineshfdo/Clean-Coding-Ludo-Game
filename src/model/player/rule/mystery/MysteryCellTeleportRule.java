@@ -12,7 +12,7 @@ import model.piece.Piece;
 import model.player.Player;
 import model.player.command.Command;
 import model.player.command.mystery.MysteryCellTeleportCommand;
-import utils.random.RandomNumberGenerator;
+import utils.randomgenerator.RandomNumberGenerator;
 
 // T-11: a piece landing on the active Mystery Cell teleports to a random destination.
 public final class MysteryCellTeleportRule {

@@ -1,8 +1,10 @@
-package utils.random;
+package utils.coin;
+
 import config.enums.CoinTossResult;
+import utils.randomgenerator.RandomNumberGenerator;
+import utils.randomgenerator.SeededRandomNumberGenerator;
 
-
-// Singleton: shares the dice's seeded sequence, so direction stays reproducible too.
+// Singleton: shares the dice's seeded sequence, so results are reproducible.
 public final class SeededCoinToss implements CoinToss {
 
     private static final int TAILS_VALUE = 0;
@@ -24,6 +26,7 @@ public final class SeededCoinToss implements CoinToss {
     @Override
     public CoinTossResult flip() {
         int drawnValue = numberGenerator.nextIntInRange(TAILS_VALUE, HEADS_VALUE);
+
         return drawnValue == HEADS_VALUE ? CoinTossResult.HEADS : CoinTossResult.TAILS;
     }
 }

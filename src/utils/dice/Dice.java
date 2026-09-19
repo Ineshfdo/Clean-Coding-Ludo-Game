@@ -1,4 +1,4 @@
-package utils.random;
+package utils.dice;
 
 public interface Dice {
 

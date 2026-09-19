@@ -1,6 +1,8 @@
-package utils.random;
+package utils.dice;
 
 import config.constant.DiceConstants;
+import utils.randomgenerator.RandomNumberGenerator;
+import utils.randomgenerator.SeededRandomNumberGenerator;
 
 // Singleton: one physical die is shared by every player's turn.
 public final class SixSidedDice implements Dice {

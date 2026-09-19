@@ -3,7 +3,7 @@ package model.effect.rule;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import utils.random.CoinToss;
+import utils.coin.CoinToss;
 import config.constant.BlockadeConstants;
 import config.constant.EffectConstants;
 import config.enums.CoinTossResult;
