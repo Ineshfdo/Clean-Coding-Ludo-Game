@@ -1,4 +1,4 @@
-import gamefacade.GameFacade;
+import controller.GameFacade;
 
 public class main {
 

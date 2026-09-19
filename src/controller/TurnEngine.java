@@ -1,0 +1,153 @@
+package controller;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+
+import model.player.action.Command;
+import config.constant.DiceConstants;
+import utils.random.Dice;
+import service.result.GameMessage;
+import view.observer.GameMessagePublisher;
+import config.enums.GameMessageType;
+import model.board.Board;
+import model.piece.Piece;
+import model.player.Player;
+import model.player.rule.BetaRestrictionRule;
+import model.player.rule.BlockadeBreakRule;
+import model.player.rule.CaptureRule;
+import model.player.rule.MysteryCellTeleportRule;
+import model.player.rule.RollValidityRule;
+import model.player.rule.TurnRule;
+import model.player.strategy.PlayerStrategy;
+import model.player.strategy.PlayerStrategyRegistry;
+import model.player.strategy.StrategyContext;
+
+// Template Method: fixed skeleton for playing a turn.
+public abstract class TurnEngine {
+
+    private final List<TurnRule> turnRules;
+    private final PlayerStrategyRegistry strategyRegistry;
+    private final RollValidityRule rollValidityRule;
+    private final CaptureRule captureRule;
+    private final BlockadeBreakRule blockadeBreakRule;
+    private final MysteryCellTeleportRule mysteryCellTeleportRule;
+    private final BetaRestrictionRule betaRestrictionRule;
+
+    protected TurnEngine(
+            List<TurnRule> turnRules, PlayerStrategyRegistry strategyRegistry,
+            RollValidityRule rollValidityRule, CaptureRule captureRule,
+            BlockadeBreakRule blockadeBreakRule, MysteryCellTeleportRule mysteryCellTeleportRule,
+            BetaRestrictionRule betaRestrictionRule) {
+        this.turnRules = turnRules;
+        this.strategyRegistry = strategyRegistry;
+        this.rollValidityRule = rollValidityRule;
+        this.captureRule = captureRule;
+        this.blockadeBreakRule = blockadeBreakRule;
+        this.mysteryCellTeleportRule = mysteryCellTeleportRule;
+        this.betaRestrictionRule = betaRestrictionRule;
+    }
+
+    public final void playTurn(
+            Player player, List<Player> allPlayers, Dice dice, Board board,
+            GameMessagePublisher messages) {
+        messages.publish(GameMessage.turnStarted(player.getColor()));
+
+        int rollNumber = 0;
+        // Tracks consecutive sixes; resets on any non-six roll.
+        int consecutiveSixCount = 0;
+        boolean turnContinues = true;
+
+        while (turnContinues) {
+            rollNumber++;
+            int rollValue = dice.roll();
+            consecutiveSixCount = rollValue == DiceConstants.SIX_ROLL_VALUE ? consecutiveSixCount + 1 : 0;
+            messages.publish(GameMessage.turnRolled(player.getColor(), rollValue));
+
+            Optional<Command> forcedBreak =
+                    blockadeBreakRule.resolve(player, consecutiveSixCount, rollValue, board, allPlayers);
+            if (forcedBreak.isPresent()) {
+                forcedBreak.get().execute(messages);
+                applyCapture(player, forcedBreak.get(), allPlayers, messages);
+                return;
+            }
+
+            if (rollValidityRule.isVoided(consecutiveSixCount, rollValue)) {
+                messages.publish(GameMessage.of(GameMessageType.THIRD_SIX_VOIDED));
+                return;
+            }
+
+            // T-13: forces still-restricted Beta piece back to Base.
+            betaRestrictionRule.resolve(player, rollNumber, rollValue)
+                    .ifPresent(command -> command.execute(messages));
+
+            boolean capturedOpponent =
+                    resolveAndPlay(player, allPlayers, rollNumber, rollValue, board, messages);
+
+            turnContinues = grantsAnotherRoll(rollValue, capturedOpponent);
+        }
+    }
+
+    private boolean resolveAndPlay(
+            Player player, List<Player> allPlayers, int rollNumber, int rollValue, Board board,
+            GameMessagePublisher messages) {
+        List<Command> legalOptions = findLegalOptions(player, allPlayers, rollValue, board);
+
+        if (legalOptions.isEmpty()) {
+            messages.publish(GameMessage.noPieceMovable());
+            return false;
+        }
+
+        PlayerStrategy strategy = strategyRegistry.getStrategyFor(player.getColor());
+        StrategyContext context = new StrategyContext(
+                player, allPlayers, board, mysteryCellTeleportRule.getMysteryCellLocation(), rollNumber);
+        Command chosenCommand = strategy.choose(legalOptions, context);
+        chosenCommand.execute(messages);
+
+        boolean capturedOpponent = applyCapture(player, chosenCommand, allPlayers, messages);
+        applyMysteryCellTeleport(player, chosenCommand, messages);
+        return capturedOpponent;
+    }
+
+    // T-11: checks distinct landing positions for Mystery Cell.
+    private void applyMysteryCellTeleport(
+            Player mover, Command executedCommand, GameMessagePublisher messages) {
+        Set<Integer> checkedPositions = new HashSet<>();
+        for (Piece movedPiece : executedCommand.getAffectedPieces()) {
+            if (!movedPiece.isOnTrack() || !checkedPositions.add(movedPiece.getTrackPosition())) {
+                continue;
+            }
+            mysteryCellTeleportRule.resolve(mover, movedPiece)
+                    .ifPresent(teleportCommand -> teleportCommand.execute(messages));
+        }
+    }
+
+    private List<Command> findLegalOptions(
+            Player player, List<Player> allPlayers, int rollValue, Board board) {
+        List<Command> legalOptions = new ArrayList<>();
+        for (TurnRule rule : turnRules) {
+            legalOptions.addAll(rule.resolve(player, rollValue, board, allPlayers));
+        }
+        return legalOptions;
+    }
+
+    // Rule 7/T-6: checks each moved piece for capture.
+    private boolean applyCapture(
+            Player mover, Command executedCommand, List<Player> allPlayers,
+            GameMessagePublisher messages) {
+        boolean capturedAny = false;
+        for (Piece movedPiece : executedCommand.getAffectedPieces()) {
+            Optional<Command> captureCommand = captureRule.resolve(mover, movedPiece, allPlayers);
+            if (captureCommand.isPresent()) {
+                captureCommand.get().execute(messages);
+                capturedAny = true;
+            }
+        }
+        return capturedAny;
+    }
+
+    // Rule 4/7: six or capture earns another roll.
+    protected abstract boolean grantsAnotherRoll(int rollValue, boolean capturedOpponent);
+}
