@@ -75,7 +75,9 @@ public final class GameFacade {
 
         GameMessageCenter.getInstance().clearObservers();
         GameMessagePublisher messages = GameMessageCenter.getInstance();
-        messages.addObserver(new ConsoleGameObserver(players, board, BLOCK_TRAVEL_DIRECTION_STRATEGY));
+        ConsoleGameObserver consoleObserver =
+            new ConsoleGameObserver(players, board, BLOCK_TRAVEL_DIRECTION_STRATEGY);
+        messages.addObserver(consoleObserver);
 
         SeededRandomNumberGenerator.getInstance().setSeed(seed);
 
@@ -90,6 +92,9 @@ public final class GameFacade {
         List<Player> tossOrder = buildTurnOrder(PlayerColor.RED, players, board);
         Player firstPlayer = determineFirstPlayer(tossOrder, dice, messages);
         List<Player> turnOrder = buildTurnOrder(firstPlayer.getColor(), players, board);
+
+        // Round reports list players in play order, starting from the toss winner.
+        consoleObserver.setTurnOrder(turnOrder);
 
         // T-10: reuses the same seeded random source for reproducibility.
         MysteryCellManager mysteryCellManager =

@@ -19,22 +19,24 @@ import model.player.strategy.blockdirection.BlockTravelDirectionStrategy;
 // Turns each GameMessage into console text; keeps roster and board only for reports.
 public final class ConsoleGameObserver implements GameMessageObserver {
 
-    private static final PlayerColor[] BOARD_STATE_DISPLAY_ORDER =
-            { PlayerColor.GREEN, PlayerColor.YELLOW, PlayerColor.BLUE, PlayerColor.RED };
-
     private static final String MYSTERY_CELL_BANNER_BORDER = "=".repeat(40);
     private static final String GAME_OVER_BANNER_BORDER = "=".repeat(50);
     private static final String BOARD_STATE_BANNER_BORDER = "=".repeat(37);
 
-    private final List<Player> players;
+    // Reports list players in this order; the toss winner's turn order replaces it.
+    private List<Player> playersInTurnOrder;
     private final Board board;
     private final BlockTravelDirectionStrategy blockTravelDirectionStrategy;
 
     public ConsoleGameObserver(
             List<Player> players, Board board, BlockTravelDirectionStrategy blockTravelDirectionStrategy) {
-        this.players = players;
+        this.playersInTurnOrder = players;
         this.board = board;
         this.blockTravelDirectionStrategy = blockTravelDirectionStrategy;
+    }
+
+    public void setTurnOrder(List<Player> turnOrder) {
+        this.playersInTurnOrder = turnOrder;
     }
 
     @Override
@@ -239,9 +241,8 @@ public final class ConsoleGameObserver implements GameMessageObserver {
     private String describeRoundStatusSummary() {
         StringBuilder summary = new StringBuilder("\n-------------------------------\n");
 
-        for (PlayerColor color : BOARD_STATE_DISPLAY_ORDER) {
-            Player player = findPlayer(color);
-            summary.append(PlayerColorNames.displayNameOf(color)).append(" player now has ")
+        for (Player player : playersInTurnOrder) {
+            summary.append(PlayerColorNames.displayNameOf(player.getColor())).append(" player now has ")
                     .append(player.countPiecesOnBoard()).append("/4 pieces on the board and ")
                     .append(player.countPiecesAtBase()).append("/4 pieces on the base.\n");
         }
@@ -258,8 +259,8 @@ public final class ConsoleGameObserver implements GameMessageObserver {
         report.append(BOARD_STATE_BANNER_BORDER).append('\n');
 
         List<String> playerRows = new ArrayList<>();
-        for (PlayerColor color : BOARD_STATE_DISPLAY_ORDER) {
-            playerRows.add(describePlayerRow(findPlayer(color)));
+        for (Player player : playersInTurnOrder) {
+            playerRows.add(describePlayerRow(player));
         }
         report.append(String.join("\n\n", playerRows));
 
@@ -438,12 +439,5 @@ public final class ConsoleGameObserver implements GameMessageObserver {
         }
 
         return false;
-    }
-
-    private Player findPlayer(PlayerColor color) {
-        return players.stream()
-                .filter(player -> player.getColor() == color)
-                .findFirst()
-                .orElseThrow();
     }
 }
