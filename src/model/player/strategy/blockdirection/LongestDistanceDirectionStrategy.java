@@ -3,9 +3,9 @@ package model.player.strategy.blockdirection;
 import java.util.List;
 import java.util.Optional;
 import model.board.Board;
+import model.direction.MovementDirectionStrategy;
+import model.direction.RemainingHomeDistance;
 import model.piece.Piece;
-import model.position.MovementDirectionStrategy;
-import model.position.RemainingHomeDistance;
 
 // T-4: a mixed block travels via the member with the longest remaining distance.
 public final class LongestDistanceDirectionStrategy implements BlockTravelDirectionStrategy {

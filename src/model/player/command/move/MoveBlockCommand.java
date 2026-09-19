@@ -5,12 +5,12 @@ import config.enums.CommandType;
 import java.util.List;
 import java.util.Optional;
 import model.board.Board;
+import model.direction.MovementDirectionStrategy;
 import model.piece.Piece;
 import model.player.Player;
 import model.player.command.Command;
 import model.player.rule.home.HomeStraightEntryRule;
 import model.player.strategy.blockdirection.BlockDirectionClassifier;
-import model.position.MovementDirectionStrategy;
 import service.result.GameMessage;
 import view.observer.GameMessagePublisher;
 

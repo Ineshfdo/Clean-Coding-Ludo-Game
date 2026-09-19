@@ -2,9 +2,9 @@ package model.player.command.move;
 
 import config.constant.BoardConstants;
 import model.board.Board;
+import model.direction.MovementDirectionStrategy;
 import model.piece.Piece;
 import model.player.rule.home.HomeStraightEntryRule;
-import model.position.MovementDirectionStrategy;
 
 // T-17: previews whether a move reaches Home (used by GreenStrategy).
 final class HomeArrivalChecker {

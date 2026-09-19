@@ -2,8 +2,8 @@ package model.player.strategy.blockdirection;
 
 import java.util.List;
 import model.board.Board;
+import model.direction.MovementDirectionStrategy;
 import model.piece.Piece;
-import model.position.MovementDirectionStrategy;
 
 // Strategy: chooses which direction a block travels in.
 public interface BlockTravelDirectionStrategy {

@@ -6,11 +6,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import model.board.Board;
+import model.direction.MovementDirectionStrategy;
 import model.effect.movement.MovementEffect;
 import model.effect.restriction.PieceRestrictionState;
 import model.piece.Piece;
 import model.player.rule.home.HomeStraightEntryRule;
-import model.position.MovementDirectionStrategy;
 
 // Owns a player's four pieces; every piece change goes through here.
 public abstract class Player {

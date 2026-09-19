@@ -1,9 +1,9 @@
-package model.position;
+package model.direction;
 
-import model.board.Board;
 import config.enums.PlayerColor;
+import model.board.Board;
 
-// T-1: tails means counter-clockwise - passes Approach twice before Home, shared for equality.
+// T-1: tails means counter-clockwise; passes Approach twice; one shared instance.
 public final class CounterClockwiseMovementStrategy implements MovementDirectionStrategy {
 
     private static final int REQUIRED_APPROACH_PASS_COUNT = 2;

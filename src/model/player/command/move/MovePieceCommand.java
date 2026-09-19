@@ -4,11 +4,11 @@ import config.constant.BoardConstants;
 import config.enums.CommandType;
 import java.util.Optional;
 import model.board.Board;
+import model.direction.MovementDirectionStrategy;
 import model.piece.Piece;
 import model.player.Player;
 import model.player.command.Command;
 import model.player.rule.home.HomeStraightEntryRule;
-import model.position.MovementDirectionStrategy;
 import service.result.GameMessage;
 import view.observer.GameMessagePublisher;
 

@@ -4,8 +4,8 @@ import config.enums.BlockDirectionType;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+import model.direction.MovementDirectionStrategy;
 import model.piece.Piece;
-import model.position.MovementDirectionStrategy;
 
 // T-4/T-5: classifies a block by its pieces' original directions, and labels it.
 public final class BlockDirectionClassifier {

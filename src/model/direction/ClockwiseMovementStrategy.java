@@ -1,9 +1,9 @@
-package model.position;
+package model.direction;
 
-import model.board.Board;
 import config.enums.PlayerColor;
+import model.board.Board;
 
-// T-1: heads means clockwise - a shared instance so same-direction pieces compare equal.
+// T-1: heads means clockwise; one shared instance, so directions compare equal.
 public final class ClockwiseMovementStrategy implements MovementDirectionStrategy {
 
     private static final int REQUIRED_APPROACH_PASS_COUNT = 1;

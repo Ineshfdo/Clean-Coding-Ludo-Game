@@ -2,8 +2,8 @@ package model.player.command.move;
 
 import java.util.Optional;
 import model.board.Board;
+import model.direction.MovementDirectionStrategy;
 import model.piece.Piece;
-import model.position.MovementDirectionStrategy;
 
 // T-16: previews a track landing cell without moving (used by RedStrategy).
 // Empty if the piece would reach or pass its Approach cell.

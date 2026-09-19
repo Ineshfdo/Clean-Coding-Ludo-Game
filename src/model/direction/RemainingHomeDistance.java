@@ -1,13 +1,10 @@
-package model.position;
-import model.piece.Piece;
+package model.direction;
 
 import config.constant.BoardConstants;
 import model.board.Board;
+import model.piece.Piece;
 
-// T-4/T-16/T-18: how many cells (including any still-needed extra laps around the board and
-// the HomeStraight itself) a piece has left before reaching Home, using its own direction.
-// Shared by LongestDistanceDirectionStrategy (find the block's longest journey) and
-// YellowStrategy (find the shortest one).
+// T-4/T-16/T-18: cells a piece has left to reach Home, using its own direction.
 public final class RemainingHomeDistance {
 
     private RemainingHomeDistance() {
@@ -17,6 +14,7 @@ public final class RemainingHomeDistance {
         if (piece.isHome()) {
             return 0;
         }
+
         if (piece.isOnHomeStraight()) {
             return BoardConstants.CELLS_PER_HOME_STRAIGHT - piece.getHomeStraightIndex();
         }

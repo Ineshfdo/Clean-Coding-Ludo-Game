@@ -5,6 +5,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
+import model.direction.MovementDirectionStrategy;
 import model.effect.mysterycell.MysteryCellLocation;
 import model.piece.Piece;
 import model.player.Player;
@@ -12,7 +13,6 @@ import model.player.command.Command;
 import model.player.strategy.PlayerStrategy;
 import model.player.strategy.StrategyContext;
 import model.player.strategy.helper.BluePieceRotationIterator;
-import model.position.MovementDirectionStrategy;
 
 // Blue rotates through its pieces (B1 -> B2 -> B3 -> B4), with Mystery Cell overrides.
 // A bonus roll in the same turn keeps considering the same piece.

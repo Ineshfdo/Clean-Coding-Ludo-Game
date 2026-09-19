@@ -5,12 +5,12 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
+import model.direction.RemainingHomeDistance;
 import model.piece.Piece;
 import model.player.command.Command;
 import model.player.strategy.PlayerStrategy;
 import model.player.strategy.StrategyContext;
 import model.player.strategy.helper.CaptureTargetFinder;
-import model.position.RemainingHomeDistance;
 
 // Yellow is winning-focused: leaves Base, captures only when needed, else nears Home.
 public final class YellowStrategy implements PlayerStrategy {

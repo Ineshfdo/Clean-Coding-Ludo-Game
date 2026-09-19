@@ -6,13 +6,13 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import model.board.Board;
+import model.direction.MovementDirectionStrategy;
 import model.piece.Piece;
 import model.player.Player;
 import model.player.command.Command;
 import model.player.command.move.BreakBlockCommand;
 import model.player.command.move.MovePieceCommand;
 import model.player.rule.home.HomeStraightEntryRule;
-import model.position.MovementDirectionStrategy;
 
 // T-6: a third consecutive six breaks an existing blockade instead of voiding.
 public final class ThirdSixBlockadeBreakRule extends BlockadeBreakRule {

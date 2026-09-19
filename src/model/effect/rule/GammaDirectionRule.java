@@ -7,7 +7,7 @@ import java.util.stream.Collectors;
 
 import model.player.command.Command;
 import model.player.command.mystery.MysteryCellTeleportCommand;
-import model.position.MovementDirectionStrategy;
+import model.direction.MovementDirectionStrategy;
 import service.result.GameMessage;
 import view.observer.GameMessagePublisher;
 import model.board.Board;

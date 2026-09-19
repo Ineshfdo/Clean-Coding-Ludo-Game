@@ -3,8 +3,8 @@ package model.player.rule.block;
 import config.enums.PlayerColor;
 import java.util.List;
 import model.board.Board;
+import model.direction.MovementDirectionStrategy;
 import model.player.Player;
-import model.position.MovementDirectionStrategy;
 
 // Chain of Responsibility: each rule may limit the allowed steps.
 public abstract class BlockadeLimitRule {

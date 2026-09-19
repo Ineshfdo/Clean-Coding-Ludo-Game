@@ -4,9 +4,9 @@ import config.constant.BlockadeConstants;
 import config.enums.PlayerColor;
 import java.util.List;
 import model.board.Board;
+import model.direction.MovementDirectionStrategy;
 import model.piece.Piece;
 import model.player.Player;
-import model.position.MovementDirectionStrategy;
 
 // T-3/T-8: 2+ same-color pieces block opponents, except an equal-size capture.
 public final class PassingBlockadeRule extends BlockadeLimitRule {

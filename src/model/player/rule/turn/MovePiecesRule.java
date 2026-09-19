@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import model.board.Board;
+import model.direction.MovementDirectionStrategy;
 import model.effect.movement.MovementEffect;
 import model.piece.Piece;
 import model.player.Player;
@@ -23,7 +24,6 @@ import model.player.rule.block.BlockadeLimitRule;
 import model.player.rule.home.ExactRollRule;
 import model.player.rule.home.HomeStraightEntryRule;
 import model.player.strategy.blockdirection.BlockTravelDirectionStrategy;
-import model.position.MovementDirectionStrategy;
 
 // Rule 1: moves a piece by the dice value, capped by blockades (T-3).
 public final class MovePiecesRule implements TurnRule {

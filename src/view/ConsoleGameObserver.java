@@ -1,7 +1,7 @@
 package view;
 
 import config.constant.BlockadeConstants;
-import model.position.MovementDirectionStrategy;
+import model.direction.MovementDirectionStrategy;
 import service.result.GameMessage;
 import view.observer.GameMessageObserver;
 import java.util.ArrayList;
