@@ -1,4 +1,5 @@
 package model.board;
+
 import config.enums.PlayerColor;
 import model.board.cell.HomeStraightCell;
 import model.board.cell.StandardCell;

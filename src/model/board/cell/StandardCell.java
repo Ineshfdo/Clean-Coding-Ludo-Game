@@ -1,4 +1,5 @@
 package model.board.cell;
+
 import config.enums.PlayerColor;
 
 
