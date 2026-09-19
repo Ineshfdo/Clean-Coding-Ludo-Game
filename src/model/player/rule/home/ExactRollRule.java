@@ -1,13 +1,15 @@
-package model.player.rule;
+package model.player.rule.home;
+
 import model.piece.Piece;
 
-// Chain of Responsibility: each rule may forbid a HomeStraight overshoot, else defers.
-public abstract class ExactHomeRule {
+// Chain of Responsibility: each rule may forbid a HomeStraight overshoot.
+public abstract class ExactRollRule {
 
-    private ExactHomeRule nextRule;
+    private ExactRollRule nextRule;
 
-    public final ExactHomeRule setNext(ExactHomeRule nextRule) {
+    public final ExactRollRule setNext(ExactRollRule nextRule) {
         this.nextRule = nextRule;
+
         return nextRule;
     }
 
@@ -15,6 +17,7 @@ public abstract class ExactHomeRule {
         if (appliesTo(piece, steps)) {
             return true;
         }
+
         return nextRule != null && nextRule.forbidsMove(piece, steps);
     }
 

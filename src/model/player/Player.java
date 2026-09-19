@@ -2,7 +2,7 @@ package model.player;
 import model.effect.movement.MovementEffect;
 import model.piece.Piece;
 import model.effect.restriction.PieceRestrictionState;
-import model.player.rule.HomeStraightEntryRule;
+import model.player.rule.home.HomeStraightEntryRule;
 
 import model.position.MovementDirectionStrategy;
 import java.util.ArrayList;

@@ -7,7 +7,7 @@ import model.board.Board;
 import model.piece.Piece;
 import model.player.Player;
 import model.player.command.Command;
-import model.player.rule.HomeStraightEntryRule;
+import model.player.rule.home.HomeStraightEntryRule;
 import model.position.MovementDirectionStrategy;
 import service.result.GameMessage;
 import view.observer.GameMessagePublisher;

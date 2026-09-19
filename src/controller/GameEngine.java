@@ -11,12 +11,12 @@ import model.board.Board;
 import model.piece.Piece;
 import model.player.Player;
 import model.player.command.Command;
-import model.player.rule.BetaRestrictionRule;
-import model.player.rule.BlockadeBreakRule;
-import model.player.rule.CaptureRule;
-import model.player.rule.MysteryCellTeleportRule;
-import model.player.rule.RollValidityRule;
-import model.player.rule.TurnRule;
+import model.player.rule.block.BlockadeBreakRule;
+import model.player.rule.capture.CaptureCheckRule;
+import model.player.rule.mystery.BetaRestrictionRule;
+import model.player.rule.mystery.MysteryCellTeleportRule;
+import model.player.rule.roll.RollValidityRule;
+import model.player.rule.turn.TurnRule;
 import model.player.strategy.PlayerStrategy;
 import model.player.strategy.PlayerStrategyRegistry;
 import model.player.strategy.StrategyContext;
@@ -29,20 +29,20 @@ public final class GameEngine {
     private final List<TurnRule> turnRules;
     private final PlayerStrategyRegistry strategyRegistry;
     private final RollValidityRule rollValidityRule;
-    private final CaptureRule captureRule;
+    private final CaptureCheckRule captureCheckRule;
     private final BlockadeBreakRule blockadeBreakRule;
     private final MysteryCellTeleportRule mysteryCellTeleportRule;
     private final BetaRestrictionRule betaRestrictionRule;
 
     public GameEngine(
             List<TurnRule> turnRules, PlayerStrategyRegistry strategyRegistry,
-            RollValidityRule rollValidityRule, CaptureRule captureRule,
+            RollValidityRule rollValidityRule, CaptureCheckRule captureCheckRule,
             BlockadeBreakRule blockadeBreakRule, MysteryCellTeleportRule mysteryCellTeleportRule,
             BetaRestrictionRule betaRestrictionRule) {
         this.turnRules = turnRules;
         this.strategyRegistry = strategyRegistry;
         this.rollValidityRule = rollValidityRule;
-        this.captureRule = captureRule;
+        this.captureCheckRule = captureCheckRule;
         this.blockadeBreakRule = blockadeBreakRule;
         this.mysteryCellTeleportRule = mysteryCellTeleportRule;
         this.betaRestrictionRule = betaRestrictionRule;
@@ -146,7 +146,7 @@ public final class GameEngine {
         boolean capturedAny = false;
 
         for (Piece movedPiece : executedCommand.getAffectedPieces()) {
-            Optional<Command> captureCommand = captureRule.resolve(mover, movedPiece, allPlayers);
+            Optional<Command> captureCommand = captureCheckRule.resolve(mover, movedPiece, allPlayers);
 
             if (captureCommand.isPresent()) {
                 captureCommand.get().execute(messages);

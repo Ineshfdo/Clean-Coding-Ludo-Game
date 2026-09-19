@@ -1,7 +1,8 @@
-package model.player.rule;
+package model.player.rule.home;
+
 import model.piece.Piece;
 
-// T-7: a piece may enter its HomeStraight only after capturing an opponent.
+// T-7: entering HomeStraight requires having captured an opponent.
 public final class HomeStraightEligibilityRule extends HomeStraightEntryRule {
 
     private static final int REQUIRED_CAPTURE_COUNT = 1;

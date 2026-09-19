@@ -1,20 +1,20 @@
-package model.player.rule;
-
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
+package model.player.rule.block;
 
 import config.constant.BlockadeConstants;
 import config.constant.DiceConstants;
-import model.player.command.move.BreakBlockCommand;
-import model.player.command.Command;
-import model.player.command.move.MovePieceCommand;
-import model.position.MovementDirectionStrategy;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 import model.board.Board;
 import model.piece.Piece;
 import model.player.Player;
+import model.player.command.Command;
+import model.player.command.move.BreakBlockCommand;
+import model.player.command.move.MovePieceCommand;
+import model.player.rule.home.HomeStraightEntryRule;
+import model.position.MovementDirectionStrategy;
 
-// T-6: a third consecutive six forces an existing blockade to break instead of being voided.
+// T-6: a third consecutive six breaks an existing blockade instead of voiding.
 public final class ThirdSixBlockadeBreakRule extends BlockadeBreakRule {
 
     private static final int TOTAL_FORCED_MOVE_STEPS = 6;
@@ -32,11 +32,11 @@ public final class ThirdSixBlockadeBreakRule extends BlockadeBreakRule {
                 || rollValue != DiceConstants.SIX_ROLL_VALUE) {
             return Optional.empty();
         }
+
         return findBlockade(player).map(blockadePieces -> buildBreakCommand(player, blockadePieces, board));
     }
 
-    // T-6: the lowest-numbered member stays; the rest are released, sharing the 6 cells
-    // between them, and move by their own direction.
+    // T-6: the lowest-numbered member stays; the rest share the 6 cells.
     private Command buildBreakCommand(Player player, List<Piece> blockadePieces, Board board) {
         List<Piece> releasedPieces = blockadePieces.subList(1, blockadePieces.size());
         int stepsPerReleasedPiece = TOTAL_FORCED_MOVE_STEPS / releasedPieces.size();
@@ -47,15 +47,15 @@ public final class ThirdSixBlockadeBreakRule extends BlockadeBreakRule {
         return new BreakBlockCommand(player, blockadePieces, releasedPieceMoves);
     }
 
-    // T-6/T-5: each released piece moves its share of the 6 cells using its own original
-    // direction, not the block's.
+    // T-6/T-5: each released piece moves by its own original direction.
     private Command buildReleasedMove(Player player, Piece piece, Board board, int steps) {
         MovementDirectionStrategy ownDirection = piece.getOriginalMovementDirectionStrategy();
+
         return new MovePieceCommand(
                 player, piece, steps, board, homeStraightEntryRule, ownDirection);
     }
 
-    // T-3: a blockade is 2+ of the player's own pieces sharing a track cell.
+    // T-3: a blockade is 2+ own pieces sharing a track cell.
     private static Optional<List<Piece>> findBlockade(Player player) {
         List<Piece> trackPieces = player.getPieces().stream()
                 .filter(Piece::isOnTrack)
@@ -65,10 +65,12 @@ public final class ThirdSixBlockadeBreakRule extends BlockadeBreakRule {
             List<Piece> sharedCell = trackPieces.stream()
                     .filter(candidate -> candidate.getTrackPosition() == piece.getTrackPosition())
                     .collect(Collectors.toList());
+
             if (sharedCell.size() >= BlockadeConstants.MINIMUM_BLOCKADE_SIZE) {
                 return Optional.of(sharedCell);
             }
         }
+
         return Optional.empty();
     }
 }

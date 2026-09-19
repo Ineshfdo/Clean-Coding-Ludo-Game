@@ -1,21 +1,20 @@
-package model.player.rule;
+package model.player.rule.mystery;
 
+import config.enums.MysteryCellDestinationType;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-
-import model.player.command.Command;
-import model.player.command.mystery.MysteryCellTeleportCommand;
 import model.board.Board;
-import config.enums.MysteryCellDestinationType;
-import model.effect.rule.MysteryCellEffects;
 import model.effect.mysterycell.MysteryCellLocation;
 import model.effect.mysterycell.MysteryCellManager;
-import utils.random.RandomNumberGenerator;
+import model.effect.rule.MysteryCellEffects;
 import model.piece.Piece;
 import model.player.Player;
+import model.player.command.Command;
+import model.player.command.mystery.MysteryCellTeleportCommand;
+import utils.random.RandomNumberGenerator;
 
-// T-11: a piece landing exactly on the active Mystery Cell teleports to a randomly chosen destination.
+// T-11: a piece landing on the active Mystery Cell teleports to a random destination.
 public final class MysteryCellTeleportRule {
 
     private static final MysteryCellDestinationType[] DESTINATIONS = MysteryCellDestinationType.values();
@@ -36,8 +35,7 @@ public final class MysteryCellTeleportRule {
         this.effects = effects;
     }
 
-    // T-19: lets a PlayerStrategy (e.g. BlueStrategy) preview the Mystery Cell's current
-    // location without depending on this whole rule or the manager's full responsibilities.
+    // T-19: read-only Mystery Cell location for strategies (e.g. BlueStrategy).
     public MysteryCellLocation getMysteryCellLocation() {
         return mysteryCellManager;
     }
@@ -49,6 +47,7 @@ public final class MysteryCellTeleportRule {
 
         List<Piece> teleportedGroup = findOwnPiecesAt(mover, landedPiece.getTrackPosition());
         MysteryCellDestinationType destinationType = chooseRandomDestination();
+
         return Optional.of(new MysteryCellTeleportCommand(mover, teleportedGroup, destinationType, board, effects));
     }
 
@@ -58,20 +57,23 @@ public final class MysteryCellTeleportRule {
                 && piece.getTrackPosition() == mysteryCellManager.getCurrentCellPosition();
     }
 
-    // T-3: every own piece sharing the landing cell teleports together, so a block never splits.
+    // T-3: own pieces on the landing cell teleport together.
     private static List<Piece> findOwnPiecesAt(Player player, int trackPosition) {
         List<Piece> piecesAtPosition = new ArrayList<>();
+
         for (Piece piece : player.getPieces()) {
             if (piece.isOnTrack() && piece.getTrackPosition() == trackPosition) {
                 piecesAtPosition.add(piece);
             }
         }
+
         return piecesAtPosition;
     }
 
     private MysteryCellDestinationType chooseRandomDestination() {
         int randomIndex =
                 randomNumberGenerator.nextIntInRange(FIRST_DESTINATION_INDEX, LAST_DESTINATION_INDEX);
+
         return DESTINATIONS[randomIndex];
     }
 }

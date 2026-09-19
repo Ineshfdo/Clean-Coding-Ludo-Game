@@ -1,13 +1,13 @@
-package model.player.rule;
+package model.player.rule.roll;
 
-// Chain of Responsibility: each rule checks for a void
-// condition, else defers onward.
+// Chain of Responsibility: each rule checks for a void condition.
 public abstract class RollValidityRule {
 
     private RollValidityRule nextRule;
 
     public final RollValidityRule setNext(RollValidityRule nextRule) {
         this.nextRule = nextRule;
+
         return nextRule;
     }
 
@@ -15,6 +15,7 @@ public abstract class RollValidityRule {
         if (appliesTo(consecutiveSixCount, rollValue)) {
             return true;
         }
+
         return nextRule != null && nextRule.isVoided(consecutiveSixCount, rollValue);
     }
 

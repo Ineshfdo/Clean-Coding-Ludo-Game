@@ -1,32 +1,34 @@
-package model.player.rule;
+package model.player.rule.capture;
 
 import java.util.List;
 import java.util.Optional;
-
-import model.player.command.Command;
 import model.piece.Piece;
 import model.player.Player;
+import model.player.command.Command;
 
-// Chain of Responsibility: each rule checks if the moved piece captures an opponent, else defers.
-public abstract class CaptureRule {
+// Chain of Responsibility: each rule checks whether the moved piece captures.
+public abstract class CaptureCheckRule {
 
-    private CaptureRule nextRule;
+    private CaptureCheckRule nextRule;
 
-    public final CaptureRule setNext(CaptureRule nextRule) {
+    public final CaptureCheckRule setNext(CaptureCheckRule nextRule) {
         this.nextRule = nextRule;
+
         return nextRule;
     }
 
     public final Optional<Command> resolve(Player mover, Piece movedPiece, List<Player> allPlayers) {
         Optional<Command> command = identify(mover, movedPiece, allPlayers);
+
         if (command.isPresent()) {
             return command;
         }
+
         return nextRule == null
-                ? Optional.empty()
-                : nextRule.resolve(mover, movedPiece, allPlayers);
+            ? Optional.empty()
+            : nextRule.resolve(mover, movedPiece, allPlayers);
     }
 
     protected abstract Optional<Command> identify(
-            Player mover, Piece movedPiece, List<Player> allPlayers);
+        Player mover, Piece movedPiece, List<Player> allPlayers);
 }

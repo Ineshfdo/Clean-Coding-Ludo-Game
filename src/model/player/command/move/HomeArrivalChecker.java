@@ -3,7 +3,7 @@ package model.player.command.move;
 import config.constant.BoardConstants;
 import model.board.Board;
 import model.piece.Piece;
-import model.player.rule.HomeStraightEntryRule;
+import model.player.rule.home.HomeStraightEntryRule;
 import model.position.MovementDirectionStrategy;
 
 // T-17: previews whether a move reaches Home (used by GreenStrategy).
@@ -16,7 +16,7 @@ final class HomeArrivalChecker {
             Piece piece, int steps, Board board, HomeStraightEntryRule homeStraightEntryRule,
             MovementDirectionStrategy travelDirection) {
         if (piece.isOnHomeStraight()) {
-            // Already validated by ExactHomeRule, so reaching the last index is legitimate.
+            // Already validated by ExactRollRule, so reaching the last index is legitimate.
             return piece.getHomeStraightIndex() + steps >= BoardConstants.CELLS_PER_HOME_STRAIGHT;
         }
 

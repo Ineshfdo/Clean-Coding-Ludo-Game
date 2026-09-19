@@ -19,27 +19,27 @@ import model.player.GreenPlayer;
 import model.player.Player;
 import model.player.RedPlayer;
 import model.player.YellowPlayer;
-import model.player.rule.ApproachPassCountRule;
-import model.player.rule.BaseExitRule;
-import model.player.rule.BetaRestrictionRule;
-import model.player.rule.BlockCaptureRule;
-import model.player.rule.BlockMovementRule;
-import model.player.rule.BlockadeBreakRule;
-import model.player.rule.BlockadeRule;
-import model.player.rule.CaptureRule;
-import model.player.rule.ConsecutiveSixVoidRule;
-import model.player.rule.DivideByBlockSizeRule;
-import model.player.rule.ExactHomeRule;
-import model.player.rule.HomeStraightEligibilityRule;
-import model.player.rule.HomeStraightEntryRule;
-import model.player.rule.MovementRule;
-import model.player.rule.MysteryCellTeleportRule;
-import model.player.rule.OpponentBlockadeRule;
-import model.player.rule.OpponentCaptureRule;
-import model.player.rule.OvershootHomeRule;
-import model.player.rule.RollValidityRule;
-import model.player.rule.ThirdSixBlockadeBreakRule;
-import model.player.rule.TurnRule;
+import model.player.rule.block.BlockStepsRule;
+import model.player.rule.block.BlockadeBreakRule;
+import model.player.rule.block.BlockadeLimitRule;
+import model.player.rule.block.DivideByBlockSizeRule;
+import model.player.rule.block.PassingBlockadeRule;
+import model.player.rule.block.ThirdSixBlockadeBreakRule;
+import model.player.rule.capture.BlockCaptureRule;
+import model.player.rule.capture.CaptureCheckRule;
+import model.player.rule.capture.PieceCaptureRule;
+import model.player.rule.home.ApproachPassCountRule;
+import model.player.rule.home.ExactRollRule;
+import model.player.rule.home.HomeStraightEligibilityRule;
+import model.player.rule.home.HomeStraightEntryRule;
+import model.player.rule.home.OvershootHomeRule;
+import model.player.rule.mystery.BetaRestrictionRule;
+import model.player.rule.mystery.MysteryCellTeleportRule;
+import model.player.rule.roll.ConsecutiveSixVoidRule;
+import model.player.rule.roll.RollValidityRule;
+import model.player.rule.turn.EnterBoardRule;
+import model.player.rule.turn.MovePiecesRule;
+import model.player.rule.turn.TurnRule;
 import model.player.strategy.BlockDirectionStrategy;
 import model.player.strategy.BlueStrategy;
 import model.player.strategy.GreenStrategy;
@@ -221,17 +221,17 @@ public final class GameFacade {
     private static GameEngine buildGameEngine(MysteryCellManager mysteryCellManager) {
         Board board = LudoBoard.getInstance();
 
-        BlockadeRule blockadeRule = new OpponentBlockadeRule();
+        BlockadeLimitRule blockadeLimitRule = new PassingBlockadeRule();
         HomeStraightEntryRule homeStraightEntryRule = new ApproachPassCountRule();
         homeStraightEntryRule.setNext(new HomeStraightEligibilityRule());
-        ExactHomeRule exactHomeRule = new OvershootHomeRule();
-        BlockMovementRule blockMovementRule = new DivideByBlockSizeRule();
+        ExactRollRule exactRollRule = new OvershootHomeRule();
+        BlockStepsRule blockStepsRule = new DivideByBlockSizeRule();
 
         CoinToss coinToss = SeededCoinToss.getInstance();
         List<TurnRule> turnRules = List.of(
-            new BaseExitRule(coinToss),
-            new MovementRule(
-                blockadeRule, homeStraightEntryRule, exactHomeRule, blockMovementRule,
+            new EnterBoardRule(coinToss),
+            new MovePiecesRule(
+                blockadeLimitRule, homeStraightEntryRule, exactRollRule, blockStepsRule,
                 BLOCK_DIRECTION_STRATEGY));
 
         // T-16-19: each color gets its own strategy; default is fallback.
@@ -245,8 +245,8 @@ public final class GameFacade {
             new PlayerStrategyRegistry(strategiesByColor, defaultStrategy);
 
         RollValidityRule rollValidityRule = new ConsecutiveSixVoidRule();
-        CaptureRule captureRule = new BlockCaptureRule();
-        captureRule.setNext(new OpponentCaptureRule());
+        CaptureCheckRule captureCheckRule = new BlockCaptureRule();
+        captureCheckRule.setNext(new PieceCaptureRule());
         BlockadeBreakRule blockadeBreakRule = new ThirdSixBlockadeBreakRule(homeStraightEntryRule);
 
         // T-12: reuses T-1's same seeded coin toss for effects.
@@ -268,7 +268,7 @@ public final class GameFacade {
         BetaRestrictionRule betaRestrictionRule = new BetaRestrictionRule();
 
         return new GameEngine(
-            turnRules, strategyRegistry, rollValidityRule, captureRule, blockadeBreakRule,
+            turnRules, strategyRegistry, rollValidityRule, captureCheckRule, blockadeBreakRule,
             mysteryCellTeleportRule, betaRestrictionRule
         );
     }

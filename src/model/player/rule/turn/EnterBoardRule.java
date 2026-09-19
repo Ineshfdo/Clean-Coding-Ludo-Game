@@ -1,22 +1,21 @@
-package model.player.rule;
+package model.player.rule.turn;
 
+import config.constant.DiceConstants;
 import java.util.List;
 import java.util.Optional;
-
-import utils.random.CoinToss;
-import config.constant.DiceConstants;
-import model.player.command.Command;
-import model.player.command.move.EnterBoardCommand;
 import model.board.Board;
 import model.piece.Piece;
 import model.player.Player;
+import model.player.command.Command;
+import model.player.command.move.EnterBoardCommand;
+import utils.random.CoinToss;
 
-// Rule 2: a piece may leave Base only when the dice shows a 6.
-public final class BaseExitRule implements TurnRule {
+// Rule 2: a piece may leave Base only on a 6.
+public final class EnterBoardRule implements TurnRule {
 
     private final CoinToss coinToss;
 
-    public BaseExitRule(CoinToss coinToss) {
+    public EnterBoardRule(CoinToss coinToss) {
         this.coinToss = coinToss;
     }
 
@@ -26,6 +25,7 @@ public final class BaseExitRule implements TurnRule {
         if (rollValue != DiceConstants.SIX_ROLL_VALUE) {
             return List.of();
         }
+
         return findBasePiece(player)
                 .<List<Command>>map(piece -> List.of(new EnterBoardCommand(player, piece, board, coinToss)))
                 .orElse(List.of());

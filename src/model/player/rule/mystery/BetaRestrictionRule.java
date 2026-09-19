@@ -1,16 +1,14 @@
-package model.player.rule;
-
-import java.util.List;
-import java.util.Optional;
+package model.player.rule.mystery;
 
 import config.constant.TurnConstants;
-import model.player.command.Command;
-import model.player.command.mystery.BetaReturnToBaseCommand;
+import java.util.List;
+import java.util.Optional;
 import model.piece.Piece;
 import model.player.Player;
+import model.player.command.Command;
+import model.player.command.mystery.BetaReturnToBaseCommand;
 
-// T-13: while a piece/block sits Beta-restricted, its owner's first roll each round is checked
-// for two consecutive rounds of a 3 - the condition that forces it back to Base.
+// T-13: consecutive 3s on the first roll send a Beta piece back to Base.
 public final class BetaRestrictionRule {
 
     public Optional<Command> resolve(Player player, int rollNumber, int rollValue) {
@@ -20,9 +18,11 @@ public final class BetaRestrictionRule {
 
         player.recordRestrictionRoll(rollValue);
         List<Piece> triggeredPieces = player.findPiecesTriggeredForReturnToBase();
+
         if (triggeredPieces.isEmpty()) {
             return Optional.empty();
         }
+
         return Optional.of(new BetaReturnToBaseCommand(player, triggeredPieces));
     }
 }
