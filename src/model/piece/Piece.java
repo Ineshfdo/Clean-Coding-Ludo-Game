@@ -1,10 +1,12 @@
 package model.piece;
-import config.enums.PieceLocation;
-import model.effect.MovementEffect;
 
+import config.enums.PieceLocation;
+import config.enums.PlayerColor;
+import model.effect.movement.MovementEffect;
+import model.effect.restriction.NoRestrictionState;
+import model.effect.restriction.PieceRestrictionState;
 import model.player.PlayerColorLabels;
 import model.position.MovementDirectionStrategy;
-import config.enums.PlayerColor;
 
 // Rule 6: a piece travels Base -> track -> HomeStraight -> Home, then stops.
 public final class Piece {
@@ -15,14 +17,18 @@ public final class Piece {
     private PieceLocation location;
     private int trackPosition;
     private int homeStraightIndex;
+
     private MovementDirectionStrategy movementDirectionStrategy;
     private MovementDirectionStrategy originalMovementDirectionStrategy;
     private int adoptedForBlockSize;
+
     private int approachPassCount;
     private int captureCount;
+
     private MovementEffect individualEffect = MovementEffect.none();
     private MovementEffect blockEffect = MovementEffect.none();
     private int blockEffectAssignedForBlockSize;
+
     private PieceRestrictionState restrictionState = NoRestrictionState.getInstance();
 
     public Piece(PlayerColor color, int pieceNumber) {
@@ -53,67 +59,62 @@ public final class Piece {
 
     public int getTrackPosition() {
         requireLocation(PieceLocation.TRACK);
+
         return trackPosition;
     }
 
     public int getHomeStraightIndex() {
         requireLocation(PieceLocation.HOME_STRAIGHT);
+
         return homeStraightIndex;
     }
 
-    // T-1/T-5: the direction currently driving this piece - its own, or a block's while grouped.
+    // T-1/T-5: current direction - its own, or its block's while grouped.
     public MovementDirectionStrategy getMovementDirectionStrategy() {
         return movementDirectionStrategy;
     }
 
-    // T-5: the direction assigned at Base exit, unaffected by any block it later joins.
+    // T-5: direction assigned at Base exit, unaffected by blocks.
     public MovementDirectionStrategy getOriginalMovementDirectionStrategy() {
         return originalMovementDirectionStrategy;
     }
 
-    // T-5: true once a block's direction has replaced this piece's own, pending restoration.
+    // T-5: true while a block's direction replaces its own.
     public boolean hasAdoptedBlockDirection() {
         return movementDirectionStrategy != originalMovementDirectionStrategy;
     }
 
-    // T-1: how many times this piece has passed its own Approach cell so far.
+    // T-1: times this piece has passed its Approach cell.
     public int getApproachPassCount() {
         return approachPassCount;
     }
 
-    // T-7: how many opponent pieces this piece itself has captured.
+    // T-7: opponent pieces this piece has captured.
     public int getCaptureCount() {
         return captureCount;
     }
 
-    // T-12: this piece's own Energized/Sick status, used only while it moves alone.
+    // T-12: own Energized/Sick status, used when moving alone.
     public MovementEffect getIndividualEffect() {
         return individualEffect;
     }
 
-    // T-12: the shared Energized/Sick status of the block this piece was teleported into -
-    // only meaningful while hasActiveBlockEffectForSize() confirms it still matches the
-    // CURRENT block; use that to decide whether to trust this value.
+    // T-12: shared block status; check hasActiveBlockEffectForSize() first.
     public MovementEffect getBlockEffect() {
         return blockEffect;
     }
 
-    // T-12: true only if this piece's stored block effect was genuinely assigned to a group
-    // of exactly this size. Guards against a stale effect leaking into a later, unrelated
-    // regrouping of the same size - the same size-membership check T-4/T-5 already use for
-    // adoptedForBlockSize, applied here to the effect instead of the direction.
+    // T-12: true only if the block effect matches this block size.
     public boolean hasActiveBlockEffectForSize(int currentBlockSize) {
         return blockEffect.isActive() && blockEffectAssignedForBlockSize == currentBlockSize;
     }
 
-    // T-13: this piece's current movement-restriction state, e.g. Beta-restricted after a teleport.
+    // T-13: current movement restriction, e.g. Beta-restricted.
     public PieceRestrictionState getRestrictionState() {
         return restrictionState;
     }
 
-    // Mutators below are called only by Player (the owning aggregate) - kept public because
-    // model.player is a separate package from model.piece, but every call site outside this
-    // class still goes exclusively through Player's own API, never directly from elsewhere.
+    // Mutators below are public, but only Player should call them.
     public void leaveBase(int entryCellPosition) {
         this.location = PieceLocation.TRACK;
         this.trackPosition = entryCellPosition;
@@ -125,10 +126,7 @@ public final class Piece {
         this.originalMovementDirectionStrategy = movementDirectionStrategy;
     }
 
-    // T-4/T-5: temporarily borrows a block's shared direction while grouped with teammates,
-    // and records how many members the block had when that direction was decided - so a
-    // later arrival changing the block's size can be detected and re-compared fairly,
-    // without recalculating on every ordinary round where membership hasn't changed.
+    // T-4/T-5: borrows a block's direction while grouped, remembering the block size.
     public void adoptBlockDirection(MovementDirectionStrategy blockDirection, int blockSize) {
         this.movementDirectionStrategy = blockDirection;
         this.adoptedForBlockSize = blockSize;
@@ -138,15 +136,15 @@ public final class Piece {
         return adoptedForBlockSize;
     }
 
-    // T-5: resumes the direction assigned when this piece left Base.
+    // T-5: resumes the direction from Base exit.
     public void restoreOriginalDirection() {
         this.movementDirectionStrategy = originalMovementDirectionStrategy;
     }
 
-    // T-14: a Gamma teleport permanently reverses direction - unlike T-5's temporary
-    // block-borrowed direction, both the active AND original direction are replaced.
+    // T-14: Gamma permanently reverses both the active and original direction.
     public void reverseDirection() {
         MovementDirectionStrategy reversed = movementDirectionStrategy.reverse();
+
         this.movementDirectionStrategy = reversed;
         this.originalMovementDirectionStrategy = reversed;
     }
@@ -159,19 +157,18 @@ public final class Piece {
         captureCount++;
     }
 
-    // T-12: assigned once, at the moment this piece is teleported to Alpha.
+    // T-12: assigned once, when teleported to Alpha.
     public void applyIndividualEffect(MovementEffect effect) {
         this.individualEffect = effect;
     }
 
-    // T-12: records which block size this effect was assigned to, so a later regrouping of a
-    // different size (or different members) can tell it no longer applies.
+    // T-12: records block size, so a different regrouping ignores it.
     public void applyBlockEffect(MovementEffect effect, int blockSize) {
         this.blockEffect = effect;
         this.blockEffectAssignedForBlockSize = blockSize;
     }
 
-    // T-12: called once per round so a 4-round effect eventually expires back to None.
+    // T-12: once per round; the 4-round effect eventually expires.
     public void tickIndividualEffect() {
         this.individualEffect = individualEffect.afterRoundElapses();
     }
@@ -180,17 +177,17 @@ public final class Piece {
         this.blockEffect = blockEffect.afterRoundElapses();
     }
 
-    // T-13: assigned once, at the moment this piece is teleported to Beta.
+    // T-13: assigned once, when teleported to Beta.
     public void applyRestriction(PieceRestrictionState restrictionState) {
         this.restrictionState = restrictionState;
     }
 
-    // T-13: called once per round so a 4-round Beta restriction eventually expires.
+    // T-13: once per round; the Beta restriction eventually expires.
     public void tickRestriction() {
         this.restrictionState = restrictionState.afterRoundElapses();
     }
 
-    // T-13: records this round's roll toward the Beta restriction's consecutive-3 condition.
+    // T-13: records this round's roll toward the consecutive-3 rule.
     public void recordRestrictionRoll(int rollValue) {
         this.restrictionState = restrictionState.afterRollRecorded(rollValue);
     }
@@ -209,20 +206,22 @@ public final class Piece {
         this.location = PieceLocation.HOME;
     }
 
-    // T-9/T-12/T-13: every field returns to its Base default, including any temporary
-    // movement effect or Beta restriction.
+    // T-9/T-12/T-13: resets every field to its Base default.
     public void returnToBase() {
         this.location = PieceLocation.BASE;
         this.trackPosition = 0;
         this.homeStraightIndex = 0;
         this.approachPassCount = 0;
         this.captureCount = 0;
+
         this.movementDirectionStrategy = null;
         this.originalMovementDirectionStrategy = null;
         this.adoptedForBlockSize = 0;
+
         this.individualEffect = MovementEffect.none();
         this.blockEffect = MovementEffect.none();
         this.blockEffectAssignedForBlockSize = 0;
+
         this.restrictionState = NoRestrictionState.getInstance();
     }
 

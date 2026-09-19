@@ -8,7 +8,7 @@ import java.util.function.Predicate;
 import config.constant.TurnConstants;
 import model.player.action.Command;
 import model.position.MovementDirectionStrategy;
-import model.effect.MysteryCellLocation;
+import model.effect.mysterycell.MysteryCellLocation;
 import model.piece.Piece;
 import model.player.Player;
 

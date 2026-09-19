@@ -1,4 +1,4 @@
-package model.effect;
+package model.effect.rule;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -10,11 +10,11 @@ import config.enums.CoinTossResult;
 import service.result.GameMessage;
 import view.observer.GameMessagePublisher;
 import config.enums.MovementEffectType;
+import model.effect.movement.MovementEffect;
 import model.piece.Piece;
 import model.player.Player;
 
-// T-12: a coin toss decides Energized or Sick for every piece teleported to Alpha,
-// plus one more shared toss for the whole block when 2+ pieces teleported together.
+// T-12: coin toss picks Energized or Sick for pieces teleported to Alpha.
 public final class AlphaEffectRule {
 
     private final CoinToss coinToss;
@@ -27,6 +27,7 @@ public final class AlphaEffectRule {
         for (Piece piece : teleportedPieces) {
             MovementEffect individualEffect = rollEffect();
             player.applyIndividualEffect(piece, individualEffect);
+
             messages.publish(
                     GameMessage.individualEffectAssigned(piece.toString(), individualEffect.getLabel()));
         }
@@ -35,13 +36,13 @@ public final class AlphaEffectRule {
             return;
         }
 
-        // T-12: as long as they stay grouped, this shared block effect overrides each piece's
-        // own - recorded against this exact group's size so it stops applying the moment the
-        // group's membership changes.
+        // T-12: block effect overrides each piece's own while grouped.
         MovementEffect blockEffect = rollEffect();
+
         for (Piece piece : teleportedPieces) {
             player.applyBlockEffect(piece, blockEffect, teleportedPieces.size());
         }
+
         messages.publish(
                 GameMessage.blockEffectAssigned(describeBlock(teleportedPieces), blockEffect.getLabel()));
     }
@@ -50,6 +51,7 @@ public final class AlphaEffectRule {
         MovementEffectType type = coinToss.flip() == CoinTossResult.HEADS
                 ? MovementEffectType.ENERGIZED
                 : MovementEffectType.SICK;
+
         return MovementEffect.of(type, EffectConstants.EFFECT_DURATION_IN_ROUNDS);
     }
 

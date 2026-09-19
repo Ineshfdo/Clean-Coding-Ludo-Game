@@ -3,7 +3,7 @@ package model.player.strategy;
 import java.util.List;
 
 import model.board.Board;
-import model.effect.MysteryCellLocation;
+import model.effect.mysterycell.MysteryCellLocation;
 import model.player.Player;
 
 // T-16/T-19: bundles the read-only context a PlayerStrategy needs to evaluate legal options,

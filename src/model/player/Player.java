@@ -1,7 +1,7 @@
 package model.player;
-import model.effect.MovementEffect;
+import model.effect.movement.MovementEffect;
 import model.piece.Piece;
-import model.piece.PieceRestrictionState;
+import model.effect.restriction.PieceRestrictionState;
 import model.player.rule.HomeStraightEntryRule;
 
 import model.position.MovementDirectionStrategy;

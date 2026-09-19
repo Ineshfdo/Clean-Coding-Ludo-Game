@@ -1,18 +1,18 @@
-package model.effect;
+package model.effect.mysterycell;
 
-import service.result.GameMessage;
-import view.observer.GameMessagePublisher;
-import java.util.ArrayList;
-import java.util.List;
 import config.constant.BoardConstants;
 import config.constant.MysteryCellConstants;
+import java.util.ArrayList;
+import java.util.List;
 import model.board.Board;
-import utils.random.RandomNumberGenerator;
 import model.piece.Piece;
 import model.player.Player;
+import service.result.GameMessage;
+import utils.random.RandomNumberGenerator;
+import view.observer.GameMessagePublisher;
 
-// T-10: tracks the mystery cell's spawn timing, lifespan, and relocation.
-// Publishes through GameMessagePublisher only - never prints directly (Observer's job).
+// T-10: tracks Mystery Cell spawn, lifespan and relocation.
+// Publishes messages only; never prints directly.
 public final class MysteryCellManager implements MysteryCellLocation {
 
     private static final int NO_ROUND_RECORDED = -1;
@@ -35,29 +35,28 @@ public final class MysteryCellManager implements MysteryCellLocation {
         return currentCellPosition;
     }
 
-    // T-11/T-19: lets other rules and strategies check whether a piece can land on an active
-    // Mystery Cell.
+    // T-11/T-19: lets rules and strategies check for an active cell.
     @Override
     public boolean isActive() {
         return isActive;
     }
 
-    // Called once per round, before turns are played, so a spawn/relocation
-    // is visible for the whole round it takes effect in.
+    // Runs before turns, so changes last the whole round.
     public void onRoundStarted(int roundNumber, List<Player> players, GameMessagePublisher messages) {
         if (isActive) {
             relocateIfDue(players, messages);
             return;
         }
+
         spawnIfDue(roundNumber, players, messages);
     }
 
-    // Called once per round, after turns are played, so a piece that only
-    // reaches the standard path mid-round is still credited to this round.
+    // Runs after turns, so mid-round entries count this round.
     public void onRoundCompleted(int roundNumber, List<Player> players) {
         if (firstStandardPathEntryRound != NO_ROUND_RECORDED) {
             return;
         }
+
         if (isAnyPieceOnStandardPath(players)) {
             firstStandardPathEntryRound = roundNumber;
         }
@@ -67,7 +66,9 @@ public final class MysteryCellManager implements MysteryCellLocation {
         if (firstStandardPathEntryRound == NO_ROUND_RECORDED) {
             return;
         }
+
         int roundsSinceEntry = roundNumber - firstStandardPathEntryRound;
+
         if (roundsSinceEntry < MysteryCellConstants.REQUIRED_ROUNDS_BEFORE_SPAWN
                 || !isAnyPieceOnStandardPath(players)) {
             return;
@@ -76,11 +77,13 @@ public final class MysteryCellManager implements MysteryCellLocation {
         currentCellPosition = selectRandomEmptyCell(players, BoardConstants.NO_TRACK_POSITION);
         roundsRemainingAtCurrentCell = MysteryCellConstants.ROUNDS_PER_LOCATION;
         isActive = true;
+
         messages.publish(GameMessage.mysteryCellAppeared(currentCellPosition));
     }
 
     private void relocateIfDue(List<Player> players, GameMessagePublisher messages) {
         roundsRemainingAtCurrentCell--;
+
         if (roundsRemainingAtCurrentCell > 0) {
             return;
         }
@@ -88,26 +91,31 @@ public final class MysteryCellManager implements MysteryCellLocation {
         int previousCellPosition = currentCellPosition;
         currentCellPosition = selectRandomEmptyCell(players, previousCellPosition);
         roundsRemainingAtCurrentCell = MysteryCellConstants.ROUNDS_PER_LOCATION;
+
         messages.publish(GameMessage.mysteryCellRelocated(currentCellPosition));
     }
 
-    // T-10: excludes the previous cell so it never reappears in the same place consecutively.
+    // T-10: excludes the previous cell so it never repeats.
     private int selectRandomEmptyCell(List<Player> players, int excludedCellPosition) {
         List<Integer> emptyCellPositions = findEmptyCellPositions(players, excludedCellPosition);
         int randomIndex = randomNumberGenerator.nextIntInRange(0, emptyCellPositions.size() - 1);
+
         return emptyCellPositions.get(randomIndex);
     }
 
     private List<Integer> findEmptyCellPositions(List<Player> players, int excludedCellPosition) {
         List<Integer> emptyCellPositions = new ArrayList<>();
+
         for (int cellPosition = 0; cellPosition < board.getStandardCellCount(); cellPosition++) {
             if (cellPosition == excludedCellPosition) {
                 continue;
             }
+
             if (!isCellOccupied(cellPosition, players)) {
                 emptyCellPositions.add(cellPosition);
             }
         }
+
         return emptyCellPositions;
     }
 
@@ -119,6 +127,7 @@ public final class MysteryCellManager implements MysteryCellLocation {
                 }
             }
         }
+
         return false;
     }
 
@@ -130,6 +139,7 @@ public final class MysteryCellManager implements MysteryCellLocation {
                 }
             }
         }
+
         return false;
     }
 }

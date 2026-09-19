@@ -1,9 +1,8 @@
-package model.effect;
+package model.effect.mysterycell;
 
 import config.enums.MysteryCellDestinationType;
 
-// T-11: display text for each Mystery Cell destination - kept out of
-// MysteryCellDestinationType itself so the enum stays a pure list of constants.
+// T-11: display text for each destination, kept out of the enum.
 public final class MysteryCellDestinationLabels {
 
     private MysteryCellDestinationLabels() {

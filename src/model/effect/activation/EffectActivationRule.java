@@ -1,13 +1,13 @@
-package model.effect;
+package model.effect.activation;
 
-// T-15: Chain of Responsibility - validates that a piece reached Alpha/Beta/Gamma through
-// genuine Mystery Cell teleportation before its associated effect is allowed to activate.
+// T-15: Chain of Responsibility - an effect needs a genuine teleport.
 public abstract class EffectActivationRule {
 
     private EffectActivationRule nextRule;
 
     public final EffectActivationRule setNext(EffectActivationRule nextRule) {
         this.nextRule = nextRule;
+
         return nextRule;
     }
 
@@ -15,6 +15,7 @@ public abstract class EffectActivationRule {
         if (!allowsActivation(arrival)) {
             return false;
         }
+
         return nextRule == null || nextRule.permitsActivation(arrival);
     }
 

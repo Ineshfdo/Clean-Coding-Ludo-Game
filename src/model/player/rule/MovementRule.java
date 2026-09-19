@@ -18,7 +18,7 @@ import model.player.action.MoveCommand;
 import model.position.MovementDirectionStrategy;
 import model.board.Board;
 import model.player.strategy.BlockDirectionStrategy;
-import model.effect.MovementEffect;
+import model.effect.movement.MovementEffect;
 import model.piece.Piece;
 import model.player.Player;
 

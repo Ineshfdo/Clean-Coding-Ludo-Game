@@ -1,7 +1,6 @@
-package model.piece;
+package model.effect.restriction;
 
-// T-13: the default state - every piece starts free to move, until a rule (such as landing
-// on Mystery Cell's Beta) places it into BetaRestrictedState.
+// T-13: the default state - the piece is free to move.
 public final class NoRestrictionState implements PieceRestrictionState {
 
     private static final NoRestrictionState INSTANCE = new NoRestrictionState();

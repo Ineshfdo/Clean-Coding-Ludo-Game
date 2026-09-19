@@ -8,11 +8,11 @@ import config.constant.BoardConstants;
 import service.result.GameMessage;
 import view.observer.GameMessagePublisher;
 import model.board.Board;
-import model.effect.MysteryCellArrival;
+import model.effect.activation.MysteryCellArrival;
 import config.enums.MysteryCellDestinationType;
-import model.effect.MysteryCellDestinationLabels;
-import model.effect.MysteryCellEffects;
-import model.piece.BetaRestrictedState;
+import model.effect.mysterycell.MysteryCellDestinationLabels;
+import model.effect.rule.MysteryCellEffects;
+import model.effect.restriction.BetaRestrictedState;
 import model.piece.Piece;
 import model.player.Player;
 

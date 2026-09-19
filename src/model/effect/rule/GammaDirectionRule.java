@@ -1,4 +1,5 @@
-package model.effect;
+package model.effect.rule;
+
 import config.enums.MysteryCellDestinationType;
 
 import java.util.List;
@@ -13,8 +14,7 @@ import model.board.Board;
 import model.piece.Piece;
 import model.player.Player;
 
-// T-14: a Clockwise piece/block teleported to Gamma has its direction reversed; an already
-// Counter-Clockwise piece/block is instead forwarded on to Beta.
+// T-14: Clockwise groups reverse direction; Counter-Clockwise groups go on to Beta.
 public final class GammaDirectionRule {
 
     private final Board board;
@@ -23,8 +23,7 @@ public final class GammaDirectionRule {
         this.board = board;
     }
 
-    // T-15: receives the same MysteryCellEffects bundle TeleportCommand was given, so the
-    // forwarded Beta teleport goes through the identical activation-rule check.
+    // T-15: reuses the same effects bundle, so Beta gets the same activation check.
     public void applyTo(
             Player player, List<Piece> teleportedPieces, GameMessagePublisher messages,
             MysteryCellEffects effects) {
@@ -38,24 +37,25 @@ public final class GammaDirectionRule {
         forwardToBeta(player, teleportedPieces, messages, effects);
     }
 
-    // T-14/Strategy: every member's direction is permanently replaced with its reverse.
+    // T-14: permanently reverses every piece's direction.
     private static void reverseDirection(
             Player player, List<Piece> teleportedPieces, GameMessagePublisher messages) {
         for (Piece piece : teleportedPieces) {
             player.reverseDirection(piece);
         }
+
         MovementDirectionStrategy newDirection = teleportedPieces.get(0).getMovementDirectionStrategy();
         messages.publish(GameMessage.pieceDirectionReversed(
                 describeLabel(teleportedPieces), newDirection.getLabel()));
     }
 
-    // T-14/Command: already Counter-Clockwise, so this group is teleported onward to Beta -
-    // reusing TeleportCommand also reuses T-13's restriction, at no extra cost.
+    // T-14: Counter-Clockwise groups teleport on to Beta.
     private void forwardToBeta(
             Player player, List<Piece> teleportedPieces, GameMessagePublisher messages,
             MysteryCellEffects effects) {
         Command forwardToBeta = new TeleportCommand(
                 player, teleportedPieces, MysteryCellDestinationType.BETA, board, effects);
+
         forwardToBeta.execute(messages);
     }
 

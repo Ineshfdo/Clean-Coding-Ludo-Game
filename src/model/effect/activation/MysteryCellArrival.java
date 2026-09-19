@@ -1,9 +1,8 @@
-package model.effect;
+package model.effect.activation;
+
 import config.enums.MysteryCellDestinationType;
 
-// T-15: proof that a piece's current position was reached through genuine Mystery Cell
-// teleportation. Only TeleportCommand ever constructs one - ordinary movement commands
-// (MoveCommand/BlockMoveCommand) have no way to produce one.
+// T-15: proof a piece arrived by a genuine Mystery Cell teleport.
 public final class MysteryCellArrival {
 
     private final MysteryCellDestinationType destinationType;

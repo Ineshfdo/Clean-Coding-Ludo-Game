@@ -1,8 +1,8 @@
-package model.effect;
+package model.effect.rule;
 
-// T-12/T-14/T-15: bundles TeleportCommand's destination-specific collaborators into one
-// object, so adding a future Mystery Cell effect does not keep growing TeleportCommand's
-// (and MysteryCellTeleportRule's) constructor parameter list.
+import model.effect.activation.EffectActivationRule;
+
+// T-12/T-14/T-15: bundles the Mystery Cell effect rules into one object.
 public final class MysteryCellEffects {
 
     private final AlphaEffectRule alphaEffectRule;
