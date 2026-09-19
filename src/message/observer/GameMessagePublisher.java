@@ -1,7 +1,8 @@
-package view.observer;
+package message.observer;
+
 import message.GameMessage;
 
-// Subject contract (Observer pattern): game logic publishes through this abstraction instead of calling observers directly.
+// Subject: game logic publishes through this, never to observers directly.
 public interface GameMessagePublisher {
 
     void addObserver(GameMessageObserver observer);

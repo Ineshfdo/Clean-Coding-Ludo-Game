@@ -3,8 +3,8 @@ package model.player.command;
 import config.enums.CommandType;
 import java.util.List;
 import java.util.Optional;
+import message.observer.GameMessagePublisher;
 import model.piece.Piece;
-import view.observer.GameMessagePublisher;
 
 // One action wrapped as an object, so callers run it without knowing how.
 public interface Command {

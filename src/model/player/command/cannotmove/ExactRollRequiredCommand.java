@@ -2,9 +2,9 @@ package model.player.command.cannotmove;
 
 import config.enums.CommandType;
 import message.GameMessage;
+import message.observer.GameMessagePublisher;
 import model.piece.Piece;
 import model.player.command.Command;
-import view.observer.GameMessagePublisher;
 
 // Rule 10: announces an exact roll is needed to reach Home.
 public final class ExactRollRequiredCommand implements Command {

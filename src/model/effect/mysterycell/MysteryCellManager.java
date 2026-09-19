@@ -5,11 +5,11 @@ import config.constant.MysteryCellConstants;
 import java.util.ArrayList;
 import java.util.List;
 import message.GameMessage;
+import message.observer.GameMessagePublisher;
 import model.board.Board;
 import model.piece.Piece;
 import model.player.Player;
 import utils.randomgenerator.RandomNumberGenerator;
-import view.observer.GameMessagePublisher;
 
 // T-10: tracks Mystery Cell spawn, lifespan and relocation.
 // Publishes messages only; never prints directly.

@@ -1,11 +1,10 @@
-package view.observer;
-import message.GameMessage;
+package message.observer;
 
 import java.util.ArrayList;
 import java.util.List;
+import message.GameMessage;
 
-// Singleton: every part of the game publishes here, so
-// all observers see every message.
+// Singleton: every part of the game publishes here, so all observers see it.
 public final class GameMessageCenter implements GameMessagePublisher {
 
     private static final GameMessageCenter SHARED_INSTANCE = new GameMessageCenter();
@@ -25,8 +24,7 @@ public final class GameMessageCenter implements GameMessagePublisher {
         observers.add(observer);
     }
 
-    // Clears observers so a fresh game starts clean; this
-    // Singleton persists across the whole JVM.
+    // Clears observers so each game starts clean; the singleton outlives games.
     public void clearObservers() {
         observers.clear();
     }

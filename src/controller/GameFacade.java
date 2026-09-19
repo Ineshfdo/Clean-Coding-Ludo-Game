@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import message.GameMessage;
+import message.observer.GameMessageCenter;
+import message.observer.GameMessagePublisher;
 import model.board.Board;
 import model.board.LudoBoard;
 import model.effect.activation.EffectActivationRule;
@@ -56,8 +58,6 @@ import utils.dice.Dice;
 import utils.dice.SixSidedDice;
 import utils.randomgenerator.SeededRandomNumberGenerator;
 import view.ConsoleGameObserver;
-import view.observer.GameMessageCenter;
-import view.observer.GameMessagePublisher;
 
 public final class GameFacade {
 

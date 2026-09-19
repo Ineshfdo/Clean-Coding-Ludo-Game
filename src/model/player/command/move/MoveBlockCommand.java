@@ -5,6 +5,7 @@ import config.enums.CommandType;
 import java.util.List;
 import java.util.Optional;
 import message.GameMessage;
+import message.observer.GameMessagePublisher;
 import model.board.Board;
 import model.direction.MovementDirectionStrategy;
 import model.piece.Piece;
@@ -12,7 +13,6 @@ import model.player.Player;
 import model.player.command.Command;
 import model.player.rule.home.HomeStraightEntryRule;
 import model.player.strategy.blockdirection.BlockDirectionClassifier;
-import view.observer.GameMessagePublisher;
 
 // T-3: a block moves together using one shared direction.
 public final class MoveBlockCommand implements Command {

@@ -2,10 +2,10 @@ package model.player.command.capture;
 
 import config.enums.CommandType;
 import message.GameMessage;
+import message.observer.GameMessagePublisher;
 import model.piece.Piece;
 import model.player.Player;
 import model.player.command.Command;
-import view.observer.GameMessagePublisher;
 
 // Rule 7: the captured piece returns to Base; the capturer gains one.
 public final class CapturePieceCommand implements Command {

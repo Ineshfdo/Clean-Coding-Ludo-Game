@@ -8,7 +8,7 @@ import config.constant.BlockadeConstants;
 import config.constant.EffectConstants;
 import config.enums.CoinTossResult;
 import message.GameMessage;
-import view.observer.GameMessagePublisher;
+import message.observer.GameMessagePublisher;
 import config.enums.MovementEffectType;
 import model.effect.movement.MovementEffect;
 import model.piece.Piece;

@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import message.GameMessage;
+import message.observer.GameMessagePublisher;
 import model.board.Board;
 import model.piece.Piece;
 import model.player.Player;
@@ -22,7 +23,6 @@ import model.player.strategy.PlayerStrategy;
 import model.player.strategy.PlayerStrategyRegistry;
 import model.player.strategy.StrategyContext;
 import utils.dice.Dice;
-import view.observer.GameMessagePublisher;
 
 public final class GameEngine {
 

@@ -4,10 +4,10 @@ import config.enums.CommandType;
 import java.util.List;
 import java.util.stream.Collectors;
 import message.GameMessage;
+import message.observer.GameMessagePublisher;
 import model.piece.Piece;
 import model.player.Player;
 import model.player.command.Command;
-import view.observer.GameMessagePublisher;
 
 // T-13: consecutive 3s send a Beta-restricted piece/block back to Base.
 public final class BetaReturnToBaseCommand implements Command {

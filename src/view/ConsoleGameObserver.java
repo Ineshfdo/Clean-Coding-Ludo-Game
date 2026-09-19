@@ -1,26 +1,27 @@
 package view;
 
 import config.constant.BlockadeConstants;
-import model.direction.MovementDirectionStrategy;
-import message.GameMessage;
-import view.observer.GameMessageObserver;
+import config.enums.PlayerColor;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import message.GameMessage;
+import message.observer.GameMessageObserver;
 import model.board.Board;
-import config.enums.PlayerColor;
+import model.direction.MovementDirectionStrategy;
+import model.piece.Piece;
+import model.player.Player;
 import model.player.PlayerColorNames;
 import model.player.strategy.blockdirection.BlockDirectionClassifier;
 import model.player.strategy.blockdirection.BlockTravelDirectionStrategy;
-import model.piece.Piece;
-import model.player.Player;
 
-// Observer: turns a GameMessage into console text. Holds roster/board only to render reports.
+// Turns each GameMessage into console text; keeps roster and board only for reports.
 public final class ConsoleGameObserver implements GameMessageObserver {
 
     private static final PlayerColor[] BOARD_STATE_DISPLAY_ORDER =
             { PlayerColor.GREEN, PlayerColor.YELLOW, PlayerColor.BLUE, PlayerColor.RED };
+
     private static final String MYSTERY_CELL_BANNER_BORDER = "=".repeat(40);
     private static final String GAME_OVER_BANNER_BORDER = "=".repeat(50);
     private static final String BOARD_STATE_BANNER_BORDER = "=".repeat(37);
@@ -136,17 +137,18 @@ public final class ConsoleGameObserver implements GameMessageObserver {
         };
     }
 
-    // "R1, R2, R3, and R4" - every label is comma-separated except the last, which gets "and".
+    // "R1, R2, R3, and R4": comma-separated, with "and" before the last.
     private static String joinWithAnd(List<String> labels) {
         if (labels.size() == 1) {
             return labels.get(0);
         }
+
         String allButLast = String.join(", ", labels.subList(0, labels.size() - 1));
+
         return allButLast + ", and " + labels.get(labels.size() - 1);
     }
 
-    // GAME_OVER: ranks 1st..4th in finishing order - the one player who never completed all 4
-    // pieces Home is last, since the game stops once the other 3 have finished.
+    // GAME_OVER: ranks 1st..4th; the player who never finished is last.
     private static String describeGameOver(List<PlayerColor> finalStandings) {
         String[] placeLabels = { "1st", "2nd", "3rd", "4th" };
         StringBuilder banner = new StringBuilder();
@@ -154,27 +156,30 @@ public final class ConsoleGameObserver implements GameMessageObserver {
         banner.append("                   GAME OVER!\n");
         banner.append(GAME_OVER_BANNER_BORDER).append('\n');
         banner.append("FINAL STANDINGS:\n");
+
         for (int rank = 0; rank < finalStandings.size(); rank++) {
             banner.append(placeLabels[rank]).append(" Place: ")
                     .append(finalStandings.get(rank).name()).append('\n');
         }
+
         banner.append(GAME_OVER_BANNER_BORDER);
+
         return banner.toString();
     }
 
-    // T-11: a Base destination has no track cell to report - every other destination does.
+    // T-11: a Base destination has no cell to report.
     private static String describePieceTeleported(GameMessage message) {
         String outcome = "  -> " + message.getPieceLabel() + " landed on the Mystery Cell! Teleported to "
                 + message.getDestinationLabel();
+
         if (message.getNewPosition() < 0) {
             return outcome + ".";
         }
+
         return outcome + " (cell " + message.getNewPosition() + ").";
     }
 
-    // T-4/T-13: a block move also names its BlockType and BlockDirection; a solo move does not.
-    // Requirement 2: a solo standard-path move names the dice value and travel direction that
-    // produced it; a block move keeps its own BlockType/BlockDirection wording (T-4/T-13) instead.
+    // T-4/T-13: block moves name BlockType/BlockDirection; solo moves name dice and direction.
     private String describePieceMoved(GameMessage message) {
         if (message.getBlockTypeLabel() != null) {
             return "  -> Moved " + message.getPieceLabel() + " from cell "
@@ -182,6 +187,7 @@ public final class ConsoleGameObserver implements GameMessageObserver {
                     + " [BlockType:" + message.getBlockTypeLabel()
                     + " BlockDirection:" + message.getMovementDirectionLabel() + "]";
         }
+
         return "  -> " + PlayerColorNames.displayNameOf(message.getColor()) + " moves piece " + message.getPieceLabel()
                 + " from location " + describeCellLabel(message.getFromPosition())
                 + " to " + describeCellLabel(message.getNewPosition())
@@ -189,17 +195,16 @@ public final class ConsoleGameObserver implements GameMessageObserver {
                 + message.getMovementDirectionLabel() + " direction.";
     }
 
-    // Names a track cell the way the board-state report does - "Approach(X)" only for a color's
-    // Approach cell, "Cell(X)" otherwise.
+    // Names a cell "Approach(X)" for an Approach cell, else "Cell(X)".
     private String describeCellLabel(int position) {
         if (isApproachCell(position)) {
             return "Approach(" + position + ")";
         }
+
         return "Cell(" + position + ")";
     }
 
-    // Requirement 4: names the landing square, then the captured player's updated on-board/at-base
-    // tally - same tally shape as describePieceEnteredBoard.
+    // Requirement 4: the landing square, then the captured player's new tally.
     private static String describePieceCaptured(GameMessage message) {
         String captureLine = "  -> " + message.getPieceLabel() + " piece lands on square "
                 + message.getNewPosition() + ", captures " + message.getCapturedPieceLabel()
@@ -207,36 +212,39 @@ public final class ConsoleGameObserver implements GameMessageObserver {
         String tallyLine = "  -> " + PlayerColorNames.displayNameOf(message.getColor()) + " player now has "
                 + message.getPiecesOnBoard() + "/4 pieces on the board and " + message.getPiecesAtBase()
                 + "/4 pieces on the base.";
+
         return captureLine + "\n" + tallyLine;
     }
 
-    // Reports the piece leaving Base for the starting point, then the player's updated
-    // on-board/at-base tally, both sourced from the GameMessage's counts, not recomputed here.
+    // Reports the piece leaving Base, then the player's tally (from the message counts).
     private static String describePieceEnteredBoard(GameMessage message) {
         String colorName = PlayerColorNames.displayNameOf(message.getColor());
         String movedLine = "  -> " + colorName + " player moves piece " + message.getPieceLabel()
                 + " to the starting point.";
         String tallyLine = "  -> " + colorName + " player now has " + message.getPiecesOnBoard()
                 + "/4 pieces on the board and " + message.getPiecesAtBase() + "/4 pieces on the base.";
+
         return movedLine + "\n" + tallyLine;
     }
 
-    // T-10: the mystery cell spawn/relocate wording is bordered so it stands out on the console.
+    // T-10: Mystery Cell banners are bordered to stand out.
     private static String describeMysteryCellBanner(String messageText) {
         return "\n" + MYSTERY_CELL_BANNER_BORDER + "\n" + messageText + "\n" + MYSTERY_CELL_BANNER_BORDER;
     }
 
-    // Requirement 5: a simple on-board/at-base tally per player, printed just before the
-    // detailed per-round board-state dump - same tally line style as describePieceEnteredBoard.
+    // Requirement 5: a per-player board/base tally, printed before the board-state dump.
     private String describeRoundStatusSummary() {
         StringBuilder summary = new StringBuilder("\n-------------------------------\n");
+
         for (PlayerColor color : BOARD_STATE_DISPLAY_ORDER) {
             Player player = findPlayer(color);
             summary.append(PlayerColorNames.displayNameOf(color)).append(" player now has ")
                     .append(player.countPiecesOnBoard()).append("/4 pieces on the board and ")
                     .append(player.countPiecesAtBase()).append("/4 pieces on the base.\n");
         }
+
         summary.append("-------------------------------\n");
+
         return summary.toString();
     }
 
@@ -253,6 +261,7 @@ public final class ConsoleGameObserver implements GameMessageObserver {
         report.append(String.join("\n\n", playerRows));
 
         report.append('\n').append(BOARD_STATE_BANNER_BORDER);
+
         return report.toString();
     }
 
@@ -269,7 +278,7 @@ public final class ConsoleGameObserver implements GameMessageObserver {
         return row.toString();
     }
 
-    // T-3: same-color pieces sharing a track cell form a block, shown as one segment.
+    // T-3: same-color pieces on one cell form a block, shown as one segment.
     private List<String> buildPieceSegments(Player player) {
         List<Piece> pieces = player.getPieces();
         List<String> segments = new ArrayList<>();
@@ -281,6 +290,7 @@ public final class ConsoleGameObserver implements GameMessageObserver {
             }
 
             List<Piece> blockGroup = findBlockGroup(piece, pieces);
+
             if (blockGroup.size() >= BlockadeConstants.MINIMUM_BLOCKADE_SIZE) {
                 segments.add(describeBlock(blockGroup));
                 alreadyShown.addAll(blockGroup);
@@ -293,7 +303,7 @@ public final class ConsoleGameObserver implements GameMessageObserver {
         return segments;
     }
 
-    // Rule 10: same-index HomeStraight pieces also form a block, moving together.
+    // Rule 10: same-index HomeStraight pieces also form a block.
     private static List<Piece> findBlockGroup(Piece piece, List<Piece> allPieces) {
         List<Piece> group = new ArrayList<>();
 
@@ -302,6 +312,7 @@ public final class ConsoleGameObserver implements GameMessageObserver {
                 group.add(candidate);
             }
         }
+
         return group;
     }
 
@@ -309,19 +320,23 @@ public final class ConsoleGameObserver implements GameMessageObserver {
         if (piece.isOnTrack()) {
             return candidate.isOnTrack() && candidate.getTrackPosition() == piece.getTrackPosition();
         }
+
         if (piece.isOnHomeStraight()) {
             return candidate.isOnHomeStraight()
                     && candidate.getHomeStraightIndex() == piece.getHomeStraightIndex();
         }
+
         return false;
     }
 
-    // T-1: only a track block has a direction to choose - HomeStraight has no branching.
+    // T-1: only a track block has a direction; HomeStraight has none to choose.
     private String describeBlock(List<Piece> blockedPieces) {
         StringBuilder block = new StringBuilder("[Block:");
+
         for (Piece piece : blockedPieces) {
             block.append(' ').append(describePiece(piece));
         }
+
         if (blockedPieces.get(0).isOnTrack()) {
             MovementDirectionStrategy travelDirection =
                     blockTravelDirectionStrategy.resolveTravelDirection(blockedPieces, board);
@@ -331,19 +346,20 @@ public final class ConsoleGameObserver implements GameMessageObserver {
             block.append(" BlockDirection:").append(travelDirection.getLabel());
             block.append(" BlockApproachCellPasses:").append(naturalMember.getApproachPassCount());
         }
-        // T-12: every member shares this identical value, so it is shown once for the whole
-        // block - only while it was genuinely assigned to this exact group (see
-        // hasActiveBlockEffectForSize), never for an ordinary blockade formed by movement.
+
+        // T-12: shown once for the block, only if assigned to this exact group.
         Piece blockRepresentative = blockedPieces.get(0);
+
         if (blockRepresentative.hasActiveBlockEffectForSize(blockedPieces.size())) {
             block.append(" BlockEffect:").append(blockRepresentative.getBlockEffect().getLabel());
         }
+
         block.append(']');
+
         return block.toString();
     }
 
-    // T-4/T-5: the member whose OWN direction matches the block's chosen travel direction -
-    // its approach-pass count is what BlockApproachCellPasses reports.
+    // T-4/T-5: the member whose own direction matches the block's; its pass count is reported.
     private static Piece findNaturalMemberFor(List<Piece> blockedPieces, MovementDirectionStrategy travelDirection) {
         return blockedPieces.stream()
                 .filter(piece -> piece.getOriginalMovementDirectionStrategy() == travelDirection)
@@ -351,36 +367,40 @@ public final class ConsoleGameObserver implements GameMessageObserver {
                 .orElse(blockedPieces.get(0));
     }
 
-    // T-9: each piece shows its OWN capture count - HomeStraightEligibilityRule gates on this, not the team total.
+    // T-9: each piece shows its own capture count (HomeStraight entry depends on it).
     private String describePiece(Piece piece) {
         return piece + "(" + describeLocation(piece) + describeDirection(piece)
                 + ", IndividualCaptureCount:" + piece.getCaptureCount() + describeIndividualEffect(piece)
                 + describeRestriction(piece) + ")";
     }
 
-    // T-12: only shown while this piece's own Energized/Sick status is active - most pieces never have one.
+    // T-12: shown only while the piece's own Energized/Sick effect is active.
     private static String describeIndividualEffect(Piece piece) {
         if (!piece.getIndividualEffect().isActive()) {
             return "";
         }
+
         return ", IndividualEffect:" + piece.getIndividualEffect().getLabel();
     }
 
-    // T-13: only shown while this piece is still Beta-restricted - most pieces never have one.
+    // T-13: shown only while the piece is Beta-restricted.
     private static String describeRestriction(Piece piece) {
         if (!piece.getRestrictionState().forbidsMovement()) {
             return "";
         }
+
         return ", BetaRestrictionRoundsLeft:" + piece.getRestrictionState().getRoundsRemaining();
     }
 
-    // T-1/T-5: shown only after a coin toss assigns direction - never for Base or Home.
+    // T-1/T-5: shown only after a coin toss sets direction, never for Base or Home.
     private String describeDirection(Piece piece) {
         if (piece.isAtBase() || piece.isHome()) {
             return "";
         }
+
         MovementDirectionStrategy direction = piece.getMovementDirectionStrategy();
         MovementDirectionStrategy originalDirection = piece.getOriginalMovementDirectionStrategy();
+
         return ", CurrentDirection:" + direction.getLabel() + ", OriginalDirection:" + originalDirection.getLabel()
                 + ", ApproachCellPasses:" + piece.getApproachPassCount();
     }
@@ -389,17 +409,21 @@ public final class ConsoleGameObserver implements GameMessageObserver {
         if (piece.isAtBase()) {
             return "BASE";
         }
+
         if (piece.isOnHomeStraight()) {
             return "HomeStraight(" + piece.getHomeStraightIndex() + ")";
         }
+
         if (piece.isHome()) {
             return "HOME";
         }
 
         int position = piece.getTrackPosition();
+
         if (isApproachCell(position)) {
             return "Approach(" + position + ")";
         }
+
         return "Cell(" + position + ")";
     }
 
@@ -409,6 +433,7 @@ public final class ConsoleGameObserver implements GameMessageObserver {
                 return true;
             }
         }
+
         return false;
     }
 

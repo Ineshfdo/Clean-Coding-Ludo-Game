@@ -4,13 +4,13 @@ import config.constant.BoardConstants;
 import config.enums.CommandType;
 import java.util.Optional;
 import message.GameMessage;
+import message.observer.GameMessagePublisher;
 import model.board.Board;
 import model.direction.MovementDirectionStrategy;
 import model.piece.Piece;
 import model.player.Player;
 import model.player.command.Command;
 import model.player.rule.home.HomeStraightEntryRule;
-import view.observer.GameMessagePublisher;
 
 // Rule 1: moves a piece forward by the dice value.
 public final class MovePieceCommand implements Command {

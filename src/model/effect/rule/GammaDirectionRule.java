@@ -9,7 +9,7 @@ import model.player.command.Command;
 import model.player.command.mystery.MysteryCellTeleportCommand;
 import model.direction.MovementDirectionStrategy;
 import message.GameMessage;
-import view.observer.GameMessagePublisher;
+import message.observer.GameMessagePublisher;
 import model.board.Board;
 import model.piece.Piece;
 import model.player.Player;

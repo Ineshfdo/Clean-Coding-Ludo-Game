@@ -1,4 +1,5 @@
-package view.observer;
+package message.observer;
+
 import message.GameMessage;
 
 // Observer: implementations decide how a published GameMessage is shown.

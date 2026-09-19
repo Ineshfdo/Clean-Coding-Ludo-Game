@@ -3,9 +3,9 @@ package model.player.command.cannotmove;
 import config.enums.CommandType;
 import java.util.List;
 import message.GameMessage;
+import message.observer.GameMessagePublisher;
 import model.piece.Piece;
 import model.player.command.Command;
-import view.observer.GameMessagePublisher;
 
 // T-3: announces an opponent blockade stops this piece or block.
 public final class MoveBlockedByBlockadeCommand implements Command {

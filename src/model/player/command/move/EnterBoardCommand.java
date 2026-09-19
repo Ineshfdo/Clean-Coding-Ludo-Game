@@ -3,6 +3,7 @@ package model.player.command.move;
 import config.enums.CoinTossResult;
 import config.enums.CommandType;
 import message.GameMessage;
+import message.observer.GameMessagePublisher;
 import model.board.Board;
 import model.direction.ClockwiseMovementStrategy;
 import model.direction.CounterClockwiseMovementStrategy;
@@ -12,7 +13,6 @@ import model.player.Player;
 import model.player.command.Command;
 import utils.coin.CoinToss;
 import utils.coin.CoinTossLabels;
-import view.observer.GameMessagePublisher;
 
 // Rule 2: Base -> Entry, then a coin toss sets direction (T-1).
 public final class EnterBoardCommand implements Command {
