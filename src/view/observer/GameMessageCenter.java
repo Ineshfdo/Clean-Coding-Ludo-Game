@@ -1,5 +1,5 @@
 package view.observer;
-import service.result.GameMessage;
+import message.GameMessage;
 
 import java.util.ArrayList;
 import java.util.List;

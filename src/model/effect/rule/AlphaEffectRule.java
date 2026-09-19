@@ -7,7 +7,7 @@ import utils.random.CoinToss;
 import config.constant.BlockadeConstants;
 import config.constant.EffectConstants;
 import config.enums.CoinTossResult;
-import service.result.GameMessage;
+import message.GameMessage;
 import view.observer.GameMessagePublisher;
 import config.enums.MovementEffectType;
 import model.effect.movement.MovementEffect;

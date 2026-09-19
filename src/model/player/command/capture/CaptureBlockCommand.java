@@ -3,10 +3,10 @@ package model.player.command.capture;
 import config.enums.CommandType;
 import java.util.List;
 import java.util.stream.Collectors;
+import message.GameMessage;
 import model.piece.Piece;
 import model.player.Player;
 import model.player.command.Command;
-import service.result.GameMessage;
 import view.observer.GameMessagePublisher;
 
 // T-8: a blockade captures an equal-sized blockade; each capturer gains one.

@@ -4,10 +4,10 @@ import config.constant.BoardConstants;
 import config.constant.MysteryCellConstants;
 import java.util.ArrayList;
 import java.util.List;
+import message.GameMessage;
 import model.board.Board;
 import model.piece.Piece;
 import model.player.Player;
-import service.result.GameMessage;
 import utils.random.RandomNumberGenerator;
 import view.observer.GameMessagePublisher;
 

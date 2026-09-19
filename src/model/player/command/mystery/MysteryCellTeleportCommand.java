@@ -5,6 +5,7 @@ import config.enums.CommandType;
 import config.enums.MysteryCellDestinationType;
 import java.util.List;
 import java.util.stream.Collectors;
+import message.GameMessage;
 import model.board.Board;
 import model.effect.activation.MysteryCellArrival;
 import model.effect.mysterycell.MysteryCellDestinationLabels;
@@ -13,7 +14,6 @@ import model.effect.rule.MysteryCellEffects;
 import model.piece.Piece;
 import model.player.Player;
 import model.player.command.Command;
-import service.result.GameMessage;
 import view.observer.GameMessagePublisher;
 
 // T-11: teleports pieces from the Mystery Cell to a random destination.

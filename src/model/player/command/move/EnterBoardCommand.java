@@ -2,6 +2,7 @@ package model.player.command.move;
 
 import config.enums.CoinTossResult;
 import config.enums.CommandType;
+import message.GameMessage;
 import model.board.Board;
 import model.direction.ClockwiseMovementStrategy;
 import model.direction.CounterClockwiseMovementStrategy;
@@ -9,7 +10,6 @@ import model.direction.MovementDirectionStrategy;
 import model.piece.Piece;
 import model.player.Player;
 import model.player.command.Command;
-import service.result.GameMessage;
 import utils.random.CoinToss;
 import utils.random.CoinTossLabels;
 import view.observer.GameMessagePublisher;

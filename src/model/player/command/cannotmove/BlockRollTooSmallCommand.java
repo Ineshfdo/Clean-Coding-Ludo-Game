@@ -1,9 +1,9 @@
 package model.player.command.cannotmove;
 
 import config.enums.CommandType;
+import message.GameMessage;
 import model.piece.Piece;
 import model.player.command.Command;
-import service.result.GameMessage;
 import view.observer.GameMessagePublisher;
 
 // T-4: announces a block's roll dropped to zero cells.

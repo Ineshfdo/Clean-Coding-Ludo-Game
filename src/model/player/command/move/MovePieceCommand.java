@@ -3,13 +3,13 @@ package model.player.command.move;
 import config.constant.BoardConstants;
 import config.enums.CommandType;
 import java.util.Optional;
+import message.GameMessage;
 import model.board.Board;
 import model.direction.MovementDirectionStrategy;
 import model.piece.Piece;
 import model.player.Player;
 import model.player.command.Command;
 import model.player.rule.home.HomeStraightEntryRule;
-import service.result.GameMessage;
 import view.observer.GameMessagePublisher;
 
 // Rule 1: moves a piece forward by the dice value.

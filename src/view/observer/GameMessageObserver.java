@@ -1,5 +1,5 @@
 package view.observer;
-import service.result.GameMessage;
+import message.GameMessage;
 
 // Observer: implementations decide how a published GameMessage is shown.
 public interface GameMessageObserver {

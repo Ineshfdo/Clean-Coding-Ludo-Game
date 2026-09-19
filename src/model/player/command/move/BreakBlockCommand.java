@@ -3,10 +3,10 @@ package model.player.command.move;
 import config.enums.CommandType;
 import java.util.List;
 import java.util.stream.Collectors;
+import message.GameMessage;
 import model.piece.Piece;
 import model.player.Player;
 import model.player.command.Command;
-import service.result.GameMessage;
 import view.observer.GameMessagePublisher;
 
 // T-5/T-6: pieces leave the block, then each runs its own move.

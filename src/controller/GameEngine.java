@@ -7,6 +7,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import message.GameMessage;
 import model.board.Board;
 import model.piece.Piece;
 import model.player.Player;
@@ -20,7 +21,6 @@ import model.player.rule.turn.TurnRule;
 import model.player.strategy.PlayerStrategy;
 import model.player.strategy.PlayerStrategyRegistry;
 import model.player.strategy.StrategyContext;
-import service.result.GameMessage;
 import utils.random.Dice;
 import view.observer.GameMessagePublisher;
 

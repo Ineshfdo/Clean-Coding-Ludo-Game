@@ -2,7 +2,7 @@ package view;
 
 import config.constant.BlockadeConstants;
 import model.direction.MovementDirectionStrategy;
-import service.result.GameMessage;
+import message.GameMessage;
 import view.observer.GameMessageObserver;
 import java.util.ArrayList;
 import java.util.HashSet;

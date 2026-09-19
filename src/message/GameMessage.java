@@ -1,20 +1,20 @@
-package service.result;
-import config.enums.GameMessageType;
+package message;
 
+import config.enums.GameMessageType;
+import config.enums.PlayerColor;
 import java.util.List;
 
-import config.enums.PlayerColor;
-
-// Carries what happened; game logic never decides wording -
-// that's ConsoleGameObserver's job.
+// Carries what happened; ConsoleGameObserver decides the wording.
 public final class GameMessage {
 
     private final GameMessageType type;
     private final PlayerColor color;
+
     private final int rollValue;
     private final int roundNumber;
     private final int fromPosition;
     private final int newPosition;
+
     private final String pieceLabel;
     private final String homeStraightCellLabel;
     private final String capturedPieceLabel;
@@ -23,8 +23,10 @@ public final class GameMessage {
     private final String blockTypeLabel;
     private final String destinationLabel;
     private final String effectLabel;
+
     private final List<PlayerColor> finalStandings;
     private final List<String> pieceLabels;
+
     private final int piecesOnBoard;
     private final int piecesAtBase;
 
@@ -36,10 +38,12 @@ public final class GameMessage {
             int piecesOnBoard, int piecesAtBase) {
         this.type = type;
         this.color = color;
+
         this.rollValue = rollValue;
         this.roundNumber = roundNumber;
         this.fromPosition = fromPosition;
         this.newPosition = newPosition;
+
         this.pieceLabel = pieceLabel;
         this.homeStraightCellLabel = homeStraightCellLabel;
         this.capturedPieceLabel = capturedPieceLabel;
@@ -48,8 +52,10 @@ public final class GameMessage {
         this.blockTypeLabel = blockTypeLabel;
         this.destinationLabel = destinationLabel;
         this.effectLabel = effectLabel;
+
         this.finalStandings = finalStandings;
         this.pieceLabels = pieceLabels;
+
         this.piecesOnBoard = piecesOnBoard;
         this.piecesAtBase = piecesAtBase;
     }
@@ -101,8 +107,7 @@ public final class GameMessage {
                 null, null, null, null, null, 0, 0);
     }
 
-    // Requirement 2: a solo standard-path move reports the dice value and travel direction
-    // that produced it, alongside both endpoints - T-13's fromPosition/newPosition.
+    // Requirement 2: a solo move reports its dice value, direction and both endpoints.
     public static GameMessage pieceMoved(
             PlayerColor color, String pieceLabel, int fromPosition, int newPosition, int diceValue,
             String movementDirectionLabel) {
@@ -111,7 +116,7 @@ public final class GameMessage {
                 null, null, null, movementDirectionLabel, null, null, null, null, null, 0, 0);
     }
 
-    // T-4/T-13: a block move also reports its chosen direction, classification, and both endpoints.
+    // T-4/T-13: a block move reports its direction, type and both endpoints.
     public static GameMessage blockMoved(
             String pieceLabel, int fromPosition, int newPosition, String blockTypeLabel,
             String movementDirectionLabel) {
@@ -120,8 +125,7 @@ public final class GameMessage {
                 null, null, movementDirectionLabel, blockTypeLabel, null, null, null, null, 0, 0);
     }
 
-    // Observer pattern: reports the color, the piece that just left Base, and the player's
-    // current on-board/at-base tally so ConsoleGameObserver can render both without recomputing.
+    // Observer: reports the piece that left Base and the player's board/base tally.
     public static GameMessage pieceEnteredBoard(
             PlayerColor color, String pieceLabel, int newPosition, int piecesOnBoard, int piecesAtBase) {
         return new GameMessage(
@@ -148,9 +152,7 @@ public final class GameMessage {
                 null, null, null, null, null, null, null, 0, 0);
     }
 
-    // Requirement 4: reports where the capture happened, the captured piece's color, and that
-    // player's updated on-board/at-base tally after returning to Base - same tally shape as
-    // pieceEnteredBoard.
+    // Requirement 4: reports the capture cell, the captured piece and its player's new tally.
     public static GameMessage pieceCaptured(
             String capturingPieceLabel, int capturePosition, String capturedPieceLabel,
             PlayerColor capturedPlayerColor, int piecesOnBoard, int piecesAtBase) {
@@ -196,79 +198,77 @@ public final class GameMessage {
                 null, null, null, null, null, null, 0, 0);
     }
 
-    // T-10: the mystery cell's first spawn, at a random empty standard-path cell.
+    // T-10: the Mystery Cell's first spawn, on a random empty cell.
     public static GameMessage mysteryCellAppeared(int cellPosition) {
         return new GameMessage(
                 GameMessageType.MYSTERY_CELL_APPEARED, null, 0, 0, 0, cellPosition, null, null,
                 null, null, null, null, null, null, null, null, 0, 0);
     }
 
-    // T-10: the mystery cell relocating after its four rounds at the previous cell.
+    // T-10: the Mystery Cell relocates after four rounds.
     public static GameMessage mysteryCellRelocated(int cellPosition) {
         return new GameMessage(
                 GameMessageType.MYSTERY_CELL_RELOCATED, null, 0, 0, 0, cellPosition, null, null,
                 null, null, null, null, null, null, null, null, 0, 0);
     }
 
-    // T-11: landing on the Mystery Cell teleports to a randomly chosen destination.
-    // newPosition is -1 when destinationLabel is Base - there is no track cell.
+    // T-11: teleport to a random destination; newPosition is -1 for Base (no track cell).
     public static GameMessage pieceTeleported(String pieceLabel, String destinationLabel, int newPosition) {
         return new GameMessage(
                 GameMessageType.PIECE_TELEPORTED, null, 0, 0, 0, newPosition, pieceLabel, null,
                 null, null, null, null, destinationLabel, null, null, null, 0, 0);
     }
 
-    // T-12: a coin toss assigns this piece its own Energized/Sick status.
+    // T-12: a coin toss gives this piece its own Energized/Sick status.
     public static GameMessage individualEffectAssigned(String pieceLabel, String effectLabel) {
         return new GameMessage(
                 GameMessageType.INDIVIDUAL_EFFECT_ASSIGNED, null, 0, 0, 0, 0, pieceLabel, null,
                 null, null, null, null, null, effectLabel, null, null, 0, 0);
     }
 
-    // T-12: a coin toss assigns the whole teleported block a shared Energized/Sick status.
+    // T-12: a coin toss gives the teleported block a shared Energized/Sick status.
     public static GameMessage blockEffectAssigned(String blockLabel, String effectLabel) {
         return new GameMessage(
                 GameMessageType.BLOCK_EFFECT_ASSIGNED, null, 0, 0, 0, 0, blockLabel, null,
                 null, null, null, null, null, effectLabel, null, null, 0, 0);
     }
 
-    // T-12: a Sick effect halved this roll down to zero cells.
+    // T-12: a Sick effect cut the roll to zero cells.
     public static GameMessage effectRollTooSmall(String pieceLabel) {
         return new GameMessage(
                 GameMessageType.EFFECT_ROLL_TOO_SMALL, null, 0, 0, 0, 0, pieceLabel, null, null,
                 null, null, null, null, null, null, null, 0, 0);
     }
 
-    // T-13: two consecutive rounds of rolling a 3 forced this Beta-restricted piece/block to Base.
+    // T-13: consecutive 3s sent a Beta-restricted piece/block back to Base.
     public static GameMessage betaRestrictionTriggered(String pieceLabel) {
         return new GameMessage(
                 GameMessageType.BETA_RESTRICTION_TRIGGERED, null, 0, 0, 0, 0, pieceLabel, null, null,
                 null, null, null, null, null, null, null, 0, 0);
     }
 
-    // T-13: announces that a just-teleported piece/block cannot move for the next 4 rounds.
+    // T-13: a teleported piece/block cannot move for 4 rounds.
     public static GameMessage betaRestrictionApplied(String pieceLabel) {
         return new GameMessage(
                 GameMessageType.BETA_RESTRICTION_APPLIED, null, 0, 0, 0, 0, pieceLabel, null, null,
                 null, null, null, null, null, null, null, 0, 0);
     }
 
-    // T-14: a Gamma teleport reversed this piece/block's direction (Clockwise <-> Counter-Clockwise).
+    // T-14: a Gamma teleport reversed the piece/block's direction.
     public static GameMessage pieceDirectionReversed(String pieceLabel, String newDirectionLabel) {
         return new GameMessage(
                 GameMessageType.PIECE_DIRECTION_REVERSED, null, 0, 0, 0, 0, pieceLabel, null, null,
                 null, newDirectionLabel, null, null, null, null, null, 0, 0);
     }
 
-    // 3.1: announces one player's full piece roster before the game begins.
+    // 3.1: announces a player's pieces before the game begins.
     public static GameMessage playerRosterAnnounced(PlayerColor color, List<String> pieceLabels) {
         return new GameMessage(
                 GameMessageType.PLAYER_ROSTER_ANNOUNCED, color, 0, 0, 0, 0, null, null, null, null,
                 null, null, null, null, null, pieceLabels, 0, 0);
     }
 
-    // GAME_OVER: the game ends once 3 of the 4 players have every piece Home - finalStandings
-    // is ranked 1st..4th, with the one remaining unfinished player placed last.
+    // GAME_OVER: standings ranked 1st..4th; the unfinished player is last.
     public static GameMessage gameOver(List<PlayerColor> finalStandings) {
         return new GameMessage(
                 GameMessageType.GAME_OVER, null, 0, 0, 0, 0, null, null, null, null, null, null,
