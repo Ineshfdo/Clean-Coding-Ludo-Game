@@ -1,8 +1,8 @@
 package model.player.rule;
 
 import config.constant.BlockadeConstants;
-import model.player.action.CaptureCommand;
-import model.player.action.Command;
+import model.player.command.capture.CaptureCommand;
+import model.player.command.Command;
 import java.util.List;
 import java.util.Optional;
 import model.piece.Piece;

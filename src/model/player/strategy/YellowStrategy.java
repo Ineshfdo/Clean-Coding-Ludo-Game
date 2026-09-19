@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
 
-import model.player.action.Command;
+import model.player.command.Command;
 import config.enums.CommandType;
 import model.piece.Piece;
 import model.position.RemainingHomeDistance;

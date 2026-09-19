@@ -1,6 +1,6 @@
 package model.player.strategy;
 
-import model.player.action.Command;
+import model.player.command.Command;
 import config.enums.CommandType;
 import java.util.List;
 

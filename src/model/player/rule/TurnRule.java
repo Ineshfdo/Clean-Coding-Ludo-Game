@@ -2,7 +2,7 @@ package model.player.rule;
 
 import java.util.List;
 
-import model.player.action.Command;
+import model.player.command.Command;
 import model.board.Board;
 import model.player.Player;
 

@@ -1,4 +1,4 @@
-package model.player.action;
+package model.player.command.movement;
 
 import java.util.Optional;
 

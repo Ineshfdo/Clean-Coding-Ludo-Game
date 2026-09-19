@@ -6,7 +6,7 @@ import java.util.Optional;
 import java.util.function.Predicate;
 
 import config.constant.TurnConstants;
-import model.player.action.Command;
+import model.player.command.Command;
 import model.position.MovementDirectionStrategy;
 import model.effect.mysterycell.MysteryCellLocation;
 import model.piece.Piece;

@@ -1,4 +1,4 @@
-package model.player.action;
+package model.player.command.movement;
 
 import config.constant.BoardConstants;
 import model.position.MovementDirectionStrategy;

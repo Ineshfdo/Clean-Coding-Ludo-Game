@@ -5,8 +5,8 @@ import config.enums.MysteryCellDestinationType;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import model.player.action.Command;
-import model.player.action.TeleportCommand;
+import model.player.command.Command;
+import model.player.command.mysterycell.TeleportCommand;
 import model.position.MovementDirectionStrategy;
 import service.result.GameMessage;
 import view.observer.GameMessagePublisher;

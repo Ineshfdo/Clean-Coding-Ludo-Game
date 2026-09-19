@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import model.player.action.Command;
-import model.player.action.TeleportCommand;
+import model.player.command.Command;
+import model.player.command.mysterycell.TeleportCommand;
 import model.board.Board;
 import config.enums.MysteryCellDestinationType;
 import model.effect.rule.MysteryCellEffects;

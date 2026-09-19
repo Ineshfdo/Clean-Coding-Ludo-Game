@@ -1,11 +1,12 @@
-package model.player.action;
-import config.enums.CommandType;
+package model.player.command.cannotmove;
 
+import config.enums.CommandType;
+import model.piece.Piece;
+import model.player.command.Command;
 import service.result.GameMessage;
 import view.observer.GameMessagePublisher;
-import model.piece.Piece;
 
-// Rule 10: announces a HomeStraight piece needs an exact roll to reach Home.
+// Rule 10: announces an exact roll is needed to reach Home.
 public final class ExactRollRequiredCommand implements Command {
 
     private final Piece piece;
@@ -21,7 +22,7 @@ public final class ExactRollRequiredCommand implements Command {
 
     @Override
     public CommandType getType() {
-        return CommandType.BLOCKED;
+        return CommandType.CANNOT_MOVE;
     }
 
     @Override

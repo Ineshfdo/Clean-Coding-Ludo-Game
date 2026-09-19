@@ -1,16 +1,17 @@
-package model.player.action;
-import config.enums.CommandType;
+package model.player.command.cannotmove;
 
+import config.enums.CommandType;
+import model.piece.Piece;
+import model.player.command.Command;
 import service.result.GameMessage;
 import view.observer.GameMessagePublisher;
-import model.piece.Piece;
 
-// T-12: announces a Sick-halved roll that fell to zero cells and cannot move.
-public final class EffectRollTooSmallCommand implements Command {
+// T-12: announces a Sick roll dropped to zero cells.
+public final class SickRollTooSmallCommand implements Command {
 
     private final Piece piece;
 
-    public EffectRollTooSmallCommand(Piece piece) {
+    public SickRollTooSmallCommand(Piece piece) {
         this.piece = piece;
     }
 
@@ -21,7 +22,7 @@ public final class EffectRollTooSmallCommand implements Command {
 
     @Override
     public CommandType getType() {
-        return CommandType.BLOCKED;
+        return CommandType.CANNOT_MOVE;
     }
 
     @Override

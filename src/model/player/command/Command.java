@@ -1,4 +1,4 @@
-package model.player.action;
+package model.player.command;
 import config.enums.CommandType;
 
 import java.util.List;

@@ -5,8 +5,8 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import config.constant.BlockadeConstants;
-import model.player.action.CaptureBlockCommand;
-import model.player.action.Command;
+import model.player.command.capture.CaptureBlockCommand;
+import model.player.command.Command;
 import model.piece.Piece;
 import model.player.Player;
 

@@ -7,14 +7,14 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import config.constant.BlockadeConstants;
-import model.player.action.BlockMoveCommand;
-import model.player.action.BlockRollTooSmallCommand;
-import model.player.action.BlockedMoveCommand;
-import model.player.action.BreakBlockCommand;
-import model.player.action.Command;
-import model.player.action.EffectRollTooSmallCommand;
-import model.player.action.ExactRollRequiredCommand;
-import model.player.action.MoveCommand;
+import model.player.command.movement.BlockMoveCommand;
+import model.player.command.cannotmove.BlockRollTooSmallCommand;
+import model.player.command.movement.BreakBlockCommand;
+import model.player.command.Command;
+import model.player.command.cannotmove.ExactRollRequiredCommand;
+import model.player.command.cannotmove.MoveBlockedByBlockadeCommand;
+import model.player.command.movement.MoveCommand;
+import model.player.command.cannotmove.SickRollTooSmallCommand;
 import model.position.MovementDirectionStrategy;
 import model.board.Board;
 import model.player.strategy.BlockDirectionStrategy;
@@ -87,9 +87,9 @@ public final class MovementRule implements TurnRule {
             return new BlockRollTooSmallCommand(representative);
         }
         if (resolveActiveEffect(blockPieces).applyTo(blockAdjustedSteps) == 0) {
-            return new EffectRollTooSmallCommand(representative);
+            return new SickRollTooSmallCommand(representative);
         }
-        return new BlockedMoveCommand(blockPieces);
+        return new MoveBlockedByBlockadeCommand(blockPieces);
     }
 
     // T-3/T-1/T-5: a block moves together; a lone piece breaks away if a restore is owed.

@@ -4,8 +4,8 @@ import java.util.List;
 import java.util.Optional;
 
 import config.constant.TurnConstants;
-import model.player.action.Command;
-import model.player.action.ReturnToBaseCommand;
+import model.player.command.Command;
+import model.player.command.mysterycell.ReturnToBaseCommand;
 import model.piece.Piece;
 import model.player.Player;
 

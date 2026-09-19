@@ -10,7 +10,7 @@ import java.util.Set;
 import model.board.Board;
 import model.piece.Piece;
 import model.player.Player;
-import model.player.action.Command;
+import model.player.command.Command;
 import model.player.rule.BetaRestrictionRule;
 import model.player.rule.BlockadeBreakRule;
 import model.player.rule.CaptureRule;

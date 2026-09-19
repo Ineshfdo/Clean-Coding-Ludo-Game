@@ -1,4 +1,5 @@
-package model.player.action;
+package model.player.command.movement;
+import model.player.command.Command;
 import config.enums.CommandType;
 
 import utils.random.CoinToss;

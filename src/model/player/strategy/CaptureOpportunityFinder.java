@@ -5,7 +5,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import config.constant.BlockadeConstants;
-import model.player.action.Command;
+import model.player.command.Command;
 import model.piece.Piece;
 import model.player.Player;
 

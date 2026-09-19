@@ -6,9 +6,9 @@ import java.util.stream.Collectors;
 
 import config.constant.BlockadeConstants;
 import config.constant.DiceConstants;
-import model.player.action.BreakBlockCommand;
-import model.player.action.Command;
-import model.player.action.MoveCommand;
+import model.player.command.movement.BreakBlockCommand;
+import model.player.command.Command;
+import model.player.command.movement.MoveCommand;
 import model.position.MovementDirectionStrategy;
 import model.board.Board;
 import model.piece.Piece;
