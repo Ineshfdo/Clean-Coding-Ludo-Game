@@ -39,4 +39,9 @@ public interface Command {
     default boolean breaksExistingBlock() {
         return false;
     }
+
+    // Red: would this move carry a track piece off the standard path (into HomeStraight or Home)?
+    default boolean leavesStandardPath() {
+        return false;
+    }
 }

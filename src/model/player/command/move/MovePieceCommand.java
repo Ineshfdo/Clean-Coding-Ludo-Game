@@ -81,4 +81,9 @@ public final class MovePieceCommand implements Command {
     public boolean reachesHome() {
         return HomeArrivalChecker.resolve(piece, effectiveDiceValue, board, homeStraightEntryRule, travelDirection);
     }
+
+    @Override
+    public boolean leavesStandardPath() {
+        return HomeArrivalChecker.leavesTrack(piece, effectiveDiceValue, board, homeStraightEntryRule, travelDirection);
+    }
 }

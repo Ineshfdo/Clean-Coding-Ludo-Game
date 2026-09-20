@@ -62,4 +62,9 @@ public final class BreakBlockCommand implements Command {
     public boolean breaksExistingBlock() {
         return true;
     }
+
+    @Override
+    public boolean leavesStandardPath() {
+        return releasedPieceMoves.stream().anyMatch(Command::leavesStandardPath);
+    }
 }

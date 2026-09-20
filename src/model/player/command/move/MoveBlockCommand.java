@@ -108,6 +108,12 @@ public final class MoveBlockCommand implements Command {
                 blockPieces.get(0), effectiveDiceValue, board, homeStraightEntryRule, travelDirection);
     }
 
+    @Override
+    public boolean leavesStandardPath() {
+        return HomeArrivalChecker.leavesTrack(
+                blockPieces.get(0), effectiveDiceValue, board, homeStraightEntryRule, travelDirection);
+    }
+
     // T-4/T-17: the "move as a block" action GreenStrategy prefers.
     @Override
     public boolean movesExistingBlock() {
