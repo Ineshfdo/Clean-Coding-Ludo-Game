@@ -74,6 +74,12 @@ public abstract class Player {
         piece.moveTo(trackPosition);
     }
 
+    // T-1/T-11: teleporting onto Approach counts as arriving there, like landing on it.
+    public void recordApproachPass(Piece piece) {
+        requireOwnership(piece);
+        piece.recordApproachPass();
+    }
+
     // T-12: assigns a piece's own Energized/Sick effect (Alpha teleport).
     public void applyIndividualEffect(Piece piece, MovementEffect effect) {
         requireOwnership(piece);
@@ -184,7 +190,10 @@ public abstract class Player {
             return;
         }
 
-        piece.recordApproachPass();
+        // Leaving Approach isn't a new pass: arriving on it was already counted.
+        if (stepsToApproach > 0) {
+            piece.recordApproachPass();
+        }
 
         if (homeStraightEntryRule.forbidsEntry(piece)) {
             piece.moveTo(travelDirection.nextPosition(piece.getTrackPosition(), steps, board));

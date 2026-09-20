@@ -55,6 +55,13 @@ public final class MysteryCellTeleportCommand implements Command {
             player.teleportTo(piece, targetPosition);
         }
 
+        // T-1: arriving on Approach counts as a pass, so the next move can enter HomeStraight.
+        if (destinationType == MysteryCellDestinationType.APPROACH) {
+            for (Piece piece : teleportedPieces) {
+                player.recordApproachPass(piece);
+            }
+        }
+
         messages.publish(GameMessage.pieceTeleported(
             describeLabel(), MysteryCellDestinationLabels.labelOf(destinationType), targetPosition
         ));

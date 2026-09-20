@@ -22,7 +22,9 @@ public final class RemainingHomeDistance {
         MovementDirectionStrategy ownDirection = piece.getOriginalMovementDirectionStrategy();
         int stepsToApproach = ownDirection.stepsToApproach(piece.getTrackPosition(), piece.getColor(), board);
 
-        int passesAfterThisCrossing = piece.getApproachPassCount() + 1;
+        // Standing on Approach, its arrival is already counted, so only full laps remain.
+        int nextCrossingPasses = stepsToApproach > 0 ? 1 : 0;
+        int passesAfterThisCrossing = piece.getApproachPassCount() + nextCrossingPasses;
         int requiredPasses = ownDirection.getRequiredApproachPassCount();
         int extraLapsNeeded = Math.max(0, requiredPasses - passesAfterThisCrossing);
 
