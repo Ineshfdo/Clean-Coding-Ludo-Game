@@ -1,6 +1,7 @@
 package controller;
 
 import config.constant.DiceConstants;
+import config.enums.CommandType;
 import config.enums.GameMessageType;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -123,24 +124,33 @@ public final class GameEngine {
         chosenCommand.execute(messages);
 
         boolean capturedOpponent = applyCapture(player, chosenCommand, allPlayers, messages);
-        applyMysteryCellTeleport(player, chosenCommand, messages);
+        boolean capturedByTeleport =
+                applyMysteryCellTeleport(player, chosenCommand, allPlayers, messages);
 
-        return capturedOpponent;
+        return capturedOpponent || capturedByTeleport;
     }
 
-    // T-11: checks distinct landing positions for Mystery Cell.
-    private void applyMysteryCellTeleport(
-            Player mover, Command executedCommand, GameMessagePublisher messages) {
+    // T-11: checks distinct landing positions for Mystery Cell; a teleport can capture too.
+    private boolean applyMysteryCellTeleport(
+            Player mover, Command executedCommand, List<Player> allPlayers,
+            GameMessagePublisher messages) {
         Set<Integer> checkedPositions = new HashSet<>();
+        boolean capturedAny = false;
 
         for (Piece movedPiece : executedCommand.getAffectedPieces()) {
             if (!movedPiece.isOnTrack() || !checkedPositions.add(movedPiece.getTrackPosition())) {
                 continue;
             }
 
-            mysteryCellTeleportRule.resolve(mover, movedPiece)
-                .ifPresent(teleportCommand -> teleportCommand.execute(messages));
+            Optional<Command> teleportCommand = mysteryCellTeleportRule.resolve(mover, movedPiece);
+
+            if (teleportCommand.isPresent()) {
+                teleportCommand.get().execute(messages);
+                capturedAny |= applyCapture(mover, teleportCommand.get(), allPlayers, messages);
+            }
         }
+
+        return capturedAny;
     }
 
     private List<Command> findLegalOptions(
@@ -158,6 +168,11 @@ public final class GameEngine {
     private boolean applyCapture(
             Player mover, Command executedCommand, List<Player> allPlayers,
             GameMessagePublisher messages) {
+        // A "cannot move" turn moves nothing, so nothing can be captured.
+        if (executedCommand.getType() == CommandType.CANNOT_MOVE) {
+            return false;
+        }
+
         boolean capturedAny = false;
 
         for (Piece movedPiece : executedCommand.getAffectedPieces()) {
