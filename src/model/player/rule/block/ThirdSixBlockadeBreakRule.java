@@ -18,11 +18,15 @@ import model.player.rule.home.HomeStraightEntryRule;
 public final class ThirdSixBlockadeBreakRule extends BlockadeBreakRule {
 
     private static final int TOTAL_FORCED_MOVE_STEPS = 6;
+    private static final int RELEASED_PIECE_BLOCK_SIZE = 1;
 
     private final HomeStraightEntryRule homeStraightEntryRule;
+    private final BlockadeLimitRule blockadeLimitRule;
 
-    public ThirdSixBlockadeBreakRule(HomeStraightEntryRule homeStraightEntryRule) {
+    public ThirdSixBlockadeBreakRule(
+            HomeStraightEntryRule homeStraightEntryRule, BlockadeLimitRule blockadeLimitRule) {
         this.homeStraightEntryRule = homeStraightEntryRule;
+        this.blockadeLimitRule = blockadeLimitRule;
     }
 
     @Override
@@ -33,26 +37,38 @@ public final class ThirdSixBlockadeBreakRule extends BlockadeBreakRule {
             return Optional.empty();
         }
 
-        return findBlockade(player).map(blockadePieces -> buildBreakCommand(player, blockadePieces, board));
+        return findBlockade(player)
+                .map(blockadePieces -> buildBreakCommand(player, blockadePieces, board, allPlayers));
     }
 
     // T-6: the lowest-numbered member stays; the rest share the 6 cells.
-    private Command buildBreakCommand(Player player, List<Piece> blockadePieces, Board board) {
+    private Command buildBreakCommand(
+            Player player, List<Piece> blockadePieces, Board board, List<Player> allPlayers) {
         List<Piece> releasedPieces = blockadePieces.subList(1, blockadePieces.size());
         int stepsPerReleasedPiece = TOTAL_FORCED_MOVE_STEPS / releasedPieces.size();
         List<Command> releasedPieceMoves = releasedPieces.stream()
-                .map(piece -> buildReleasedMove(player, piece, board, stepsPerReleasedPiece))
+                .map(piece -> buildReleasedMove(player, piece, board, allPlayers, stepsPerReleasedPiece))
+                .flatMap(Optional::stream)
                 .collect(Collectors.toList());
 
         return new BreakBlockCommand(player, blockadePieces, releasedPieceMoves);
     }
 
-    // T-6/T-5: each released piece moves by its own original direction.
-    private Command buildReleasedMove(Player player, Piece piece, Board board, int steps) {
+    // T-6/T-5: each released piece moves by its own original direction. T-3: it stops next to
+    // an opponent block like any other move, and stays put if it can't move at all.
+    private Optional<Command> buildReleasedMove(
+            Player player, Piece piece, Board board, List<Player> allPlayers, int steps) {
         MovementDirectionStrategy ownDirection = piece.getOriginalMovementDirectionStrategy();
+        int allowedSteps = blockadeLimitRule.limitSteps(
+                player.getColor(), piece.getTrackPosition(), steps, board, allPlayers, ownDirection,
+                RELEASED_PIECE_BLOCK_SIZE);
 
-        return new MovePieceCommand(
-                player, piece, steps, board, homeStraightEntryRule, ownDirection);
+        if (allowedSteps == 0) {
+            return Optional.empty();
+        }
+
+        return Optional.of(new MovePieceCommand(
+                player, piece, allowedSteps, board, homeStraightEntryRule, ownDirection));
     }
 
     // T-3: a blockade is 2+ own pieces sharing a track cell.

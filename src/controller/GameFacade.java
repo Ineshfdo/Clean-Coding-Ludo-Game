@@ -251,7 +251,8 @@ public final class GameFacade {
         captureCheckRule.setNext(new PieceCaptureRule());
         // A forced blockade break never uses the open gate, so it gets an always-closed chain.
         HomeStraightEntryRule forcedBreakEntryRule = buildHomeStraightEntryRule(color -> false);
-        BlockadeBreakRule blockadeBreakRule = new ThirdSixBlockadeBreakRule(forcedBreakEntryRule);
+        BlockadeBreakRule blockadeBreakRule =
+            new ThirdSixBlockadeBreakRule(forcedBreakEntryRule, blockadeLimitRule);
 
         // T-12: reuses T-1's same seeded coin toss for effects.
         AlphaEffectRule alphaEffectRule = new AlphaEffectRule(SeededCoinToss.getInstance());
