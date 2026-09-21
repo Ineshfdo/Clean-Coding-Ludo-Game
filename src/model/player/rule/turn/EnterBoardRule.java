@@ -4,30 +4,31 @@ import config.constant.DiceConstants;
 import java.util.List;
 import java.util.Optional;
 import model.board.Board;
+import model.direction.EntryDirectionAssigner;
 import model.piece.Piece;
 import model.player.Player;
-import model.player.command.Command;
+import model.player.command.MoveCommand;
 import model.player.command.move.EnterBoardCommand;
-import utils.coin.CoinToss;
 
 // Rule 2: a piece may leave Base only on a 6.
 public final class EnterBoardRule implements TurnRule {
 
-    private final CoinToss coinToss;
+    private final EntryDirectionAssigner entryDirectionAssigner;
 
-    public EnterBoardRule(CoinToss coinToss) {
-        this.coinToss = coinToss;
+    public EnterBoardRule(EntryDirectionAssigner entryDirectionAssigner) {
+        this.entryDirectionAssigner = entryDirectionAssigner;
     }
 
     @Override
-    public List<Command> findLegalCommands(
+    public List<MoveCommand> findLegalCommands(
             Player player, int rollValue, Board board, List<Player> allPlayers) {
         if (rollValue != DiceConstants.SIX_ROLL_VALUE) {
             return List.of();
         }
 
         return findBasePiece(player)
-                .<List<Command>>map(piece -> List.of(new EnterBoardCommand(player, piece, board, coinToss)))
+                .<List<MoveCommand>>map(piece ->
+                        List.of(new EnterBoardCommand(player, piece, board, entryDirectionAssigner)))
                 .orElse(List.of());
     }
 

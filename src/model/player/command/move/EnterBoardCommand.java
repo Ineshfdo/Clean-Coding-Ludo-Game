@@ -1,33 +1,30 @@
 package model.player.command.move;
 
-import config.enums.CoinTossResult;
-import config.enums.CommandType;
 import message.GameMessage;
 import message.observer.GameMessagePublisher;
 import model.board.Board;
-import model.direction.ClockwiseMovementStrategy;
-import model.direction.CounterClockwiseMovementStrategy;
-import model.direction.MovementDirectionStrategy;
+import model.direction.EntryDirection;
+import model.direction.EntryDirectionAssigner;
 import model.piece.Piece;
 import model.player.Player;
-import model.player.command.Command;
-import utils.coin.CoinToss;
+import model.player.command.MoveCommand;
 import utils.coin.CoinTossLabels;
 
 // Rule 2: Base -> Entry, then a coin toss sets direction (T-1).
-public final class EnterBoardCommand implements Command {
+public final class EnterBoardCommand implements MoveCommand {
 
     private final Player player;
     private final Piece piece;
 
     private final Board board;
-    private final CoinToss coinToss;
+    private final EntryDirectionAssigner entryDirectionAssigner;
 
-    public EnterBoardCommand(Player player, Piece piece, Board board, CoinToss coinToss) {
+    public EnterBoardCommand(
+            Player player, Piece piece, Board board, EntryDirectionAssigner entryDirectionAssigner) {
         this.player = player;
         this.piece = piece;
         this.board = board;
-        this.coinToss = coinToss;
+        this.entryDirectionAssigner = entryDirectionAssigner;
     }
 
     @Override
@@ -38,23 +35,17 @@ public final class EnterBoardCommand implements Command {
                 player.getColor(), piece.toString(), piece.getTrackPosition(),
                 player.countPiecesOnBoard(), player.countPiecesAtBase()));
 
-        CoinTossResult tossResult = coinToss.flip();
-        MovementDirectionStrategy direction = resolveDirection(tossResult);
-        player.assignMovementDirection(piece, direction);
+        EntryDirection entryDirection = entryDirectionAssigner.assign();
+        player.assignMovementDirection(piece, entryDirection.getDirection());
 
         messagePublisher.publish(GameMessage.pieceDirectionAssigned(
-                piece.toString(), CoinTossLabels.labelOf(tossResult), direction.getLabel()));
-    }
-
-    private static MovementDirectionStrategy resolveDirection(CoinTossResult tossResult) {
-        return tossResult == CoinTossResult.HEADS
-                ? ClockwiseMovementStrategy.getInstance()
-                : CounterClockwiseMovementStrategy.getInstance();
+                piece.toString(), CoinTossLabels.labelOf(entryDirection.getTossResult()),
+                entryDirection.getDirection().getLabel()));
     }
 
     @Override
-    public CommandType getType() {
-        return CommandType.ENTER_BOARD;
+    public boolean entersBoard() {
+        return true;
     }
 
     @Override

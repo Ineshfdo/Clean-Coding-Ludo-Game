@@ -1,6 +1,5 @@
 package model.player.command.mystery;
 
-import config.enums.CommandType;
 import java.util.List;
 import message.GameMessage;
 import message.observer.GameMessagePublisher;
@@ -27,11 +26,6 @@ public final class BetaReturnToBaseCommand implements Command {
         }
 
         messagePublisher.publish(GameMessage.betaRestrictionTriggered(PieceLabels.joinPieceLabels(returningPieces)));
-    }
-
-    @Override
-    public CommandType getType() {
-        return CommandType.RETURN_TO_BASE;
     }
 
     @Override

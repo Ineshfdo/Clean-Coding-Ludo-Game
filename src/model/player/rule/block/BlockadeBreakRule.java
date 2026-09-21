@@ -5,15 +5,10 @@ import java.util.Optional;
 import model.board.Board;
 import model.player.Player;
 import model.player.command.Command;
+import model.rule.ChainedRule;
 
 // Chain of Responsibility: each rule may force a consequence for this roll.
-public abstract class BlockadeBreakRule {
-
-    private BlockadeBreakRule nextRule;
-
-    public final void setNext(BlockadeBreakRule nextRule) {
-        this.nextRule = nextRule;
-    }
+public abstract class BlockadeBreakRule extends ChainedRule<BlockadeBreakRule> {
 
     public final Optional<Command> findForcedBreak(
             Player player, int consecutiveSixCount, int rollValue, Board board, List<Player> allPlayers) {
@@ -23,11 +18,10 @@ public abstract class BlockadeBreakRule {
             return command;
         }
 
-        return nextRule == null
-            ? Optional.empty()
-            : nextRule.findForcedBreak(player, consecutiveSixCount, rollValue, board, allPlayers);
+        return getNextRule().flatMap(nextRule ->
+                nextRule.findForcedBreak(player, consecutiveSixCount, rollValue, board, allPlayers));
     }
 
     protected abstract Optional<Command> identify(
-        Player player, int consecutiveSixCount, int rollValue, Board board, List<Player> allPlayers);
+            Player player, int consecutiveSixCount, int rollValue, Board board, List<Player> allPlayers);
 }

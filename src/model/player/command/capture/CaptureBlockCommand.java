@@ -1,6 +1,5 @@
 package model.player.command.capture;
 
-import config.enums.CommandType;
 import java.util.List;
 import message.GameMessage;
 import message.observer.GameMessagePublisher;
@@ -38,11 +37,6 @@ public final class CaptureBlockCommand implements Command {
         }
 
         messagePublisher.publish(GameMessage.blockCaptured(PieceLabels.joinPieceLabels(capturingBlock), PieceLabels.joinPieceLabels(capturedBlock)));
-    }
-
-    @Override
-    public CommandType getType() {
-        return CommandType.CAPTURE;
     }
 
     @Override

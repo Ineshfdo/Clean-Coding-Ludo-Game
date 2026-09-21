@@ -10,6 +10,7 @@ import model.direction.MovementDirectionStrategy;
 import model.piece.Piece;
 import model.player.Player;
 import model.player.command.Command;
+import model.player.command.MoveCommand;
 import model.player.command.move.BreakBlockCommand;
 import model.player.command.move.MovePieceCommand;
 import model.player.rule.home.HomeStraightEntryRule;
@@ -46,7 +47,7 @@ public final class ThirdSixBlockadeBreakRule extends BlockadeBreakRule {
             Player player, List<Piece> blockadePieces, Board board, List<Player> allPlayers) {
         List<Piece> releasedPieces = blockadePieces.subList(STAYING_MEMBER_COUNT, blockadePieces.size());
         int stepsPerReleasedPiece = DiceConstants.SIX_ROLL_VALUE / releasedPieces.size();
-        List<Command> releasedPieceMoves = releasedPieces.stream()
+        List<MoveCommand> releasedPieceMoves = releasedPieces.stream()
                 .map(piece -> buildReleasedMove(player, piece, board, allPlayers, stepsPerReleasedPiece))
                 .flatMap(Optional::stream)
                 .collect(Collectors.toList());
@@ -56,7 +57,7 @@ public final class ThirdSixBlockadeBreakRule extends BlockadeBreakRule {
 
     // T-6/T-5: each released piece moves by its own original direction. T-3: it stops next to
     // an opponent block like any other move, and stays put if it can't move at all.
-    private Optional<Command> buildReleasedMove(
+    private Optional<MoveCommand> buildReleasedMove(
             Player player, Piece piece, Board board, List<Player> allPlayers, int steps) {
         MovementDirectionStrategy ownDirection = piece.getOriginalMovementDirection();
         int allowedSteps = blockadeLimitRule.limitSteps(
@@ -73,14 +74,12 @@ public final class ThirdSixBlockadeBreakRule extends BlockadeBreakRule {
 
     // T-3: a blockade is 2+ own pieces sharing a track cell.
     private static Optional<List<Piece>> findBlockade(Player player) {
-        List<Piece> trackPieces = player.getPieces().stream()
-                .filter(Piece::isOnTrack)
-                .collect(Collectors.toList());
+        for (Piece piece : player.getPieces()) {
+            if (!piece.isOnTrack()) {
+                continue;
+            }
 
-        for (Piece piece : trackPieces) {
-            List<Piece> piecesOnSameCell = trackPieces.stream()
-                    .filter(candidate -> candidate.getTrackPosition() == piece.getTrackPosition())
-                    .collect(Collectors.toList());
+            List<Piece> piecesOnSameCell = player.getPiecesAt(piece.getTrackPosition());
 
             if (piecesOnSameCell.size() >= BlockadeConstants.MINIMUM_BLOCKADE_SIZE) {
                 return Optional.of(piecesOnSameCell);

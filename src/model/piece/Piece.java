@@ -7,7 +7,7 @@ import model.direction.MovementDirectionStrategy;
 import model.effect.movement.MovementEffect;
 import model.effect.restriction.NoRestrictionState;
 import model.effect.restriction.PieceRestrictionState;
-import model.player.PlayerColorNames;
+import utils.color.PlayerColorNames;
 
 // Rule 6: a piece travels Base -> track -> HomeStraight -> Home, then stops.
 public final class Piece {
@@ -246,6 +246,18 @@ public final class Piece {
             throw new InvalidPieceStateException(
                     this + " is at " + location + ", not " + requiredLocation);
         }
+    }
+
+    // T-1/T-5: a throwaway copy with only what the home-entry rules read, so previews never touch this piece.
+    public Piece copyForPreview(int extraApproachPasses) {
+        Piece preview = new Piece(color, number);
+
+        preview.movementDirection = originalMovementDirection;
+        preview.originalMovementDirection = originalMovementDirection;
+        preview.approachPassCount = approachPassCount + extraApproachPasses;
+        preview.captureCount = captureCount;
+
+        return preview;
     }
 
     @Override

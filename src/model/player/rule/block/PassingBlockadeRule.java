@@ -5,7 +5,6 @@ import config.enums.PlayerColor;
 import java.util.List;
 import model.board.Board;
 import model.direction.MovementDirectionStrategy;
-import model.piece.Piece;
 import model.player.Player;
 
 // T-3/T-8: 2+ same-color pieces block opponents, except an equal-size capture.
@@ -36,7 +35,7 @@ public final class PassingBlockadeRule extends BlockadeLimitRule {
                 continue;
             }
 
-            long opponentCount = countPiecesAt(player, position);
+            int opponentCount = player.getPiecesAt(position).size();
 
             if (opponentCount < BlockadeConstants.MINIMUM_BLOCKADE_SIZE) {
                 continue;
@@ -50,12 +49,5 @@ public final class PassingBlockadeRule extends BlockadeLimitRule {
         }
 
         return false;
-    }
-
-    private static long countPiecesAt(Player player, int position) {
-        return player.getPieces().stream()
-            .filter(Piece::isOnTrack)
-            .filter(piece -> piece.getTrackPosition() == position)
-            .count();
     }
 }

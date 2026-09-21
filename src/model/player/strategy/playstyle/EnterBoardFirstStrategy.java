@@ -1,8 +1,7 @@
 package model.player.strategy.playstyle;
 
-import config.enums.CommandType;
 import java.util.List;
-import model.player.command.Command;
+import model.player.command.MoveCommand;
 import model.player.strategy.PlayerStrategy;
 import model.player.strategy.StrategyContext;
 
@@ -10,9 +9,9 @@ import model.player.strategy.StrategyContext;
 public final class EnterBoardFirstStrategy implements PlayerStrategy {
 
     @Override
-    public Command choose(List<Command> legalCommands, StrategyContext context) {
+    public MoveCommand choose(List<MoveCommand> legalCommands, StrategyContext context) {
         return legalCommands.stream()
-            .filter(command -> command.getType() == CommandType.ENTER_BOARD)
+            .filter(command -> command.entersBoard())
             .findFirst()
             .orElse(legalCommands.get(0));
     }

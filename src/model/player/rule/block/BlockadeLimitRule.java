@@ -5,32 +5,25 @@ import java.util.List;
 import model.board.Board;
 import model.direction.MovementDirectionStrategy;
 import model.player.Player;
+import model.rule.ChainedRule;
 
 // Chain of Responsibility: each rule may limit the allowed steps.
-public abstract class BlockadeLimitRule {
+public abstract class BlockadeLimitRule extends ChainedRule<BlockadeLimitRule> {
 
-    private BlockadeLimitRule nextRule;
-
-    public final void setNext(BlockadeLimitRule nextRule) {
-        this.nextRule = nextRule;
-    }
-
-         public final int limitSteps(
+    public final int limitSteps(
             PlayerColor moverColor, int fromPosition, int requestedSteps, Board board,
             List<Player> allPlayers, MovementDirectionStrategy direction, int moverBlockSize) {
         int allowedSteps = restrict(
                 moverColor, fromPosition, requestedSteps, board, allPlayers, direction, moverBlockSize);
 
-        return nextRule == null
-                ? allowedSteps
-                : nextRule.limitSteps(
+        return getNextRule()
+                .map(nextRule -> nextRule.limitSteps(
                         moverColor, fromPosition, allowedSteps, board, allPlayers, direction,
-                        moverBlockSize
-                );
-        }
+                        moverBlockSize))
+                .orElse(allowedSteps);
+    }
 
-        protected abstract int restrict(
+    protected abstract int restrict(
             PlayerColor moverColor, int fromPosition, int requestedSteps, Board board,
-            List<Player> allPlayers, MovementDirectionStrategy direction, int moverBlockSize
-        );
+            List<Player> allPlayers, MovementDirectionStrategy direction, int moverBlockSize);
 }

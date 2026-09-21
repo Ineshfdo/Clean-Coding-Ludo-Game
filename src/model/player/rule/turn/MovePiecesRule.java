@@ -11,7 +11,7 @@ import model.direction.MovementDirectionStrategy;
 import model.effect.movement.MovementEffect;
 import model.piece.Piece;
 import model.player.Player;
-import model.player.command.Command;
+import model.player.command.MoveCommand;
 import model.player.command.cannotmove.BlockRollTooSmallCommand;
 import model.player.command.cannotmove.ExactRollRequiredCommand;
 import model.player.command.cannotmove.MoveBlockedByBlockadeCommand;
@@ -47,7 +47,7 @@ public final class MovePiecesRule implements TurnRule {
 
     // T-16: every distinct piece or block gets its own command.
     @Override
-    public List<Command> findLegalCommands(
+    public List<MoveCommand> findLegalCommands(
             Player player, int rollValue, Board board, List<Player> allPlayers) {
         List<Piece> candidates = findMovableCandidates(player);
 
@@ -55,7 +55,7 @@ public final class MovePiecesRule implements TurnRule {
             return List.of();
         }
 
-        List<Command> moveCommands = new ArrayList<>();
+        List<MoveCommand> moveCommands = new ArrayList<>();
         Set<Piece> coveredPieces = new HashSet<>();
 
         for (Piece piece : candidates) {
@@ -84,7 +84,7 @@ public final class MovePiecesRule implements TurnRule {
     }
 
     // Rule 10/T-4/T-12: picks the message matching why the piece can't move.
-    private Command buildNoMoveCommand(Piece representative, List<Piece> candidates, int rollValue) {
+    private MoveCommand buildNoMoveCommand(Piece representative, List<Piece> candidates, int rollValue) {
         if (representative.isOnHomeStraight()) {
             return new ExactRollRequiredCommand(representative);
         }
@@ -104,7 +104,7 @@ public final class MovePiecesRule implements TurnRule {
     }
 
     // T-3/T-1/T-5: a block moves together; a lone piece breaks away if owed.
-    private Command buildMoveCommand(
+    private MoveCommand buildMoveCommand(
             Player player, Piece piece, List<Piece> blockPieces, int effectiveSteps, Board board,
             MovementDirectionStrategy travelDirection) {
         if (blockPieces.size() >= BlockadeConstants.MINIMUM_BLOCKADE_SIZE) {
@@ -112,7 +112,7 @@ public final class MovePiecesRule implements TurnRule {
                 player, blockPieces, effectiveSteps, board, homeStraightEntryRule, travelDirection);
         }
 
-        Command moveCommand = new MovePieceCommand(
+        MoveCommand moveCommand = new MovePieceCommand(
                 player, piece, effectiveSteps, board, homeStraightEntryRule, travelDirection);
 
         if (piece.hasAdoptedBlockDirection()) {

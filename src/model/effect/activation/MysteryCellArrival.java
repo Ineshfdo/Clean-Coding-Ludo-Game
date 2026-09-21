@@ -1,17 +1,17 @@
 package model.effect.activation;
 
-import config.enums.MysteryCellDestinationType;
+import model.effect.mysterycell.MysteryCellDestination;
 
 // T-15: proof a piece arrived by a genuine Mystery Cell teleport.
 public final class MysteryCellArrival {
 
-    private final MysteryCellDestinationType destinationType;
+    private final MysteryCellDestination destination;
 
-    public MysteryCellArrival(MysteryCellDestinationType destinationType) {
-        this.destinationType = destinationType;
+    public MysteryCellArrival(MysteryCellDestination destination) {
+        this.destination = destination;
     }
 
-    public MysteryCellDestinationType getDestinationType() {
-        return destinationType;
+    public MysteryCellDestination getDestination() {
+        return destination;
     }
 }

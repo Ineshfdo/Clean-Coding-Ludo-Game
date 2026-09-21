@@ -6,7 +6,6 @@ import exception.IllegalMoveException;
 import exception.InvalidPieceStateException;
 import exception.PieceOwnershipException;
 import exception.PlayerNotFoundException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
@@ -14,14 +13,22 @@ import java.util.logging.Logger;
 import message.GameMessage;
 import message.observer.GameMessageCenter;
 import message.observer.GameMessagePublisher;
-import model.board.Board;
+import message.observer.GameMessageRegistry;
 import model.board.LudoBoard;
+import model.direction.CoinTossEntryDirectionAssigner;
 import model.effect.activation.EffectActivationRule;
 import model.effect.activation.MysteryTeleportActivationRule;
+import model.effect.destination.AlphaDestination;
+import model.effect.destination.ApproachDestination;
+import model.effect.destination.BaseDestination;
+import model.effect.destination.BetaDestination;
+import model.effect.destination.EntryDestination;
+import model.effect.destination.GammaDestination;
+import model.effect.mysterycell.MysteryCellDestination;
+import model.effect.mysterycell.MysteryCellLocation;
 import model.effect.mysterycell.MysteryCellSchedule;
 import model.effect.rule.AlphaEffectRule;
 import model.effect.rule.GammaDirectionRule;
-import model.effect.rule.MysteryCellEffectRules;
 import model.piece.Piece;
 import model.player.BluePlayer;
 import model.player.GreenPlayer;
@@ -63,6 +70,8 @@ import utils.coin.CoinToss;
 import utils.coin.SeededCoinToss;
 import utils.dice.Dice;
 import utils.dice.SixSidedDice;
+import utils.randomgenerator.RandomNumberGenerator;
+import utils.randomgenerator.SeedableRandomNumberGenerator;
 import utils.randomgenerator.SeededRandomNumberGenerator;
 import view.ConsoleGameObserver;
 
@@ -73,8 +82,6 @@ public final class GameFacade {
         new LongestDistanceDirectionStrategy();
 
     private static final Logger LOGGER = Logger.getLogger(GameFacade.class.getName());
-
-    private static final int NO_ROLL_YET = 0;
 
     private GameFacade() {}
 
@@ -89,17 +96,18 @@ public final class GameFacade {
     }
 
     private static void playGame(long seed) {
-
         List<Player> allPlayers = buildPlayers();
-        Board board = LudoBoard.getInstance();
+        LudoBoard board = LudoBoard.getInstance();
 
-        GameMessageCenter.getInstance().clearObservers();
+        GameMessageRegistry messageRegistry = GameMessageCenter.getInstance();
+        messageRegistry.clearObservers();
         GameMessagePublisher messagePublisher = GameMessageCenter.getInstance();
         ConsoleGameObserver consoleObserver =
             new ConsoleGameObserver(allPlayers, board, BLOCK_TRAVEL_DIRECTION_STRATEGY);
-        messagePublisher.addObserver(consoleObserver);
+        messageRegistry.addObserver(consoleObserver);
 
-        SeededRandomNumberGenerator.getInstance().setSeed(seed);
+        SeedableRandomNumberGenerator randomNumberGenerator = SeededRandomNumberGenerator.getInstance();
+        randomNumberGenerator.setSeed(seed);
 
         Dice dice = SixSidedDice.getInstance();
 
@@ -109,61 +117,22 @@ public final class GameFacade {
         messagePublisher.publish(GameMessage.of(GameMessageType.GAME_STARTING));
 
         // The toss order is also clockwise, starting from Red.
-        List<Player> tossOrder = buildTurnOrder(PlayerColor.RED, allPlayers, board);
-        Player firstPlayer = determineFirstPlayer(tossOrder, dice, messagePublisher);
-        List<Player> turnOrder = buildTurnOrder(firstPlayer.getColor(), allPlayers, board);
+        TurnOrderBuilder turnOrderBuilder = new TurnOrderBuilder(board);
+        List<Player> tossOrder = turnOrderBuilder.buildFrom(PlayerColor.RED, allPlayers);
+        Player firstPlayer = new FirstPlayerSelector(dice, messagePublisher).select(tossOrder);
+        List<Player> turnOrder = turnOrderBuilder.buildFrom(firstPlayer.getColor(), allPlayers);
 
         // Round reports list players in play order, starting from the toss winner.
         consoleObserver.setTurnOrder(turnOrder);
 
         // T-10: reuses the same seeded random source for reproducibility.
-        MysteryCellSchedule mysteryCellSchedule =
-            new MysteryCellSchedule(board, SeededRandomNumberGenerator.getInstance());
+        MysteryCellSchedule mysteryCellSchedule = new MysteryCellSchedule(board, randomNumberGenerator);
 
         // T-11: each game needs its own MysteryCellSchedule instance.
-        GameEngine gameEngine = buildGameEngine(mysteryCellSchedule);
+        GameEngine gameEngine = buildGameEngine(board, mysteryCellSchedule, randomNumberGenerator);
 
-        // GAME_OVER: the game ends only once every player has all pieces Home.
-        List<PlayerColor> finalStandings = new ArrayList<>();
-        RoundTracker roundTracker = new RoundTracker(turnOrder);
-
-        while (!allPlayersFinished(allPlayers)) {
-            int roundNumber = roundTracker.startNextRound();
-            messagePublisher.publish(GameMessage.roundStarted(roundNumber));
-            mysteryCellSchedule.onRoundStarted(roundNumber, allPlayers, messagePublisher);
-
-            // T-12/T-13: expire this round's effects and Beta restriction first.
-            for (Player player : roundTracker.getTurnOrder()) {
-                player.tickMovementEffects();
-                player.tickRestrictions();
-            }
-
-            for (Player player : roundTracker.getTurnOrder()) {
-                // Finished players take no turn: no roll, no message.
-                if (player.hasAllPiecesHome()) {
-                    continue;
-                }
-
-                gameEngine.playTurn(player, allPlayers, dice, board, messagePublisher);
-                recordFinisherIfNewlyDone(player, finalStandings);
-            }
-
-            mysteryCellSchedule.onRoundCompleted(roundNumber, allPlayers);
-            messagePublisher.publish(GameMessage.boardStateReported(roundNumber));
-        }
-
-        messagePublisher.publish(GameMessage.gameOver(finalStandings));
-    }
-
-    private static boolean allPlayersFinished(List<Player> allPlayers) {
-        return allPlayers.stream().allMatch(Player::hasAllPiecesHome);
-    }
-
-    // GAME_OVER: record a player the moment its 4th piece reaches Home.
-    private static void recordFinisherIfNewlyDone(Player player, List<PlayerColor> finalStandings) {
-        if (player.hasAllPiecesHome() && !finalStandings.contains(player.getColor())) {
-            finalStandings.add(player.getColor());
-        }
+        new GameLoop(gameEngine, mysteryCellSchedule, dice, board, messagePublisher)
+            .play(allPlayers, turnOrder);
     }
 
     // Message per player, naming its pieces.
@@ -185,73 +154,21 @@ public final class GameFacade {
             new BluePlayer());
     }
 
-    // Rerolls everyone when two or more players tie highest.
-    private static Player determineFirstPlayer(
-            List<Player> allPlayers, Dice dice, GameMessagePublisher messagePublisher) {
-        messagePublisher.publish(GameMessage.of(GameMessageType.TOSS_STARTING));
-
-        while (true) {
-            Player highestRoller = allPlayers.get(0);
-            int highestRoll = NO_ROLL_YET;
-            int highestRollerCount = 0;
-
-            for (Player player : allPlayers) {
-                int rollValue = dice.roll();
-                messagePublisher.publish(GameMessage.diceRolled(player.getColor(), rollValue));
-
-                if (rollValue > highestRoll) {
-                    highestRoll = rollValue;
-                    highestRoller = player;
-                    highestRollerCount = 1;
-                } else if (rollValue == highestRoll) {
-                    highestRollerCount++;
-                }
-            }
-
-            if (highestRollerCount == 1) {
-                messagePublisher.publish(GameMessage.tossWon(highestRoller.getColor(), highestRoll));
-                return highestRoller;
-            }
-
-            messagePublisher.publish(GameMessage.tossTied(highestRoll));
-        }
-    }
-
-    // Rule 3: turn order runs clockwise from a given color.
-    private static List<Player> buildTurnOrder(
-            PlayerColor startingColor, List<Player> allPlayers, Board board) {
-        List<Player> turnOrder = new ArrayList<>();
-        PlayerColor color = startingColor;
-
-        for (int position = 0; position < allPlayers.size(); position++) {
-            turnOrder.add(findPlayerByColor(allPlayers, color));
-            color = board.getNextColorClockwise(color);
-        }
-
-        return turnOrder;
-    }
-
-    private static Player findPlayerByColor(List<Player> allPlayers, PlayerColor color) {
-        return allPlayers.stream()
-            .filter(player -> player.getColor() == color)
-            .findFirst()
-            .orElseThrow(() -> new PlayerNotFoundException("No player with color " + color));
-    }
-
-    private static GameEngine buildGameEngine(MysteryCellSchedule mysteryCellSchedule) {
-        Board board = LudoBoard.getInstance();
+    private static GameEngine buildGameEngine(
+            LudoBoard board, MysteryCellLocation mysteryCellLocation,
+            RandomNumberGenerator randomNumberGenerator) {
 
         // T-7: one tracker, shared by the engine (updates it) and the capture rule (reads it).
         HomeGateTracker homeGateTracker = new HomeGateTracker();
 
         BlockadeLimitRule blockadeLimitRule = new PassingBlockadeRule();
         HomeStraightEntryRule homeStraightEntryRule = buildHomeStraightEntryRule(homeGateTracker);
-        ExactRollRule exactRollRule = new OvershootHomeRule();
+        ExactRollRule exactRollRule = new OvershootHomeRule(board);
         BlockStepsRule blockStepsRule = new DivideByBlockSizeRule();
 
         CoinToss coinToss = SeededCoinToss.getInstance();
         List<TurnRule> turnRules = List.of(
-            new EnterBoardRule(coinToss),
+            new EnterBoardRule(new CoinTossEntryDirectionAssigner(coinToss)),
             new MovePiecesRule(
                 blockadeLimitRule, homeStraightEntryRule, exactRollRule, blockStepsRule,
                 BLOCK_TRAVEL_DIRECTION_STRATEGY));
@@ -274,27 +191,35 @@ public final class GameFacade {
         BlockadeBreakRule blockadeBreakRule =
             new ThirdSixBlockadeBreakRule(forcedBreakEntryRule, blockadeLimitRule);
 
-        // T-12: reuses T-1's same seeded coin toss for effects.
-        AlphaEffectRule alphaEffectRule = new AlphaEffectRule(SeededCoinToss.getInstance());
-
-        // T-14: reverses direction, or forwards to Beta, on Gamma.
-        GammaDirectionRule gammaDirectionRule = new GammaDirectionRule(board);
-
         // T-15: effects only activate after genuine Mystery Cell teleport.
         EffectActivationRule effectActivationRule = new MysteryTeleportActivationRule();
-        MysteryCellEffectRules mysteryCellEffectRules =
-            new MysteryCellEffectRules(alphaEffectRule, gammaDirectionRule, effectActivationRule);
+
+        // T-12: reuses T-1's same seeded coin toss for effects.
+        AlphaEffectRule alphaEffectRule = new AlphaEffectRule(coinToss);
+
+        // T-14: reverses direction, or forwards to Beta, on Gamma.
+        MysteryCellDestination betaDestination = new BetaDestination(board, effectActivationRule);
+        GammaDirectionRule gammaDirectionRule = new GammaDirectionRule(betaDestination);
+
+        // T-11: the list order is the random draw order, so keep it stable for reproducible games.
+        List<MysteryCellDestination> mysteryCellDestinations = List.of(
+            new AlphaDestination(board, effectActivationRule, alphaEffectRule),
+            betaDestination,
+            new GammaDestination(board, effectActivationRule, gammaDirectionRule),
+            new BaseDestination(),
+            new EntryDestination(board, effectActivationRule),
+            new ApproachDestination(board, effectActivationRule));
 
         // T-11: reuses the same seeded random source for reproducibility.
         MysteryCellTeleportRule mysteryCellTeleportRule = new MysteryCellTeleportRule(
-            mysteryCellSchedule, SeededRandomNumberGenerator.getInstance(), board, mysteryCellEffectRules);
+            mysteryCellLocation, randomNumberGenerator, mysteryCellDestinations);
 
         // T-13: checks each roll for Beta's consecutive-3 return trigger.
         BetaRestrictionRule betaRestrictionRule = new BetaRestrictionRule();
 
         return new GameEngine(
             turnRules, strategyRegistry, rollValidityRule, captureCheckRule, blockadeBreakRule,
-            mysteryCellTeleportRule, betaRestrictionRule, homeGateTracker
+            mysteryCellTeleportRule, mysteryCellLocation, List.of(homeGateTracker, betaRestrictionRule)
         );
     }
 

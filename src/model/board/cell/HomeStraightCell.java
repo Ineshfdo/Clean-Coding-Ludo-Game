@@ -2,7 +2,7 @@ package model.board.cell;
 
 import config.constant.BoardConstants;
 import config.enums.PlayerColor;
-import model.player.PlayerColorNames;
+import utils.color.PlayerColorNames;
 
 // One of the 5 color-owned cells between a color's Approach cell and its Home.
 public final class HomeStraightCell {

@@ -1,4 +1,4 @@
-package model.player;
+package utils.color;
 
 import config.enums.PlayerColor;
 

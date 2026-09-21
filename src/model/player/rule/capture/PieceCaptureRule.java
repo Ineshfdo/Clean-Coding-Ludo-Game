@@ -26,7 +26,7 @@ public final class PieceCaptureRule extends CaptureCheckRule {
                 continue;
             }
 
-            Optional<Piece> capturedPiece = findPieceAt(opponent, trackPosition);
+            Optional<Piece> capturedPiece = opponent.getPiecesAt(trackPosition).stream().findFirst();
 
             if (capturedPiece.isPresent() && !hasBlockadeAt(opponent, trackPosition)) {
                 return Optional.of(
@@ -39,20 +39,6 @@ public final class PieceCaptureRule extends CaptureCheckRule {
 
     // T-3/T-8: 2+ pieces of one colour on a cell form a blockade.
     private static boolean hasBlockadeAt(Player player, int trackPosition) {
-        return countPiecesAt(player, trackPosition) >= BlockadeConstants.MINIMUM_BLOCKADE_SIZE;
-    }
-
-    private static long countPiecesAt(Player player, int trackPosition) {
-        return player.getPieces().stream()
-            .filter(Piece::isOnTrack)
-            .filter(piece -> piece.getTrackPosition() == trackPosition)
-            .count();
-    }
-
-    private static Optional<Piece> findPieceAt(Player player, int trackPosition) {
-        return player.getPieces().stream()
-            .filter(Piece::isOnTrack)
-            .filter(piece -> piece.getTrackPosition() == trackPosition)
-            .findFirst();
+        return player.getPiecesAt(trackPosition).size() >= BlockadeConstants.MINIMUM_BLOCKADE_SIZE;
     }
 }

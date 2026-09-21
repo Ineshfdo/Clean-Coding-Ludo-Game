@@ -9,11 +9,12 @@ import message.observer.GameMessagePublisher;
 import model.board.Board;
 import model.piece.Piece;
 import model.player.Player;
+import model.round.RoundListener;
 import utils.randomgenerator.RandomNumberGenerator;
 
 // T-10: tracks Mystery Cell spawn, lifespan and relocation.
 // Publishes messages only; never prints directly.
-public final class MysteryCellSchedule implements MysteryCellLocation {
+public final class MysteryCellSchedule implements MysteryCellLocation, RoundListener {
 
     private static final int NO_ROUND_RECORDED = -1;
 
@@ -42,6 +43,7 @@ public final class MysteryCellSchedule implements MysteryCellLocation {
     }
 
     // Runs before turns, so changes last the whole round.
+    @Override
     public void onRoundStarted(int roundNumber, List<Player> allPlayers, GameMessagePublisher messagePublisher) {
         if (isActive) {
             relocateIfDue(allPlayers, messagePublisher);
@@ -52,6 +54,7 @@ public final class MysteryCellSchedule implements MysteryCellLocation {
     }
 
     // Runs after turns, so mid-round entries count this round.
+    @Override
     public void onRoundCompleted(int roundNumber, List<Player> allPlayers) {
         if (firstStandardPathEntryRound != NO_ROUND_RECORDED) {
             return;
@@ -121,10 +124,8 @@ public final class MysteryCellSchedule implements MysteryCellLocation {
 
     private static boolean isCellOccupied(int cellPosition, List<Player> allPlayers) {
         for (Player player : allPlayers) {
-            for (Piece piece : player.getPieces()) {
-                if (piece.isOnTrack() && piece.getTrackPosition() == cellPosition) {
-                    return true;
-                }
+            if (!player.getPiecesAt(cellPosition).isEmpty()) {
+                return true;
             }
         }
 

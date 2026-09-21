@@ -1,23 +1,22 @@
 package model.player.command.move;
 
-import config.enums.CommandType;
 import java.util.List;
 import java.util.stream.Collectors;
 import message.GameMessage;
 import message.observer.GameMessagePublisher;
 import model.piece.Piece;
 import model.player.Player;
-import model.player.command.Command;
+import model.player.command.MoveCommand;
 
 // T-5/T-6: pieces leave the block, then each runs its own move.
-public final class BreakBlockCommand implements Command {
+public final class BreakBlockCommand implements MoveCommand {
 
     private final Player player;
     private final List<Piece> restoredPieces;
-    private final List<Command> releasedPieceMoves;
+    private final List<MoveCommand> releasedPieceMoves;
 
     public BreakBlockCommand(
-        Player player, List<Piece> restoredPieces, List<Command> releasedPieceMoves) {
+        Player player, List<Piece> restoredPieces, List<MoveCommand> releasedPieceMoves) {
         this.player = player;
         this.restoredPieces = restoredPieces;
         this.releasedPieceMoves = releasedPieceMoves;
@@ -30,14 +29,9 @@ public final class BreakBlockCommand implements Command {
             messagePublisher.publish(GameMessage.pieceLeftBlock(piece.toString()));
         }
 
-        for (Command releasedPieceMove : releasedPieceMoves) {
+        for (MoveCommand releasedPieceMove : releasedPieceMoves) {
             releasedPieceMove.execute(messagePublisher);
         }
-    }
-
-    @Override
-    public CommandType getType() {
-        return CommandType.MOVE_FORWARD;
     }
 
     @Override
@@ -53,7 +47,7 @@ public final class BreakBlockCommand implements Command {
         }
 
         return releasedPieceMoves.stream()
-            .map(Command::getAffectedPiece)
+            .map(MoveCommand::getAffectedPiece)
             .collect(Collectors.toList());
     }
 
@@ -65,6 +59,6 @@ public final class BreakBlockCommand implements Command {
 
     @Override
     public boolean leavesStandardPath() {
-        return releasedPieceMoves.stream().anyMatch(Command::leavesStandardPath);
+        return releasedPieceMoves.stream().anyMatch(MoveCommand::leavesStandardPath);
     }
 }

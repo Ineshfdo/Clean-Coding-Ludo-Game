@@ -1,13 +1,9 @@
 package model.player.rule.mystery;
 
-import config.enums.MysteryCellDestinationType;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import model.board.Board;
+import model.effect.mysterycell.MysteryCellDestination;
 import model.effect.mysterycell.MysteryCellLocation;
-import model.effect.mysterycell.MysteryCellSchedule;
-import model.effect.rule.MysteryCellEffectRules;
 import model.piece.Piece;
 import model.player.Player;
 import model.player.command.Command;
@@ -15,65 +11,43 @@ import model.player.command.mystery.MysteryCellTeleportCommand;
 import utils.randomgenerator.RandomNumberGenerator;
 
 // T-11: a piece landing on the active Mystery Cell teleports to a random destination.
-public final class MysteryCellTeleportRule {
+public final class MysteryCellTeleportRule implements TeleportRule {
 
-    private static final MysteryCellDestinationType[] DESTINATIONS = MysteryCellDestinationType.values();
     private static final int FIRST_DESTINATION_INDEX = 0;
-    private static final int LAST_DESTINATION_INDEX = DESTINATIONS.length - 1;
 
-    private final MysteryCellSchedule mysteryCellSchedule;
+    private final MysteryCellLocation mysteryCellLocation;
     private final RandomNumberGenerator randomNumberGenerator;
-    private final Board board;
-    private final MysteryCellEffectRules effectRules;
+    private final List<MysteryCellDestination> destinations;
 
     public MysteryCellTeleportRule(
-            MysteryCellSchedule mysteryCellSchedule, RandomNumberGenerator randomNumberGenerator,
-            Board board, MysteryCellEffectRules effectRules) {
-        this.mysteryCellSchedule = mysteryCellSchedule;
+            MysteryCellLocation mysteryCellLocation, RandomNumberGenerator randomNumberGenerator,
+            List<MysteryCellDestination> destinations) {
+        this.mysteryCellLocation = mysteryCellLocation;
         this.randomNumberGenerator = randomNumberGenerator;
-        this.board = board;
-        this.effectRules = effectRules;
+        this.destinations = List.copyOf(destinations);
     }
 
-    // T-19: read-only Mystery Cell location for strategies (e.g. BlueStrategy).
-    public MysteryCellLocation getMysteryCellLocation() {
-        return mysteryCellSchedule;
-    }
-
+    @Override
     public Optional<Command> findTeleport(Player mover, Piece landedPiece) {
         if (!landsOnMysteryCell(landedPiece)) {
             return Optional.empty();
         }
 
-        List<Piece> teleportedGroup = findOwnPiecesAt(mover, landedPiece.getTrackPosition());
-        MysteryCellDestinationType destinationType = chooseRandomDestination();
+        List<Piece> teleportedGroup = mover.getPiecesAt(landedPiece.getTrackPosition());
 
-        return Optional.of(new MysteryCellTeleportCommand(mover, teleportedGroup, destinationType, board, effectRules));
+        return Optional.of(new MysteryCellTeleportCommand(mover, teleportedGroup, chooseRandomDestination()));
     }
 
     private boolean landsOnMysteryCell(Piece piece) {
-        return mysteryCellSchedule.isActive()
+        return mysteryCellLocation.isActive()
                 && piece.isOnTrack()
-                && piece.getTrackPosition() == mysteryCellSchedule.getCurrentCellPosition();
+                && piece.getTrackPosition() == mysteryCellLocation.getCurrentCellPosition();
     }
 
-    // T-3: own pieces on the landing cell teleport together.
-    private static List<Piece> findOwnPiecesAt(Player player, int trackPosition) {
-        List<Piece> piecesAtPosition = new ArrayList<>();
-
-        for (Piece piece : player.getPieces()) {
-            if (piece.isOnTrack() && piece.getTrackPosition() == trackPosition) {
-                piecesAtPosition.add(piece);
-            }
-        }
-
-        return piecesAtPosition;
-    }
-
-    private MysteryCellDestinationType chooseRandomDestination() {
+    private MysteryCellDestination chooseRandomDestination() {
         int randomIndex =
-                randomNumberGenerator.nextIntInRange(FIRST_DESTINATION_INDEX, LAST_DESTINATION_INDEX);
+                randomNumberGenerator.nextIntInRange(FIRST_DESTINATION_INDEX, destinations.size() - 1);
 
-        return DESTINATIONS[randomIndex];
+        return destinations.get(randomIndex);
     }
 }

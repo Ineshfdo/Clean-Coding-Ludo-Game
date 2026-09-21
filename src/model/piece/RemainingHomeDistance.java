@@ -1,8 +1,7 @@
-package model.direction;
+package model.piece;
 
-import config.constant.BoardConstants;
 import model.board.Board;
-import model.piece.Piece;
+import model.direction.MovementDirectionStrategy;
 
 // T-4/T-16/T-18: cells a piece has left to reach Home, using its own direction.
 public final class RemainingHomeDistance {
@@ -16,7 +15,7 @@ public final class RemainingHomeDistance {
         }
 
         if (piece.isOnHomeStraight()) {
-            return BoardConstants.CELLS_PER_HOME_STRAIGHT - piece.getHomeStraightIndex();
+            return board.getHomeStraightLength() - piece.getHomeStraightIndex();
         }
 
         MovementDirectionStrategy ownDirection = piece.getOriginalMovementDirection();
@@ -29,6 +28,6 @@ public final class RemainingHomeDistance {
         int extraLapsNeeded = Math.max(0, requiredPasses - passesAfterThisCrossing);
 
         return stepsToApproach + extraLapsNeeded * board.getStandardCellCount()
-                + BoardConstants.CELLS_PER_HOME_STRAIGHT;
+                + board.getHomeStraightLength();
     }
 }

@@ -1,15 +1,21 @@
 package model.player.rule.home;
 
-import config.constant.BoardConstants;
+import model.board.Board;
 import model.piece.Piece;
 
 // Rule 10: a HomeStraight move must land exactly on Home.
 public final class OvershootHomeRule extends ExactRollRule {
 
+    private final Board board;
+
+    public OvershootHomeRule(Board board) {
+        this.board = board;
+    }
+
     @Override
     protected boolean appliesTo(Piece piece, int steps) {
         int newIndex = piece.getHomeStraightIndex() + steps;
 
-        return newIndex > BoardConstants.CELLS_PER_HOME_STRAIGHT;
+        return newIndex > board.getHomeStraightLength();
     }
 }

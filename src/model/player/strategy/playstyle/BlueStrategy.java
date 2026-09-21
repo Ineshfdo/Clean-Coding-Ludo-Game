@@ -5,15 +5,15 @@ import exception.IllegalMoveException;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Predicate;
 import model.direction.MovementDirectionStrategy;
 import model.effect.mysterycell.MysteryCellLocation;
 import model.piece.Piece;
 import model.player.Player;
-import model.player.command.Command;
+import model.player.command.MoveCommand;
 import model.player.strategy.PlayerStrategy;
 import model.player.strategy.StrategyContext;
 import model.player.strategy.helper.BluePieceRotationIterator;
+import model.player.strategy.helper.CommandFinder;
 
 // Blue rotates through its pieces (B1 -> B2 -> B3 -> B4), with Mystery Cell overrides.
 // A bonus roll in the same turn keeps considering the same piece.
@@ -23,21 +23,21 @@ public final class BlueStrategy implements PlayerStrategy {
     private Piece consideredPieceForCurrentTurn;
 
     @Override
-    public Command choose(List<Command> legalCommands, StrategyContext context) {
+    public MoveCommand choose(List<MoveCommand> legalCommands, StrategyContext context) {
         if (context.getRollNumber() == TurnConstants.FIRST_ROLL_OF_TURN) {
             consideredPieceForCurrentTurn = resolveConsideredPiece(context.getPlayer(), legalCommands);
         }
 
-        Command chosenCommand = chooseCommand(legalCommands, context);
+        MoveCommand chosenCommand = chooseCommand(legalCommands, context);
         lastMovedPiece = chosenCommand.getAffectedPiece();
 
         return chosenCommand;
     }
 
     // Mystery Cell rules (2)/(3) only override the rotation's own choice when needed.
-    private Command chooseCommand(List<Command> legalCommands, StrategyContext context) {
+    private MoveCommand chooseCommand(List<MoveCommand> legalCommands, StrategyContext context) {
         // Rule (1): the piece the rotation is considering this turn.
-        Command cyclicChoice = findCommandFor(legalCommands, consideredPieceForCurrentTurn)
+        MoveCommand cyclicChoice = findCommandFor(legalCommands, consideredPieceForCurrentTurn)
                 .orElse(legalCommands.get(0));
         boolean cyclicChoiceLandsOnMysteryCell = landsOnMysteryCell(cyclicChoice, context);
 
@@ -48,18 +48,18 @@ public final class BlueStrategy implements PlayerStrategy {
 
         if (isClockwise(cyclicChoice) && cyclicChoiceLandsOnMysteryCell) {
             // Rule (3): clockwise onto the Mystery Cell: switch to a command that avoids it.
-            return findFirst(legalCommands, command -> !landsOnMysteryCell(command, context))
+            return CommandFinder.findFirst(legalCommands, command -> !landsOnMysteryCell(command, context))
                     .orElse(cyclicChoice);
         }
 
         // Rule (2): otherwise, look for a counter-clockwise command that lands on it.
-        return findFirst(legalCommands,
+        return CommandFinder.findFirst(legalCommands,
                 command -> isCounterClockwise(command) && landsOnMysteryCell(command, context))
                 .orElse(cyclicChoice);
     }
 
     // Resumes after the last moved piece, skipping pieces with no legal command.
-    private Piece resolveConsideredPiece(Player player, List<Command> legalCommands) {
+    private Piece resolveConsideredPiece(Player player, List<MoveCommand> legalCommands) {
         List<Piece> pieces = player.getPieces();
         Iterator<Piece> rotation = new BluePieceRotationIterator(pieces, lastMovedPiece);
 
@@ -76,7 +76,7 @@ public final class BlueStrategy implements PlayerStrategy {
     }
 
     // Base piece has no direction yet, so it is neither clockwise nor counter-clockwise.
-    private static Optional<MovementDirectionStrategy> findCurrentDirection(Command command) {
+    private static Optional<MovementDirectionStrategy> findCurrentDirection(MoveCommand command) {
         Piece piece = command.getAffectedPiece();
 
         if (!piece.hasMovementDirection()) {
@@ -86,15 +86,15 @@ public final class BlueStrategy implements PlayerStrategy {
         return Optional.of(piece.getMovementDirection());
     }
 
-    private static boolean isClockwise(Command command) {
+    private static boolean isClockwise(MoveCommand command) {
         return findCurrentDirection(command).map(MovementDirectionStrategy::isClockwise).orElse(false);
     }
 
-    private static boolean isCounterClockwise(Command command) {
+    private static boolean isCounterClockwise(MoveCommand command) {
         return findCurrentDirection(command).map(direction -> !direction.isClockwise()).orElse(false);
     }
 
-    private static boolean landsOnMysteryCell(Command command, StrategyContext context) {
+    private static boolean landsOnMysteryCell(MoveCommand command, StrategyContext context) {
         MysteryCellLocation mysteryCellLocation = context.getMysteryCellLocation();
 
         if (!mysteryCellLocation.isActive()) {
@@ -106,13 +106,9 @@ public final class BlueStrategy implements PlayerStrategy {
                 .orElse(false);
     }
 
-    private static Optional<Command> findCommandFor(List<Command> legalCommands, Piece piece) {
+    private static Optional<MoveCommand> findCommandFor(List<MoveCommand> legalCommands, Piece piece) {
         return legalCommands.stream()
                 .filter(command -> command.getAffectedPiece() == piece)
                 .findFirst();
-    }
-
-    private static Optional<Command> findFirst(List<Command> legalCommands, Predicate<Command> condition) {
-        return legalCommands.stream().filter(condition).findFirst();
     }
 }

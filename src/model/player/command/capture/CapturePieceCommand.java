@@ -1,6 +1,5 @@
 package model.player.command.capture;
 
-import config.enums.CommandType;
 import message.GameMessage;
 import message.observer.GameMessagePublisher;
 import model.piece.Piece;
@@ -36,11 +35,6 @@ public final class CapturePieceCommand implements Command {
                 capturingPiece.toString(), capturePosition, capturedPiece.toString(),
                 capturedPlayer.getColor(), capturedPlayer.countPiecesOnBoard(),
                 capturedPlayer.countPiecesAtBase()));
-    }
-
-    @Override
-    public CommandType getType() {
-        return CommandType.CAPTURE;
     }
 
     @Override

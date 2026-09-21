@@ -15,9 +15,9 @@ import model.board.Board;
 import model.direction.MovementDirectionStrategy;
 import model.piece.Piece;
 import model.player.Player;
-import model.player.PlayerColorNames;
 import model.player.strategy.blockdirection.BlockDirectionClassifier;
 import model.player.strategy.blockdirection.BlockTravelDirectionStrategy;
+import utils.color.PlayerColorNames;
 
 // Turns each GameMessage into console text; keeps roster and board only for reports.
 public final class ConsoleGameObserver implements GameMessageObserver {

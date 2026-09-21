@@ -3,7 +3,6 @@ package model.player.rule.capture;
 import config.constant.BlockadeConstants;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import model.piece.Piece;
 import model.player.Player;
 import model.player.command.Command;
@@ -19,7 +18,7 @@ public final class BlockCaptureRule extends CaptureCheckRule {
             return Optional.empty();
         }
 
-        List<Piece> capturingBlock = findBlockAt(mover, movedPiece.getTrackPosition());
+        List<Piece> capturingBlock = mover.getPiecesAt(movedPiece.getTrackPosition());
 
         if (capturingBlock.size() < BlockadeConstants.MINIMUM_BLOCKADE_SIZE) {
             return Optional.empty();
@@ -30,7 +29,7 @@ public final class BlockCaptureRule extends CaptureCheckRule {
                 continue;
             }
 
-            List<Piece> opponentBlock = findBlockAt(opponent, movedPiece.getTrackPosition());
+            List<Piece> opponentBlock = opponent.getPiecesAt(movedPiece.getTrackPosition());
 
             if (opponentBlock.size() == capturingBlock.size()) {
                 return Optional.of(
@@ -39,12 +38,5 @@ public final class BlockCaptureRule extends CaptureCheckRule {
         }
 
         return Optional.empty();
-    }
-
-    private static List<Piece> findBlockAt(Player player, int trackPosition) {
-        return player.getPieces().stream()
-            .filter(Piece::isOnTrack)
-            .filter(piece -> piece.getTrackPosition() == trackPosition)
-            .collect(Collectors.toList());
     }
 }

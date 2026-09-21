@@ -12,7 +12,6 @@ import model.direction.MovementDirectionStrategy;
 import model.effect.movement.MovementEffect;
 import model.effect.restriction.PieceRestrictionState;
 import model.piece.Piece;
-import model.player.rule.home.HomeStraightEntryRule;
 
 // Owns a player's four pieces; every piece change goes through here.
 public abstract class Player {
@@ -31,6 +30,14 @@ public abstract class Player {
 
     public List<Piece> getPieces() {
         return pieces;
+    }
+
+    // T-3: this player's pieces standing on one track cell.
+    public List<Piece> getPiecesAt(int trackPosition) {
+        return pieces.stream()
+                .filter(Piece::isOnTrack)
+                .filter(piece -> piece.getTrackPosition() == trackPosition)
+                .toList();
     }
 
     // T-7: total captures across all pieces.
@@ -161,61 +168,12 @@ public abstract class Player {
 
     // Rule 1: moves a piece by the dice value using the travel direction (T-1).
     public void moveForward(
-            Piece piece, int steps, Board board, HomeStraightEntryRule homeStraightEntryRule,
+            Piece piece, int steps, Board board, HomeEntryPolicy homeEntryPolicy,
             MovementDirectionStrategy travelDirection) {
         requireOwnership(piece);
         requireMovable(piece);
 
-        if (piece.isOnHomeStraight()) {
-            applyHomeStraightMove(piece, steps);
-        } else {
-            applyTrackMove(piece, steps, board, homeStraightEntryRule, travelDirection);
-        }
-    }
-
-    // T-1: reaching Approach enters HomeStraight only if the entry rule allows.
-    private void applyTrackMove(
-            Piece piece, int steps, Board board, HomeStraightEntryRule homeStraightEntryRule,
-            MovementDirectionStrategy travelDirection) {
-        int stepsToApproach = travelDirection.countStepsToApproach(piece.getTrackPosition(), color, board);
-
-        if (steps < stepsToApproach) {
-            piece.moveTo(travelDirection.nextPosition(piece.getTrackPosition(), steps, board));
-            return;
-        }
-
-        if (steps == stepsToApproach) {
-            // Landing exactly on Approach keeps the piece on the track.
-            piece.moveTo(travelDirection.nextPosition(piece.getTrackPosition(), steps, board));
-            piece.recordApproachPass();
-            return;
-        }
-
-        // Leaving Approach isn't a new pass: arriving on it was already counted.
-        if (stepsToApproach > 0) {
-            piece.recordApproachPass();
-        }
-
-        if (homeStraightEntryRule.forbidsEntry(piece)) {
-            piece.moveTo(travelDirection.nextPosition(piece.getTrackPosition(), steps, board));
-            return;
-        }
-
-        applyHomeStraightMove(piece, steps - stepsToApproach);
-    }
-
-    // Reaching or passing the last HomeStraight cell sends the piece Home.
-    private void applyHomeStraightMove(Piece piece, int steps) {
-        int currentIndex = piece.isOnHomeStraight() ? piece.getHomeStraightIndex()
-                : BoardConstants.BEFORE_FIRST_HOME_STRAIGHT_CELL;
-        int newIndex = currentIndex + steps;
-
-        if (newIndex >= BoardConstants.CELLS_PER_HOME_STRAIGHT) {
-            piece.moveHome();
-            return;
-        }
-
-        piece.moveToHomeStraight(newIndex);
+        PieceMovement.move(piece, steps, board, homeEntryPolicy, travelDirection);
     }
 
     private void requireMovable(Piece piece) {

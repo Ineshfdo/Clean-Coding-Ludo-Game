@@ -9,7 +9,7 @@ import model.board.cell.HomeStraightCell;
 import model.board.cell.StandardCell;
 
 // Singleton: one board layout is shared by every player, piece, and rules.
-public final class LudoBoard implements Board {
+public final class LudoBoard implements Board, MysteryCellPositions, TurnOrderLayout {
 
     private static final LudoBoard SHARED_INSTANCE = new LudoBoard();
 
@@ -34,6 +34,11 @@ public final class LudoBoard implements Board {
     @Override
     public int getStandardCellCount() {
         return BoardConstants.STANDARD_CELL_COUNT;
+    }
+
+    @Override
+    public int getHomeStraightLength() {
+        return BoardConstants.CELLS_PER_HOME_STRAIGHT;
     }
 
     @Override

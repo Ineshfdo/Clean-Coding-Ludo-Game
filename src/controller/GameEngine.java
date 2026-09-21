@@ -1,7 +1,6 @@
 package controller;
 
 import config.constant.DiceConstants;
-import config.enums.CommandType;
 import config.enums.GameMessageType;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -11,44 +10,47 @@ import java.util.Set;
 import message.GameMessage;
 import message.observer.GameMessagePublisher;
 import model.board.Board;
+import model.effect.mysterycell.MysteryCellLocation;
 import model.piece.Piece;
 import model.player.Player;
 import model.player.command.Command;
+import model.player.command.MoveCommand;
 import model.player.rule.block.BlockadeBreakRule;
 import model.player.rule.capture.CaptureCheckRule;
-import model.player.rule.mystery.BetaRestrictionRule;
-import model.player.rule.mystery.MysteryCellTeleportRule;
+import model.player.rule.mystery.TeleportRule;
+import model.player.rule.roll.RollEvent;
+import model.player.rule.roll.RollHook;
 import model.player.rule.roll.RollValidityRule;
 import model.player.rule.turn.TurnRule;
 import model.player.strategy.PlayerStrategy;
-import model.player.strategy.PlayerStrategyRegistry;
+import model.player.strategy.PlayerStrategyLookup;
 import model.player.strategy.StrategyContext;
 import utils.dice.Dice;
 
 public final class GameEngine {
 
     private final List<TurnRule> turnRules;
-    private final PlayerStrategyRegistry strategyRegistry;
+    private final PlayerStrategyLookup strategyLookup;
     private final RollValidityRule rollValidityRule;
     private final CaptureCheckRule captureCheckRule;
     private final BlockadeBreakRule blockadeBreakRule;
-    private final MysteryCellTeleportRule mysteryCellTeleportRule;
-    private final BetaRestrictionRule betaRestrictionRule;
-    private final HomeGateTracker homeGateTracker;
+    private final TeleportRule teleportRule;
+    private final MysteryCellLocation mysteryCellLocation;
+    private final List<RollHook> rollHooks;
 
     public GameEngine(
-            List<TurnRule> turnRules, PlayerStrategyRegistry strategyRegistry,
+            List<TurnRule> turnRules, PlayerStrategyLookup strategyLookup,
             RollValidityRule rollValidityRule, CaptureCheckRule captureCheckRule,
-            BlockadeBreakRule blockadeBreakRule, MysteryCellTeleportRule mysteryCellTeleportRule,
-            BetaRestrictionRule betaRestrictionRule, HomeGateTracker homeGateTracker) {
+            BlockadeBreakRule blockadeBreakRule, TeleportRule teleportRule,
+            MysteryCellLocation mysteryCellLocation, List<RollHook> rollHooks) {
         this.turnRules = turnRules;
-        this.strategyRegistry = strategyRegistry;
+        this.strategyLookup = strategyLookup;
         this.rollValidityRule = rollValidityRule;
         this.captureCheckRule = captureCheckRule;
         this.blockadeBreakRule = blockadeBreakRule;
-        this.mysteryCellTeleportRule = mysteryCellTeleportRule;
-        this.betaRestrictionRule = betaRestrictionRule;
-        this.homeGateTracker = homeGateTracker;
+        this.teleportRule = teleportRule;
+        this.mysteryCellLocation = mysteryCellLocation;
+        this.rollHooks = List.copyOf(rollHooks);
     }
 
     public void playTurn(
@@ -83,12 +85,7 @@ public final class GameEngine {
             }
 
             // Runs before legal commands, so strategy previews and the real move agree.
-            updateHomeGate(player, allPlayers, messagePublisher);
-
-            // T-13: forces still-restricted Beta piece back to Base.
-            betaRestrictionRule.recordRoll(player, rollNumber, rollValue);
-            betaRestrictionRule.findReturnToBase(player)
-                    .ifPresent(command -> command.execute(messagePublisher));
+            runRollHooks(new RollEvent(player, allPlayers, rollNumber, rollValue), messagePublisher);
 
             boolean capturedOpponent =
                     resolveAndPlay(player, allPlayers, rollNumber, rollValue, board, messagePublisher);
@@ -97,34 +94,33 @@ public final class GameEngine {
         }
     }
 
-    // T-7 home gate: counts this roll and announces it once, on the roll that opens the gate.
-    private void updateHomeGate(
-            Player player, List<Player> allPlayers, GameMessagePublisher messagePublisher) {
-        homeGateTracker.recordRoll(player, allPlayers);
-
-        if (homeGateTracker.wasOpenedByLatestRoll(player.getColor())) {
-            messagePublisher.publish(GameMessage.homeGateOpened(player.getColor()));
+    // T-7/T-13: bookkeeping after an accepted roll, e.g. the home gate and the Beta restriction.
+    private void runRollHooks(RollEvent roll, GameMessagePublisher messagePublisher) {
+        for (RollHook rollHook : rollHooks) {
+            rollHook.onRollAccepted(roll, messagePublisher);
         }
     }
 
     private boolean resolveAndPlay(
             Player player, List<Player> allPlayers, int rollNumber, int rollValue, Board board,
             GameMessagePublisher messagePublisher) {
-        List<Command> legalCommands = collectLegalCommands(player, allPlayers, rollValue, board);
+        List<MoveCommand> legalCommands = collectLegalCommands(player, allPlayers, rollValue, board);
 
         if (legalCommands.isEmpty()) {
             messagePublisher.publish(GameMessage.noPieceMovable());
             return false;
         }
 
-        PlayerStrategy strategy = strategyRegistry.getStrategyFor(player.getColor());
+        PlayerStrategy strategy = strategyLookup.getStrategyFor(player.getColor());
         StrategyContext context = new StrategyContext(
-                player, allPlayers, board, mysteryCellTeleportRule.getMysteryCellLocation(), rollNumber);
+                player, allPlayers, board, mysteryCellLocation, rollNumber);
 
-        Command chosenCommand = strategy.choose(legalCommands, context);
+        MoveCommand chosenCommand = strategy.choose(legalCommands, context);
         chosenCommand.execute(messagePublisher);
 
-        boolean capturedOpponent = applyCapture(player, chosenCommand, allPlayers, messagePublisher);
+        // A "cannot move" turn moves nothing, so nothing can be captured.
+        boolean capturedOpponent = !chosenCommand.movesNothing()
+                && applyCapture(player, chosenCommand, allPlayers, messagePublisher);
         boolean capturedByTeleport =
                 applyMysteryCellTeleport(player, chosenCommand, allPlayers, messagePublisher);
 
@@ -143,7 +139,7 @@ public final class GameEngine {
                 continue;
             }
 
-            Optional<Command> teleportCommand = mysteryCellTeleportRule.findTeleport(mover, movedPiece);
+            Optional<Command> teleportCommand = teleportRule.findTeleport(mover, movedPiece);
 
             if (teleportCommand.isPresent()) {
                 teleportCommand.get().execute(messagePublisher);
@@ -154,9 +150,9 @@ public final class GameEngine {
         return capturedAny;
     }
 
-    private List<Command> collectLegalCommands(
+    private List<MoveCommand> collectLegalCommands(
             Player player, List<Player> allPlayers, int rollValue, Board board) {
-        List<Command> legalCommands = new ArrayList<>();
+        List<MoveCommand> legalCommands = new ArrayList<>();
 
         for (TurnRule rule : turnRules) {
             legalCommands.addAll(rule.findLegalCommands(player, rollValue, board, allPlayers));
@@ -169,11 +165,6 @@ public final class GameEngine {
     private boolean applyCapture(
             Player mover, Command executedCommand, List<Player> allPlayers,
             GameMessagePublisher messagePublisher) {
-        // A "cannot move" turn moves nothing, so nothing can be captured.
-        if (executedCommand.getType() == CommandType.CANNOT_MOVE) {
-            return false;
-        }
-
         boolean capturedAny = false;
 
         for (Piece movedPiece : executedCommand.getAffectedPieces()) {

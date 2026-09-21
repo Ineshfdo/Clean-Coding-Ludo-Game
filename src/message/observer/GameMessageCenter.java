@@ -5,7 +5,7 @@ import java.util.List;
 import message.GameMessage;
 
 // Singleton: every part of the game publishes here, so all observers see it.
-public final class GameMessageCenter implements GameMessagePublisher {
+public final class GameMessageCenter implements GameMessagePublisher, GameMessageRegistry {
 
     private static final GameMessageCenter SHARED_INSTANCE = new GameMessageCenter();
 
@@ -25,6 +25,7 @@ public final class GameMessageCenter implements GameMessagePublisher {
     }
 
     // Clears observers so each game starts clean; the singleton outlives games.
+    @Override
     public void clearObservers() {
         observers.clear();
     }

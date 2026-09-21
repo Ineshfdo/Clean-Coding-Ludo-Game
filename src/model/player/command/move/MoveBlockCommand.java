@@ -1,7 +1,6 @@
 package model.player.command.move;
 
 import config.constant.BoardConstants;
-import config.enums.CommandType;
 import java.util.List;
 import java.util.Optional;
 import message.GameMessage;
@@ -10,30 +9,30 @@ import model.board.Board;
 import model.direction.MovementDirectionStrategy;
 import model.piece.Piece;
 import model.piece.PieceLabels;
+import model.player.HomeEntryPolicy;
 import model.player.Player;
-import model.player.command.Command;
-import model.player.rule.home.HomeStraightEntryRule;
+import model.player.command.MoveCommand;
 import model.player.strategy.blockdirection.BlockDirectionClassifier;
 
 // T-3: a block moves together using one shared direction.
-public final class MoveBlockCommand implements Command {
+public final class MoveBlockCommand implements MoveCommand {
 
     private final Player player;
     private final List<Piece> blockPieces;
 
     private final int effectiveSteps;
     private final Board board;
-    private final HomeStraightEntryRule homeStraightEntryRule;
+    private final HomeEntryPolicy homeEntryPolicy;
     private final MovementDirectionStrategy travelDirection;
 
     public MoveBlockCommand(Player player, List<Piece> blockPieces, int effectiveSteps,
-            Board board, HomeStraightEntryRule homeStraightEntryRule,
+            Board board, HomeEntryPolicy homeEntryPolicy,
             MovementDirectionStrategy travelDirection) {
         this.player = player;
         this.blockPieces = blockPieces;
         this.effectiveSteps = effectiveSteps;
         this.board = board;
-        this.homeStraightEntryRule = homeStraightEntryRule;
+        this.homeEntryPolicy = homeEntryPolicy;
         this.travelDirection = travelDirection;
     }
 
@@ -45,7 +44,7 @@ public final class MoveBlockCommand implements Command {
 
         for (Piece piece : blockPieces) {
             player.adoptBlockDirection(piece, travelDirection, blockPieces.size());
-            player.moveForward(piece, effectiveSteps, board, homeStraightEntryRule, travelDirection);
+            player.moveForward(piece, effectiveSteps, board, homeEntryPolicy, travelDirection);
         }
 
         messagePublisher.publish(describeOutcome(fromPosition));
@@ -75,11 +74,6 @@ public final class MoveBlockCommand implements Command {
     }
 
     @Override
-    public CommandType getType() {
-        return CommandType.MOVE_FORWARD;
-    }
-
-    @Override
     public Piece getAffectedPiece() {
         return blockPieces.get(0);
     }
@@ -92,13 +86,13 @@ public final class MoveBlockCommand implements Command {
     @Override
     public boolean reachesHome() {
         return HomeArrivalChecker.reachesHome(
-                blockPieces.get(0), effectiveSteps, board, homeStraightEntryRule, travelDirection);
+                blockPieces.get(0), effectiveSteps, board, homeEntryPolicy, travelDirection);
     }
 
     @Override
     public boolean leavesStandardPath() {
         return HomeArrivalChecker.leavesTrack(
-                blockPieces.get(0), effectiveSteps, board, homeStraightEntryRule, travelDirection);
+                blockPieces.get(0), effectiveSteps, board, homeEntryPolicy, travelDirection);
     }
 
     // T-4/T-17: the "move as a block" action GreenStrategy prefers.
