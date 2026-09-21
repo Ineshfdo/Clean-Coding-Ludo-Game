@@ -6,6 +6,14 @@
   <component name="ChangeListManager">
     <list default="true" id="576ba9fa-b4ca-47ea-9061-05b3403e3226" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/config/enums/GameMessageType.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/config/enums/GameMessageType.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/controller/GameFacade.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/controller/GameFacade.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/message/GameMessage.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/message/GameMessage.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/model/piece/Piece.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/model/piece/Piece.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/model/player/Player.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/model/player/Player.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/model/player/command/mystery/MysteryCellTeleportCommand.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/model/player/command/mystery/MysteryCellTeleportCommand.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/model/player/strategy/playstyle/BlueStrategy.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/model/player/strategy/playstyle/BlueStrategy.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/view/ConsoleGameObserver.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/view/ConsoleGameObserver.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -26,14 +34,20 @@
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
+    "Application.main.executor": "Run",
     "ModuleVcsDetector.initialDetectionPerformed": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
+    "RunOnceActivity.git.unshallow": "true",
     "RunOnceActivity.typescript.service.memoryLimit.init": "true",
     "codeWithMe.voiceChat.enabledByDefault": "false",
     "git-widget-placeholder": "master",
     "kotlin-language-version-configured": "true",
-    "node.js.selected.package.tslint": "(autodetect)"
+    "last_opened_file_path": "C:/Users/R E V O/Music/CC/Clean-Coding-Ludo-Game",
+    "node.js.detected.package.eslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm"
   }
 }]]></component>
   <component name="TaskManager">

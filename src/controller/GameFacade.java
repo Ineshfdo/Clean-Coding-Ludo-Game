@@ -2,9 +2,15 @@ package controller;
 
 import config.enums.GameMessageType;
 import config.enums.PlayerColor;
+import exception.IllegalMoveException;
+import exception.InvalidPieceStateException;
+import exception.PieceOwnershipException;
+import exception.PlayerNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import message.GameMessage;
 import message.observer.GameMessageCenter;
 import message.observer.GameMessagePublisher;
@@ -66,9 +72,21 @@ public final class GameFacade {
     private static final BlockTravelDirectionStrategy BLOCK_TRAVEL_DIRECTION_STRATEGY =
         new LongestDistanceDirectionStrategy();
 
+    private static final Logger LOGGER = Logger.getLogger(GameFacade.class.getName());
+
     private GameFacade() {}
 
     public static void startGame(long seed) {
+        try {
+            playGame(seed);
+        } catch (IllegalMoveException | InvalidPieceStateException
+                | PieceOwnershipException | PlayerNotFoundException exception) {
+            LOGGER.log(
+                    Level.SEVERE, "Game aborted; the simulation cannot continue", exception);
+        }
+    }
+
+    private static void playGame(long seed) {
 
         List<Player> players = buildPlayers();
         Board board = LudoBoard.getInstance();
@@ -215,7 +233,7 @@ public final class GameFacade {
         return players.stream()
             .filter(player -> player.getColor() == color)
             .findFirst()
-            .orElseThrow();
+            .orElseThrow(() -> new PlayerNotFoundException("No player with color " + color));
     }
 
     private static GameEngine buildGameEngine(MysteryCellManager mysteryCellManager) {

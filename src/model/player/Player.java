@@ -2,6 +2,8 @@ package model.player;
 
 import config.constant.BoardConstants;
 import config.enums.PlayerColor;
+import exception.IllegalMoveException;
+import exception.PieceOwnershipException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -164,6 +166,7 @@ public abstract class Player {
             Piece piece, int steps, Board board, HomeStraightEntryRule homeStraightEntryRule,
             MovementDirectionStrategy travelDirection) {
         requireOwnership(piece);
+        requireMovable(piece);
 
         if (piece.isOnHomeStraight()) {
             applyHomeStraightMove(piece, steps);
@@ -216,9 +219,16 @@ public abstract class Player {
         piece.moveToHomeStraight(newIndex);
     }
 
+    private void requireMovable(Piece piece) {
+        if (!piece.isOnTrack() && !piece.isOnHomeStraight()) {
+            throw new IllegalMoveException(
+                    piece + " can't move: it is at Base or already Home");
+        }
+    }
+
     private void requireOwnership(Piece piece) {
         if (piece.getColor() != color) {
-            throw new IllegalArgumentException(piece + " does not belong to " + color);
+            throw new PieceOwnershipException(piece + " does not belong to " + color);
         }
     }
 

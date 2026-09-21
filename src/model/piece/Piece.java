@@ -2,6 +2,7 @@ package model.piece;
 
 import config.enums.PieceLocation;
 import config.enums.PlayerColor;
+import exception.InvalidPieceStateException;
 import model.direction.MovementDirectionStrategy;
 import model.effect.movement.MovementEffect;
 import model.effect.restriction.NoRestrictionState;
@@ -71,11 +72,20 @@ public final class Piece {
 
     // T-1/T-5: current direction - its own, or its block's while grouped.
     public MovementDirectionStrategy getMovementDirectionStrategy() {
+        requireDirection(movementDirectionStrategy);
+
         return movementDirectionStrategy;
+    }
+
+    // False only while the piece is at Base, before its first coin toss.
+    public boolean hasMovementDirection() {
+        return movementDirectionStrategy != null;
     }
 
     // T-5: direction assigned at Base exit, unaffected by blocks.
     public MovementDirectionStrategy getOriginalMovementDirectionStrategy() {
+        requireDirection(originalMovementDirectionStrategy);
+
         return originalMovementDirectionStrategy;
     }
 
@@ -225,9 +235,16 @@ public final class Piece {
         this.restrictionState = NoRestrictionState.getInstance();
     }
 
+    private void requireDirection(MovementDirectionStrategy direction) {
+        if (direction == null) {
+            throw new InvalidPieceStateException(this + " has no movement direction yet");
+        }
+    }
+
     private void requireLocation(PieceLocation requiredLocation) {
         if (location != requiredLocation) {
-            throw new IllegalStateException(this + " is not on " + requiredLocation);
+            throw new InvalidPieceStateException(
+                    this + " is at " + location + ", not " + requiredLocation);
         }
     }
 

@@ -121,7 +121,7 @@ public final class GameMessage {
             String pieceLabel, int fromPosition, int newPosition, String blockTypeLabel,
             String movementDirectionLabel) {
         return new GameMessage(
-                GameMessageType.PIECE_MOVED, null, 0, 0, fromPosition, newPosition, pieceLabel, null,
+                GameMessageType.BLOCK_MOVED, null, 0, 0, fromPosition, newPosition, pieceLabel, null,
                 null, null, movementDirectionLabel, blockTypeLabel, null, null, null, null, 0, 0);
     }
 

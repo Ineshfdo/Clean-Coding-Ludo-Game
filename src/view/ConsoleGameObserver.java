@@ -68,6 +68,7 @@ public final class ConsoleGameObserver implements GameMessageObserver {
                             + " player: no opponent pieces remain to capture.";
             case NO_PIECE_MOVABLE -> "  -> No pieces on the board could be moved.";
             case PIECE_MOVED -> describePieceMoved(message);
+            case BLOCK_MOVED -> describeBlockMoved(message);
             case PIECE_ENTERED_BOARD -> describePieceEnteredBoard(message);
             case PIECE_DIRECTION_ASSIGNED ->
                     "  -> Coin toss for " + message.getPieceLabel() + ": "
@@ -184,15 +185,16 @@ public final class ConsoleGameObserver implements GameMessageObserver {
         return outcome + " (cell " + message.getNewPosition() + ").";
     }
 
-    // T-4/T-13: block moves name BlockType/BlockDirection; solo moves name dice and direction.
-    private String describePieceMoved(GameMessage message) {
-        if (message.getBlockTypeLabel() != null) {
-            return "  -> Moved " + message.getPieceLabel() + " from cell "
-                    + message.getFromPosition() + " to cell " + message.getNewPosition() + "."
-                    + " [BlockType:" + message.getBlockTypeLabel()
-                    + " BlockDirection:" + message.getMovementDirectionLabel() + "]";
-        }
+    // T-4/T-13: a block move names its BlockType and BlockDirection.
+    private static String describeBlockMoved(GameMessage message) {
+        return "  -> Moved " + message.getPieceLabel() + " from cell "
+                + message.getFromPosition() + " to cell " + message.getNewPosition() + "."
+                + " [BlockType:" + message.getBlockTypeLabel()
+                + " BlockDirection:" + message.getMovementDirectionLabel() + "]";
+    }
 
+    // A solo move names the dice value and direction.
+    private String describePieceMoved(GameMessage message) {
         return "  -> " + PlayerColorNames.displayNameOf(message.getColor()) + " moves piece " + message.getPieceLabel()
                 + " from location " + describeCellLabel(message.getFromPosition())
                 + " to " + describeCellLabel(message.getNewPosition())

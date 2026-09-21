@@ -1,6 +1,7 @@
 package model.player.strategy.playstyle;
 
 import config.constant.TurnConstants;
+import exception.IllegalMoveException;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
@@ -61,27 +62,28 @@ public final class BlueStrategy implements PlayerStrategy {
     private Piece resolveConsideredPiece(Player player, List<Command> legalOptions) {
         List<Piece> pieces = player.getPieces();
         Iterator<Piece> rotation = new BluePieceRotationIterator(pieces, lastMovedPiece);
-        Piece firstInRotation = null;
 
         for (int attempt = 0; attempt < pieces.size(); attempt++) {
             Piece candidate = rotation.next();
-
-            if (firstInRotation == null) {
-                firstInRotation = candidate;
-            }
 
             if (findOptionFor(legalOptions, candidate).isPresent()) {
                 return candidate;
             }
         }
 
-        // Unreachable: every legal option names one of the player's pieces.
-        return firstInRotation;
+        throw new IllegalMoveException(
+                "No legal option belongs to any " + player.getColor() + " piece");
     }
 
     // Base piece has no direction yet, so it is neither clockwise nor counter-clockwise.
     private static Optional<MovementDirectionStrategy> currentDirectionOf(Command option) {
-        return Optional.ofNullable(option.getAffectedPiece().getMovementDirectionStrategy());
+        Piece piece = option.getAffectedPiece();
+
+        if (!piece.hasMovementDirection()) {
+            return Optional.empty();
+        }
+
+        return Optional.of(piece.getMovementDirectionStrategy());
     }
 
     private static boolean isClockwise(Command option) {

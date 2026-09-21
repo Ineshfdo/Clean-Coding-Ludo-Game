@@ -3,6 +3,7 @@ package model.player.command.mystery;
 import config.constant.BoardConstants;
 import config.enums.CommandType;
 import config.enums.MysteryCellDestinationType;
+import exception.IllegalMoveException;
 import java.util.List;
 import java.util.stream.Collectors;
 import message.GameMessage;
@@ -103,7 +104,8 @@ public final class MysteryCellTeleportCommand implements Command {
             case GAMMA -> board.getGammaCellPosition();
             case ENTRY -> board.getEntryCellPosition(player.getColor());
             case APPROACH -> board.getApproachCellPosition(player.getColor());
-            case BASE -> throw new IllegalStateException("Base has no track position");
+            case BASE -> throw new IllegalMoveException(
+                    "Cannot resolve a track cell for " + describeLabel() + ": destination is BASE");
         };
     }
 
