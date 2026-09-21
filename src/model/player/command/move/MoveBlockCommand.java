@@ -9,6 +9,7 @@ import message.observer.GameMessagePublisher;
 import model.board.Board;
 import model.direction.MovementDirectionStrategy;
 import model.piece.Piece;
+import model.piece.PieceLabels;
 import model.player.Player;
 import model.player.command.Command;
 import model.player.rule.home.HomeStraightEntryRule;
@@ -20,40 +21,40 @@ public final class MoveBlockCommand implements Command {
     private final Player player;
     private final List<Piece> blockPieces;
 
-    private final int effectiveDiceValue;
+    private final int effectiveSteps;
     private final Board board;
     private final HomeStraightEntryRule homeStraightEntryRule;
     private final MovementDirectionStrategy travelDirection;
 
-    public MoveBlockCommand(Player player, List<Piece> blockPieces, int effectiveDiceValue,
+    public MoveBlockCommand(Player player, List<Piece> blockPieces, int effectiveSteps,
             Board board, HomeStraightEntryRule homeStraightEntryRule,
             MovementDirectionStrategy travelDirection) {
         this.player = player;
         this.blockPieces = blockPieces;
-        this.effectiveDiceValue = effectiveDiceValue;
+        this.effectiveSteps = effectiveSteps;
         this.board = board;
         this.homeStraightEntryRule = homeStraightEntryRule;
         this.travelDirection = travelDirection;
     }
 
     @Override
-    public void execute(GameMessagePublisher messages) {
+    public void execute(GameMessagePublisher messagePublisher) {
         Piece representative = blockPieces.get(0);
         int fromPosition = representative.isOnTrack()
                 ? representative.getTrackPosition() : BoardConstants.NO_TRACK_POSITION;
 
         for (Piece piece : blockPieces) {
             player.adoptBlockDirection(piece, travelDirection, blockPieces.size());
-            player.moveForward(piece, effectiveDiceValue, board, homeStraightEntryRule, travelDirection);
+            player.moveForward(piece, effectiveSteps, board, homeStraightEntryRule, travelDirection);
         }
 
-        messages.publish(describeOutcome(fromPosition));
+        messagePublisher.publish(describeOutcome(fromPosition));
     }
 
     // Members move identically, so one piece describes the block.
     private GameMessage describeOutcome(int fromPosition) {
         Piece representative = blockPieces.get(0);
-        String blockLabel = describeBlockLabel();
+        String blockLabel = PieceLabels.joinPieceLabels(blockPieces);
 
         if (representative.isHome()) {
             return GameMessage.pieceReachedHome(blockLabel);
@@ -73,20 +74,6 @@ public final class MoveBlockCommand implements Command {
                 travelDirection.getLabel());
     }
 
-    private String describeBlockLabel() {
-        StringBuilder label = new StringBuilder();
-
-        for (Piece piece : blockPieces) {
-            if (label.length() > 0) {
-                label.append('+');
-            }
-
-            label.append(piece);
-        }
-
-        return label.toString();
-    }
-
     @Override
     public CommandType getType() {
         return CommandType.MOVE_FORWARD;
@@ -99,19 +86,19 @@ public final class MoveBlockCommand implements Command {
 
     @Override
     public Optional<Integer> previewLandingPosition() {
-        return TrackLandingFinder.resolve(blockPieces.get(0), effectiveDiceValue, board, travelDirection);
+        return TrackLandingFinder.findLandingPosition(blockPieces.get(0), effectiveSteps, board, travelDirection);
     }
 
     @Override
     public boolean reachesHome() {
-        return HomeArrivalChecker.resolve(
-                blockPieces.get(0), effectiveDiceValue, board, homeStraightEntryRule, travelDirection);
+        return HomeArrivalChecker.reachesHome(
+                blockPieces.get(0), effectiveSteps, board, homeStraightEntryRule, travelDirection);
     }
 
     @Override
     public boolean leavesStandardPath() {
         return HomeArrivalChecker.leavesTrack(
-                blockPieces.get(0), effectiveDiceValue, board, homeStraightEntryRule, travelDirection);
+                blockPieces.get(0), effectiveSteps, board, homeStraightEntryRule, travelDirection);
     }
 
     // T-4/T-17: the "move as a block" action GreenStrategy prefers.

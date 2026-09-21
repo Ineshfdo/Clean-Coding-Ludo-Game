@@ -13,7 +13,7 @@ import utils.randomgenerator.RandomNumberGenerator;
 
 // T-10: tracks Mystery Cell spawn, lifespan and relocation.
 // Publishes messages only; never prints directly.
-public final class MysteryCellManager implements MysteryCellLocation {
+public final class MysteryCellSchedule implements MysteryCellLocation {
 
     private static final int NO_ROUND_RECORDED = -1;
 
@@ -25,7 +25,7 @@ public final class MysteryCellManager implements MysteryCellLocation {
     private int currentCellPosition = BoardConstants.NO_TRACK_POSITION;
     private int roundsRemainingAtCurrentCell;
 
-    public MysteryCellManager(Board board, RandomNumberGenerator randomNumberGenerator) {
+    public MysteryCellSchedule(Board board, RandomNumberGenerator randomNumberGenerator) {
         this.board = board;
         this.randomNumberGenerator = randomNumberGenerator;
     }
@@ -42,27 +42,27 @@ public final class MysteryCellManager implements MysteryCellLocation {
     }
 
     // Runs before turns, so changes last the whole round.
-    public void onRoundStarted(int roundNumber, List<Player> players, GameMessagePublisher messages) {
+    public void onRoundStarted(int roundNumber, List<Player> allPlayers, GameMessagePublisher messagePublisher) {
         if (isActive) {
-            relocateIfDue(players, messages);
+            relocateIfDue(allPlayers, messagePublisher);
             return;
         }
 
-        spawnIfDue(roundNumber, players, messages);
+        spawnIfDue(roundNumber, allPlayers, messagePublisher);
     }
 
     // Runs after turns, so mid-round entries count this round.
-    public void onRoundCompleted(int roundNumber, List<Player> players) {
+    public void onRoundCompleted(int roundNumber, List<Player> allPlayers) {
         if (firstStandardPathEntryRound != NO_ROUND_RECORDED) {
             return;
         }
 
-        if (isAnyPieceOnStandardPath(players)) {
+        if (isAnyPieceOnStandardPath(allPlayers)) {
             firstStandardPathEntryRound = roundNumber;
         }
     }
 
-    private void spawnIfDue(int roundNumber, List<Player> players, GameMessagePublisher messages) {
+    private void spawnIfDue(int roundNumber, List<Player> allPlayers, GameMessagePublisher messagePublisher) {
         if (firstStandardPathEntryRound == NO_ROUND_RECORDED) {
             return;
         }
@@ -70,18 +70,18 @@ public final class MysteryCellManager implements MysteryCellLocation {
         int roundsSinceEntry = roundNumber - firstStandardPathEntryRound;
 
         if (roundsSinceEntry < MysteryCellConstants.REQUIRED_ROUNDS_BEFORE_SPAWN
-                || !isAnyPieceOnStandardPath(players)) {
+                || !isAnyPieceOnStandardPath(allPlayers)) {
             return;
         }
 
-        currentCellPosition = selectRandomEmptyCell(players, BoardConstants.NO_TRACK_POSITION);
+        currentCellPosition = chooseRandomEmptyCell(allPlayers, BoardConstants.NO_TRACK_POSITION);
         roundsRemainingAtCurrentCell = MysteryCellConstants.ROUNDS_PER_LOCATION;
         isActive = true;
 
-        messages.publish(GameMessage.mysteryCellAppeared(currentCellPosition));
+        messagePublisher.publish(GameMessage.mysteryCellAppeared(currentCellPosition));
     }
 
-    private void relocateIfDue(List<Player> players, GameMessagePublisher messages) {
+    private void relocateIfDue(List<Player> allPlayers, GameMessagePublisher messagePublisher) {
         roundsRemainingAtCurrentCell--;
 
         if (roundsRemainingAtCurrentCell > 0) {
@@ -89,21 +89,21 @@ public final class MysteryCellManager implements MysteryCellLocation {
         }
 
         int previousCellPosition = currentCellPosition;
-        currentCellPosition = selectRandomEmptyCell(players, previousCellPosition);
+        currentCellPosition = chooseRandomEmptyCell(allPlayers, previousCellPosition);
         roundsRemainingAtCurrentCell = MysteryCellConstants.ROUNDS_PER_LOCATION;
 
-        messages.publish(GameMessage.mysteryCellRelocated(currentCellPosition));
+        messagePublisher.publish(GameMessage.mysteryCellRelocated(currentCellPosition));
     }
 
     // T-10: excludes the previous cell so it never repeats.
-    private int selectRandomEmptyCell(List<Player> players, int excludedCellPosition) {
-        List<Integer> emptyCellPositions = findEmptyCellPositions(players, excludedCellPosition);
+    private int chooseRandomEmptyCell(List<Player> allPlayers, int excludedCellPosition) {
+        List<Integer> emptyCellPositions = findEmptyCellPositions(allPlayers, excludedCellPosition);
         int randomIndex = randomNumberGenerator.nextIntInRange(0, emptyCellPositions.size() - 1);
 
         return emptyCellPositions.get(randomIndex);
     }
 
-    private List<Integer> findEmptyCellPositions(List<Player> players, int excludedCellPosition) {
+    private List<Integer> findEmptyCellPositions(List<Player> allPlayers, int excludedCellPosition) {
         List<Integer> emptyCellPositions = new ArrayList<>();
 
         for (int cellPosition = 0; cellPosition < board.getStandardCellCount(); cellPosition++) {
@@ -111,7 +111,7 @@ public final class MysteryCellManager implements MysteryCellLocation {
                 continue;
             }
 
-            if (!isCellOccupied(cellPosition, players)) {
+            if (!isCellOccupied(cellPosition, allPlayers)) {
                 emptyCellPositions.add(cellPosition);
             }
         }
@@ -119,8 +119,8 @@ public final class MysteryCellManager implements MysteryCellLocation {
         return emptyCellPositions;
     }
 
-    private static boolean isCellOccupied(int cellPosition, List<Player> players) {
-        for (Player player : players) {
+    private static boolean isCellOccupied(int cellPosition, List<Player> allPlayers) {
+        for (Player player : allPlayers) {
             for (Piece piece : player.getPieces()) {
                 if (piece.isOnTrack() && piece.getTrackPosition() == cellPosition) {
                     return true;
@@ -131,8 +131,8 @@ public final class MysteryCellManager implements MysteryCellLocation {
         return false;
     }
 
-    private static boolean isAnyPieceOnStandardPath(List<Player> players) {
-        for (Player player : players) {
+    private static boolean isAnyPieceOnStandardPath(List<Player> allPlayers) {
+        for (Player player : allPlayers) {
             for (Piece piece : player.getPieces()) {
                 if (piece.isOnTrack()) {
                     return true;

@@ -5,14 +5,71 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="576ba9fa-b4ca-47ea-9061-05b3403e3226" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/config/enums/GameMessageType.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/config/enums/GameMessageType.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/config/constant/BoardConstants.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/config/constant/BoardConstants.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/config/constant/EffectConstants.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/config/constant/EffectConstants.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/config/constant/TurnConstants.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/config/constant/TurnConstants.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/controller/GameEngine.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/controller/GameEngine.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/controller/GameFacade.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/controller/GameFacade.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/controller/HomeGateTracker.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/controller/HomeGateTracker.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Main.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/message/GameMessage.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/message/GameMessage.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/model/board/LudoBoard.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/model/board/LudoBoard.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/model/direction/ClockwiseMovementStrategy.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/model/direction/ClockwiseMovementStrategy.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/model/direction/CounterClockwiseMovementStrategy.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/model/direction/CounterClockwiseMovementStrategy.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/model/direction/MovementDirectionStrategy.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/model/direction/MovementDirectionStrategy.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/model/direction/RemainingHomeDistance.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/model/direction/RemainingHomeDistance.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/model/effect/activation/EffectActivationRule.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/model/effect/activation/EffectActivationRule.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/model/effect/activation/MysteryTeleportActivationRule.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/model/effect/activation/MysteryTeleportActivationRule.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/model/effect/movement/MovementEffect.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/model/effect/movement/MovementEffect.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/model/effect/mysterycell/MysteryCellManager.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/model/effect/restriction/NoRestrictionState.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/model/effect/restriction/NoRestrictionState.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/model/effect/rule/AlphaEffectRule.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/model/effect/rule/AlphaEffectRule.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/model/effect/rule/GammaDirectionRule.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/model/effect/rule/GammaDirectionRule.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/model/effect/rule/MysteryCellEffects.java" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/src/model/piece/Piece.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/model/piece/Piece.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/model/player/Player.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/model/player/Player.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/model/player/command/Command.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/model/player/command/Command.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/model/player/command/cannotmove/BlockRollTooSmallCommand.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/model/player/command/cannotmove/BlockRollTooSmallCommand.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/model/player/command/cannotmove/ExactRollRequiredCommand.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/model/player/command/cannotmove/ExactRollRequiredCommand.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/model/player/command/cannotmove/MoveBlockedByBlockadeCommand.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/model/player/command/cannotmove/MoveBlockedByBlockadeCommand.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/model/player/command/cannotmove/SickRollTooSmallCommand.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/model/player/command/cannotmove/SickRollTooSmallCommand.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/model/player/command/capture/CaptureBlockCommand.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/model/player/command/capture/CaptureBlockCommand.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/model/player/command/capture/CapturePieceCommand.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/model/player/command/capture/CapturePieceCommand.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/model/player/command/move/BreakBlockCommand.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/model/player/command/move/BreakBlockCommand.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/model/player/command/move/EnterBoardCommand.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/model/player/command/move/EnterBoardCommand.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/model/player/command/move/HomeArrivalChecker.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/model/player/command/move/HomeArrivalChecker.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/model/player/command/move/MoveBlockCommand.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/model/player/command/move/MoveBlockCommand.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/model/player/command/move/MovePieceCommand.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/model/player/command/move/MovePieceCommand.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/model/player/command/move/TrackLandingFinder.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/model/player/command/move/TrackLandingFinder.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/model/player/command/mystery/BetaReturnToBaseCommand.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/model/player/command/mystery/BetaReturnToBaseCommand.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/model/player/command/mystery/MysteryCellTeleportCommand.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/model/player/command/mystery/MysteryCellTeleportCommand.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/model/player/rule/block/BlockStepsRule.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/model/player/rule/block/BlockStepsRule.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/model/player/rule/block/BlockadeBreakRule.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/model/player/rule/block/BlockadeBreakRule.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/model/player/rule/block/BlockadeLimitRule.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/model/player/rule/block/BlockadeLimitRule.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/model/player/rule/block/ThirdSixBlockadeBreakRule.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/model/player/rule/block/ThirdSixBlockadeBreakRule.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/model/player/rule/capture/CaptureCheckRule.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/model/player/rule/capture/CaptureCheckRule.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/model/player/rule/home/ApproachPassCountRule.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/model/player/rule/home/ApproachPassCountRule.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/model/player/rule/home/ExactRollRule.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/model/player/rule/home/ExactRollRule.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/model/player/rule/home/HomeStraightEligibilityRule.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/model/player/rule/home/HomeStraightEligibilityRule.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/model/player/rule/home/HomeStraightEntryRule.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/model/player/rule/home/HomeStraightEntryRule.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/model/player/rule/mystery/BetaRestrictionRule.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/model/player/rule/mystery/BetaRestrictionRule.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/model/player/rule/mystery/MysteryCellTeleportRule.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/model/player/rule/mystery/MysteryCellTeleportRule.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/model/player/rule/roll/RollValidityRule.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/model/player/rule/roll/RollValidityRule.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/model/player/rule/turn/EnterBoardRule.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/model/player/rule/turn/EnterBoardRule.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/model/player/rule/turn/MovePiecesRule.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/model/player/rule/turn/MovePiecesRule.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/model/player/rule/turn/TurnRule.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/model/player/rule/turn/TurnRule.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/model/player/strategy/PlayerStrategy.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/model/player/strategy/PlayerStrategy.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/model/player/strategy/StrategyContext.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/model/player/strategy/StrategyContext.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/model/player/strategy/blockdirection/BlockDirectionClassifier.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/model/player/strategy/blockdirection/BlockDirectionClassifier.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/model/player/strategy/blockdirection/LongestDistanceDirectionStrategy.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/model/player/strategy/blockdirection/LongestDistanceDirectionStrategy.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/model/player/strategy/helper/CaptureTargetFinder.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/model/player/strategy/helper/CaptureTargetFinder.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/model/player/strategy/playstyle/BlueStrategy.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/model/player/strategy/playstyle/BlueStrategy.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/model/player/strategy/playstyle/EnterBoardFirstStrategy.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/model/player/strategy/playstyle/EnterBoardFirstStrategy.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/model/player/strategy/playstyle/GreenStrategy.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/model/player/strategy/playstyle/GreenStrategy.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/model/player/strategy/playstyle/RedStrategy.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/model/player/strategy/playstyle/RedStrategy.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/model/player/strategy/playstyle/YellowStrategy.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/model/player/strategy/playstyle/YellowStrategy.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/utils/coin/SeededCoinToss.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/coin/SeededCoinToss.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/utils/dice/SixSidedDice.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/dice/SixSidedDice.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/view/ConsoleGameObserver.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/view/ConsoleGameObserver.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -34,6 +91,7 @@
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
+    "Application.Main.executor": "Run",
     "Application.main.executor": "Run",
     "ModuleVcsDetector.initialDetectionPerformed": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",

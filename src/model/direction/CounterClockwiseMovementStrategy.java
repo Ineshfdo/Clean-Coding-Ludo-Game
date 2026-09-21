@@ -25,7 +25,7 @@ public final class CounterClockwiseMovementStrategy implements MovementDirection
     }
 
     @Override
-    public int stepsToApproach(int currentPosition, PlayerColor color, Board board) {
+    public int countStepsToApproach(int currentPosition, PlayerColor color, Board board) {
         return board.getForwardDistance(board.getApproachCellPosition(color), currentPosition);
     }
 

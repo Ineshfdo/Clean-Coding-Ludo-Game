@@ -1,6 +1,6 @@
 import controller.GameFacade;
 
-public class main {
+public class Main {
 
     private static final long GAME_SEED = 9L;
 

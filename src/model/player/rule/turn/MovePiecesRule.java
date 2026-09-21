@@ -45,9 +45,9 @@ public final class MovePiecesRule implements TurnRule {
         this.blockTravelDirectionStrategy = blockTravelDirectionStrategy;
     }
 
-    // T-16: every distinct piece or block gets its own option.
+    // T-16: every distinct piece or block gets its own command.
     @Override
-    public List<Command> resolve(
+    public List<Command> findLegalCommands(
             Player player, int rollValue, Board board, List<Player> allPlayers) {
         List<Piece> candidates = findMovableCandidates(player);
 
@@ -55,7 +55,7 @@ public final class MovePiecesRule implements TurnRule {
             return List.of();
         }
 
-        List<Command> moveOptions = new ArrayList<>();
+        List<Command> moveCommands = new ArrayList<>();
         Set<Piece> coveredPieces = new HashSet<>();
 
         for (Piece piece : candidates) {
@@ -68,19 +68,19 @@ public final class MovePiecesRule implements TurnRule {
 
             MovementDirectionStrategy travelDirection = resolveTravelDirection(piece, blockPieces, board);
             int effectiveSteps =
-                effectiveSteps(player, piece, rollValue, board, allPlayers, blockPieces, travelDirection);
+                calculateEffectiveSteps(player, piece, rollValue, board, allPlayers, blockPieces, travelDirection);
 
             if (effectiveSteps > 0) {
-                moveOptions.add(buildMoveCommand(
+                moveCommands.add(buildMoveCommand(
                     player, piece, blockPieces, effectiveSteps, board, travelDirection));
             }
         }
 
-        if (moveOptions.isEmpty()) {
+        if (moveCommands.isEmpty()) {
             return List.of(buildNoMoveCommand(candidates.get(0), candidates, rollValue));
         }
 
-        return moveOptions;
+        return moveCommands;
     }
 
     // Rule 10/T-4/T-12: picks the message matching why the piece can't move.
@@ -141,14 +141,14 @@ public final class MovePiecesRule implements TurnRule {
     private MovementDirectionStrategy resolveTravelDirection(
             Piece piece, List<Piece> blockPieces, Board board) {
         if (!piece.isOnTrack()) {
-            return piece.getMovementDirectionStrategy();
+            return piece.getMovementDirection();
         }
 
         return blockTravelDirectionStrategy.resolveTravelDirection(blockPieces, board);
     }
 
     // T-3/T-4/T-12/Rule 10: block division, then Energized/Sick, then blockade cap.
-    private int effectiveSteps(
+    private int calculateEffectiveSteps(
             Player player, Piece piece, int rollValue, Board board, List<Player> allPlayers,
             List<Piece> blockPieces, MovementDirectionStrategy travelDirection) {
         if (piece.isOnTrack()) {

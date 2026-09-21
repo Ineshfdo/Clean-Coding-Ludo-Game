@@ -18,29 +18,29 @@ public final class MovePieceCommand implements Command {
     private final Player player;
     private final Piece piece;
 
-    private final int effectiveDiceValue;
+    private final int effectiveSteps;
     private final Board board;
     private final HomeStraightEntryRule homeStraightEntryRule;
     private final MovementDirectionStrategy travelDirection;
 
     public MovePieceCommand(
-            Player player, Piece piece, int effectiveDiceValue, Board board,
+            Player player, Piece piece, int effectiveSteps, Board board,
             HomeStraightEntryRule homeStraightEntryRule, MovementDirectionStrategy travelDirection) {
         this.player = player;
         this.piece = piece;
-        this.effectiveDiceValue = effectiveDiceValue;
+        this.effectiveSteps = effectiveSteps;
         this.board = board;
         this.homeStraightEntryRule = homeStraightEntryRule;
         this.travelDirection = travelDirection;
     }
 
     @Override
-    public void execute(GameMessagePublisher messages) {
+    public void execute(GameMessagePublisher messagePublisher) {
         int fromPosition = piece.isOnTrack() ? piece.getTrackPosition() : BoardConstants.NO_TRACK_POSITION;
 
-        player.moveForward(piece, effectiveDiceValue, board, homeStraightEntryRule, travelDirection);
+        player.moveForward(piece, effectiveSteps, board, homeStraightEntryRule, travelDirection);
 
-        messages.publish(describeOutcome(fromPosition));
+        messagePublisher.publish(describeOutcome(fromPosition));
     }
 
     // Outcome: track landing, HomeStraight entry, or Home.
@@ -59,7 +59,7 @@ public final class MovePieceCommand implements Command {
 
         return GameMessage.pieceMoved(
             player.getColor(), piece.toString(), fromPosition, piece.getTrackPosition(),
-            effectiveDiceValue, travelDirection.getLabel());
+            effectiveSteps, travelDirection.getLabel());
     }
 
     @Override
@@ -74,16 +74,16 @@ public final class MovePieceCommand implements Command {
 
     @Override
     public Optional<Integer> previewLandingPosition() {
-        return TrackLandingFinder.resolve(piece, effectiveDiceValue, board, travelDirection);
+        return TrackLandingFinder.findLandingPosition(piece, effectiveSteps, board, travelDirection);
     }
 
     @Override
     public boolean reachesHome() {
-        return HomeArrivalChecker.resolve(piece, effectiveDiceValue, board, homeStraightEntryRule, travelDirection);
+        return HomeArrivalChecker.reachesHome(piece, effectiveSteps, board, homeStraightEntryRule, travelDirection);
     }
 
     @Override
     public boolean leavesStandardPath() {
-        return HomeArrivalChecker.leavesTrack(piece, effectiveDiceValue, board, homeStraightEntryRule, travelDirection);
+        return HomeArrivalChecker.leavesTrack(piece, effectiveSteps, board, homeStraightEntryRule, travelDirection);
     }
 }

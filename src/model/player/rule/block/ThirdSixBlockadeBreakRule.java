@@ -17,8 +17,8 @@ import model.player.rule.home.HomeStraightEntryRule;
 // T-6: a third consecutive six breaks an existing blockade instead of voiding.
 public final class ThirdSixBlockadeBreakRule extends BlockadeBreakRule {
 
-    private static final int TOTAL_FORCED_MOVE_STEPS = 6;
     private static final int RELEASED_PIECE_BLOCK_SIZE = 1;
+    private static final int STAYING_MEMBER_COUNT = 1;
 
     private final HomeStraightEntryRule homeStraightEntryRule;
     private final BlockadeLimitRule blockadeLimitRule;
@@ -44,8 +44,8 @@ public final class ThirdSixBlockadeBreakRule extends BlockadeBreakRule {
     // T-6: the lowest-numbered member stays; the rest share the 6 cells.
     private Command buildBreakCommand(
             Player player, List<Piece> blockadePieces, Board board, List<Player> allPlayers) {
-        List<Piece> releasedPieces = blockadePieces.subList(1, blockadePieces.size());
-        int stepsPerReleasedPiece = TOTAL_FORCED_MOVE_STEPS / releasedPieces.size();
+        List<Piece> releasedPieces = blockadePieces.subList(STAYING_MEMBER_COUNT, blockadePieces.size());
+        int stepsPerReleasedPiece = DiceConstants.SIX_ROLL_VALUE / releasedPieces.size();
         List<Command> releasedPieceMoves = releasedPieces.stream()
                 .map(piece -> buildReleasedMove(player, piece, board, allPlayers, stepsPerReleasedPiece))
                 .flatMap(Optional::stream)
@@ -58,7 +58,7 @@ public final class ThirdSixBlockadeBreakRule extends BlockadeBreakRule {
     // an opponent block like any other move, and stays put if it can't move at all.
     private Optional<Command> buildReleasedMove(
             Player player, Piece piece, Board board, List<Player> allPlayers, int steps) {
-        MovementDirectionStrategy ownDirection = piece.getOriginalMovementDirectionStrategy();
+        MovementDirectionStrategy ownDirection = piece.getOriginalMovementDirection();
         int allowedSteps = blockadeLimitRule.limitSteps(
                 player.getColor(), piece.getTrackPosition(), steps, board, allPlayers, ownDirection,
                 RELEASED_PIECE_BLOCK_SIZE);
@@ -78,12 +78,12 @@ public final class ThirdSixBlockadeBreakRule extends BlockadeBreakRule {
                 .collect(Collectors.toList());
 
         for (Piece piece : trackPieces) {
-            List<Piece> sharedCell = trackPieces.stream()
+            List<Piece> piecesOnSameCell = trackPieces.stream()
                     .filter(candidate -> candidate.getTrackPosition() == piece.getTrackPosition())
                     .collect(Collectors.toList());
 
-            if (sharedCell.size() >= BlockadeConstants.MINIMUM_BLOCKADE_SIZE) {
-                return Optional.of(sharedCell);
+            if (piecesOnSameCell.size() >= BlockadeConstants.MINIMUM_BLOCKADE_SIZE) {
+                return Optional.of(piecesOnSameCell);
             }
         }
 

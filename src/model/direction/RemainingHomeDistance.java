@@ -19,8 +19,8 @@ public final class RemainingHomeDistance {
             return BoardConstants.CELLS_PER_HOME_STRAIGHT - piece.getHomeStraightIndex();
         }
 
-        MovementDirectionStrategy ownDirection = piece.getOriginalMovementDirectionStrategy();
-        int stepsToApproach = ownDirection.stepsToApproach(piece.getTrackPosition(), piece.getColor(), board);
+        MovementDirectionStrategy ownDirection = piece.getOriginalMovementDirection();
+        int stepsToApproach = ownDirection.countStepsToApproach(piece.getTrackPosition(), piece.getColor(), board);
 
         // Standing on Approach, its arrival is already counted, so only full laps remain.
         int nextCrossingPasses = stepsToApproach > 0 ? 1 : 0;

@@ -4,7 +4,7 @@ package model.effect.activation;
 public final class MysteryTeleportActivationRule extends EffectActivationRule {
 
     @Override
-    protected boolean allowsActivation(MysteryCellArrival arrival) {
+    protected boolean isSatisfiedBy(MysteryCellArrival arrival) {
         return arrival != null;
     }
 }

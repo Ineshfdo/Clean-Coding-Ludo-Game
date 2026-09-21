@@ -16,8 +16,8 @@ public final class SickRollTooSmallCommand implements Command {
     }
 
     @Override
-    public void execute(GameMessagePublisher messages) {
-        messages.publish(GameMessage.effectRollTooSmall(piece.toString()));
+    public void execute(GameMessagePublisher messagePublisher) {
+        messagePublisher.publish(GameMessage.effectRollTooSmall(piece.toString()));
     }
 
     @Override

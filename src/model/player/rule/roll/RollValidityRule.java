@@ -5,10 +5,8 @@ public abstract class RollValidityRule {
 
     private RollValidityRule nextRule;
 
-    public final RollValidityRule setNext(RollValidityRule nextRule) {
+    public final void setNext(RollValidityRule nextRule) {
         this.nextRule = nextRule;
-
-        return nextRule;
     }
 
     public final boolean isVoided(int consecutiveSixCount, int rollValue) {

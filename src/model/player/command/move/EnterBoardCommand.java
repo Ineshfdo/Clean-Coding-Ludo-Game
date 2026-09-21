@@ -31,10 +31,10 @@ public final class EnterBoardCommand implements Command {
     }
 
     @Override
-    public void execute(GameMessagePublisher messages) {
+    public void execute(GameMessagePublisher messagePublisher) {
         player.leaveBase(piece, board);
 
-        messages.publish(GameMessage.pieceEnteredBoard(
+        messagePublisher.publish(GameMessage.pieceEnteredBoard(
                 player.getColor(), piece.toString(), piece.getTrackPosition(),
                 player.countPiecesOnBoard(), player.countPiecesAtBase()));
 
@@ -42,7 +42,7 @@ public final class EnterBoardCommand implements Command {
         MovementDirectionStrategy direction = resolveDirection(tossResult);
         player.assignMovementDirection(piece, direction);
 
-        messages.publish(GameMessage.pieceDirectionAssigned(
+        messagePublisher.publish(GameMessage.pieceDirectionAssigned(
                 piece.toString(), CoinTossLabels.labelOf(tossResult), direction.getLabel()));
     }
 

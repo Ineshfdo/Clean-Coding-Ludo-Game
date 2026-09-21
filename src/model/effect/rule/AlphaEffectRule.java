@@ -1,8 +1,8 @@
 package model.effect.rule;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
+import model.piece.PieceLabels;
 import utils.coin.CoinToss;
 import config.constant.BlockadeConstants;
 import config.constant.EffectConstants;
@@ -23,12 +23,12 @@ public final class AlphaEffectRule {
         this.coinToss = coinToss;
     }
 
-    public void applyTo(Player player, List<Piece> teleportedPieces, GameMessagePublisher messages) {
+    public void applyTo(Player player, List<Piece> teleportedPieces, GameMessagePublisher messagePublisher) {
         for (Piece piece : teleportedPieces) {
             MovementEffect individualEffect = rollEffect();
             player.applyIndividualEffect(piece, individualEffect);
 
-            messages.publish(
+            messagePublisher.publish(
                     GameMessage.individualEffectAssigned(piece.toString(), individualEffect.getLabel()));
         }
 
@@ -43,8 +43,8 @@ public final class AlphaEffectRule {
             player.applyBlockEffect(piece, blockEffect, teleportedPieces.size());
         }
 
-        messages.publish(
-                GameMessage.blockEffectAssigned(describeBlock(teleportedPieces), blockEffect.getLabel()));
+        messagePublisher.publish(
+                GameMessage.blockEffectAssigned(PieceLabels.joinPieceLabels(teleportedPieces), blockEffect.getLabel()));
     }
 
     private MovementEffect rollEffect() {
@@ -53,9 +53,5 @@ public final class AlphaEffectRule {
                 : MovementEffectType.SICK;
 
         return MovementEffect.of(type, EffectConstants.EFFECT_DURATION_IN_ROUNDS);
-    }
-
-    private static String describeBlock(List<Piece> pieces) {
-        return pieces.stream().map(Piece::toString).collect(Collectors.joining("+"));
     }
 }

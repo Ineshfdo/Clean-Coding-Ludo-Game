@@ -3,13 +3,13 @@ package model.effect.restriction;
 // T-13: the default state - the piece is free to move.
 public final class NoRestrictionState implements PieceRestrictionState {
 
-    private static final NoRestrictionState INSTANCE = new NoRestrictionState();
+    private static final NoRestrictionState SHARED_INSTANCE = new NoRestrictionState();
 
     private NoRestrictionState() {
     }
 
     public static NoRestrictionState getInstance() {
-        return INSTANCE;
+        return SHARED_INSTANCE;
     }
 
     @Override

@@ -53,8 +53,8 @@ public final class GameEngine {
 
     public void playTurn(
             Player player, List<Player> allPlayers, Dice dice, Board board,
-            GameMessagePublisher messages) {
-        messages.publish(GameMessage.turnStarted(player.getColor()));
+            GameMessagePublisher messagePublisher) {
+        messagePublisher.publish(GameMessage.turnStarted(player.getColor()));
 
         int rollNumber = 0;
 
@@ -67,30 +67,31 @@ public final class GameEngine {
             int rollValue = dice.roll();
             consecutiveSixCount = rollValue == DiceConstants.SIX_ROLL_VALUE ? consecutiveSixCount + 1 : 0;
 
-            messages.publish(GameMessage.turnRolled(player.getColor(), rollValue));
+            messagePublisher.publish(GameMessage.turnRolled(player.getColor(), rollValue));
 
             Optional<Command> forcedBreak =
-                    blockadeBreakRule.resolve(player, consecutiveSixCount, rollValue, board, allPlayers);
+                    blockadeBreakRule.findForcedBreak(player, consecutiveSixCount, rollValue, board, allPlayers);
             if (forcedBreak.isPresent()) {
-                forcedBreak.get().execute(messages);
-                applyCapture(player, forcedBreak.get(), allPlayers, messages);
+                forcedBreak.get().execute(messagePublisher);
+                applyCapture(player, forcedBreak.get(), allPlayers, messagePublisher);
                 return;
             }
 
             if (rollValidityRule.isVoided(consecutiveSixCount, rollValue)) {
-                messages.publish(GameMessage.of(GameMessageType.THIRD_SIX_VOIDED));
+                messagePublisher.publish(GameMessage.of(GameMessageType.THIRD_SIX_VOIDED));
                 return;
             }
 
-            // Runs before legal options, so strategy previews and the real move agree.
-            updateHomeGate(player, allPlayers, messages);
+            // Runs before legal commands, so strategy previews and the real move agree.
+            updateHomeGate(player, allPlayers, messagePublisher);
 
             // T-13: forces still-restricted Beta piece back to Base.
-            betaRestrictionRule.resolve(player, rollNumber, rollValue)
-                    .ifPresent(command -> command.execute(messages));
+            betaRestrictionRule.recordRoll(player, rollNumber, rollValue);
+            betaRestrictionRule.findReturnToBase(player)
+                    .ifPresent(command -> command.execute(messagePublisher));
 
             boolean capturedOpponent =
-                    resolveAndPlay(player, allPlayers, rollNumber, rollValue, board, messages);
+                    resolveAndPlay(player, allPlayers, rollNumber, rollValue, board, messagePublisher);
 
             turnContinues = grantsAnotherRoll(rollValue, capturedOpponent);
         }
@@ -98,21 +99,21 @@ public final class GameEngine {
 
     // T-7 home gate: counts this roll and announces it once, on the roll that opens the gate.
     private void updateHomeGate(
-            Player player, List<Player> allPlayers, GameMessagePublisher messages) {
-        boolean gateOpenedOnThisRoll = homeGateTracker.recordRoll(player, allPlayers);
+            Player player, List<Player> allPlayers, GameMessagePublisher messagePublisher) {
+        homeGateTracker.recordRoll(player, allPlayers);
 
-        if (gateOpenedOnThisRoll) {
-            messages.publish(GameMessage.homeGateOpened(player.getColor()));
+        if (homeGateTracker.wasOpenedByLatestRoll(player.getColor())) {
+            messagePublisher.publish(GameMessage.homeGateOpened(player.getColor()));
         }
     }
 
     private boolean resolveAndPlay(
             Player player, List<Player> allPlayers, int rollNumber, int rollValue, Board board,
-            GameMessagePublisher messages) {
-        List<Command> legalOptions = findLegalOptions(player, allPlayers, rollValue, board);
+            GameMessagePublisher messagePublisher) {
+        List<Command> legalCommands = collectLegalCommands(player, allPlayers, rollValue, board);
 
-        if (legalOptions.isEmpty()) {
-            messages.publish(GameMessage.noPieceMovable());
+        if (legalCommands.isEmpty()) {
+            messagePublisher.publish(GameMessage.noPieceMovable());
             return false;
         }
 
@@ -120,12 +121,12 @@ public final class GameEngine {
         StrategyContext context = new StrategyContext(
                 player, allPlayers, board, mysteryCellTeleportRule.getMysteryCellLocation(), rollNumber);
 
-        Command chosenCommand = strategy.choose(legalOptions, context);
-        chosenCommand.execute(messages);
+        Command chosenCommand = strategy.choose(legalCommands, context);
+        chosenCommand.execute(messagePublisher);
 
-        boolean capturedOpponent = applyCapture(player, chosenCommand, allPlayers, messages);
+        boolean capturedOpponent = applyCapture(player, chosenCommand, allPlayers, messagePublisher);
         boolean capturedByTeleport =
-                applyMysteryCellTeleport(player, chosenCommand, allPlayers, messages);
+                applyMysteryCellTeleport(player, chosenCommand, allPlayers, messagePublisher);
 
         return capturedOpponent || capturedByTeleport;
     }
@@ -133,7 +134,7 @@ public final class GameEngine {
     // T-11: checks distinct landing positions for Mystery Cell; a teleport can capture too.
     private boolean applyMysteryCellTeleport(
             Player mover, Command executedCommand, List<Player> allPlayers,
-            GameMessagePublisher messages) {
+            GameMessagePublisher messagePublisher) {
         Set<Integer> checkedPositions = new HashSet<>();
         boolean capturedAny = false;
 
@@ -142,32 +143,32 @@ public final class GameEngine {
                 continue;
             }
 
-            Optional<Command> teleportCommand = mysteryCellTeleportRule.resolve(mover, movedPiece);
+            Optional<Command> teleportCommand = mysteryCellTeleportRule.findTeleport(mover, movedPiece);
 
             if (teleportCommand.isPresent()) {
-                teleportCommand.get().execute(messages);
-                capturedAny |= applyCapture(mover, teleportCommand.get(), allPlayers, messages);
+                teleportCommand.get().execute(messagePublisher);
+                capturedAny |= applyCapture(mover, teleportCommand.get(), allPlayers, messagePublisher);
             }
         }
 
         return capturedAny;
     }
 
-    private List<Command> findLegalOptions(
+    private List<Command> collectLegalCommands(
             Player player, List<Player> allPlayers, int rollValue, Board board) {
-        List<Command> legalOptions = new ArrayList<>();
+        List<Command> legalCommands = new ArrayList<>();
 
         for (TurnRule rule : turnRules) {
-            legalOptions.addAll(rule.resolve(player, rollValue, board, allPlayers));
+            legalCommands.addAll(rule.findLegalCommands(player, rollValue, board, allPlayers));
         }
 
-        return legalOptions;
+        return legalCommands;
     }
 
     // Rule 7/T-6: checks each moved piece for capture.
     private boolean applyCapture(
             Player mover, Command executedCommand, List<Player> allPlayers,
-            GameMessagePublisher messages) {
+            GameMessagePublisher messagePublisher) {
         // A "cannot move" turn moves nothing, so nothing can be captured.
         if (executedCommand.getType() == CommandType.CANNOT_MOVE) {
             return false;
@@ -176,10 +177,10 @@ public final class GameEngine {
         boolean capturedAny = false;
 
         for (Piece movedPiece : executedCommand.getAffectedPieces()) {
-            Optional<Command> captureCommand = captureCheckRule.resolve(mover, movedPiece, allPlayers);
+            Optional<Command> captureCommand = captureCheckRule.findCapture(mover, movedPiece, allPlayers);
 
             if (captureCommand.isPresent()) {
-                captureCommand.get().execute(messages);
+                captureCommand.get().execute(messagePublisher);
                 capturedAny = true;
             }
         }

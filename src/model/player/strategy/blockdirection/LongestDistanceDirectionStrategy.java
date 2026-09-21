@@ -14,16 +14,16 @@ public final class LongestDistanceDirectionStrategy implements BlockTravelDirect
     @Override
     public MovementDirectionStrategy resolveTravelDirection(List<Piece> blockPieces, Board board) {
         int currentBlockSize = blockPieces.size();
-        Optional<Piece> decidedForCurrentMembership = blockPieces.stream()
+        Optional<Piece> pieceWithAdoptedDirection = blockPieces.stream()
                 .filter(Piece::hasAdoptedBlockDirection)
                 .filter(piece -> piece.getAdoptedForBlockSize() == currentBlockSize)
                 .findFirst();
 
-        if (decidedForCurrentMembership.isPresent()) {
-            return decidedForCurrentMembership.get().getMovementDirectionStrategy();
+        if (pieceWithAdoptedDirection.isPresent()) {
+            return pieceWithAdoptedDirection.get().getMovementDirection();
         }
 
-        return resolveDominantPiece(blockPieces, board).getOriginalMovementDirectionStrategy();
+        return resolveDominantPiece(blockPieces, board).getOriginalMovementDirection();
     }
 
     // T-4: the member farthest from Home sets the direction everyone adopts.

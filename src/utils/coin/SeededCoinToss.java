@@ -13,10 +13,10 @@ public final class SeededCoinToss implements CoinToss {
     private static final SeededCoinToss SHARED_INSTANCE =
             new SeededCoinToss(SeededRandomNumberGenerator.getInstance());
 
-    private final RandomNumberGenerator numberGenerator;
+    private final RandomNumberGenerator randomNumberGenerator;
 
-    private SeededCoinToss(RandomNumberGenerator numberGenerator) {
-        this.numberGenerator = numberGenerator;
+    private SeededCoinToss(RandomNumberGenerator randomNumberGenerator) {
+        this.randomNumberGenerator = randomNumberGenerator;
     }
 
     public static SeededCoinToss getInstance() {
@@ -25,7 +25,7 @@ public final class SeededCoinToss implements CoinToss {
 
     @Override
     public CoinTossResult flip() {
-        int drawnValue = numberGenerator.nextIntInRange(TAILS_VALUE, HEADS_VALUE);
+        int drawnValue = randomNumberGenerator.nextIntInRange(TAILS_VALUE, HEADS_VALUE);
 
         return drawnValue == HEADS_VALUE ? CoinTossResult.HEADS : CoinTossResult.TAILS;
     }

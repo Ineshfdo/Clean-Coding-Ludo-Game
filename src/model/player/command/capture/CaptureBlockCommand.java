@@ -2,10 +2,10 @@ package model.player.command.capture;
 
 import config.enums.CommandType;
 import java.util.List;
-import java.util.stream.Collectors;
 import message.GameMessage;
 import message.observer.GameMessagePublisher;
 import model.piece.Piece;
+import model.piece.PieceLabels;
 import model.player.Player;
 import model.player.command.Command;
 
@@ -28,7 +28,7 @@ public final class CaptureBlockCommand implements Command {
     }
 
     @Override
-    public void execute(GameMessagePublisher messages) {
+    public void execute(GameMessagePublisher messagePublisher) {
         for (Piece capturedPiece : capturedBlock) {
             capturedPlayer.returnToBase(capturedPiece);
         }
@@ -37,11 +37,7 @@ public final class CaptureBlockCommand implements Command {
             capturingPlayer.recordCapture(capturingPiece);
         }
 
-        messages.publish(GameMessage.blockCaptured(describeBlock(capturingBlock), describeBlock(capturedBlock)));
-    }
-
-    private static String describeBlock(List<Piece> block) {
-        return block.stream().map(Piece::toString).collect(Collectors.joining("+"));
+        messagePublisher.publish(GameMessage.blockCaptured(PieceLabels.joinPieceLabels(capturingBlock), PieceLabels.joinPieceLabels(capturedBlock)));
     }
 
     @Override

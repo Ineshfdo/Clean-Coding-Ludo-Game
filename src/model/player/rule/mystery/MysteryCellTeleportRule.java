@@ -6,8 +6,8 @@ import java.util.List;
 import java.util.Optional;
 import model.board.Board;
 import model.effect.mysterycell.MysteryCellLocation;
-import model.effect.mysterycell.MysteryCellManager;
-import model.effect.rule.MysteryCellEffects;
+import model.effect.mysterycell.MysteryCellSchedule;
+import model.effect.rule.MysteryCellEffectRules;
 import model.piece.Piece;
 import model.player.Player;
 import model.player.command.Command;
@@ -21,26 +21,26 @@ public final class MysteryCellTeleportRule {
     private static final int FIRST_DESTINATION_INDEX = 0;
     private static final int LAST_DESTINATION_INDEX = DESTINATIONS.length - 1;
 
-    private final MysteryCellManager mysteryCellManager;
+    private final MysteryCellSchedule mysteryCellSchedule;
     private final RandomNumberGenerator randomNumberGenerator;
     private final Board board;
-    private final MysteryCellEffects effects;
+    private final MysteryCellEffectRules effectRules;
 
     public MysteryCellTeleportRule(
-            MysteryCellManager mysteryCellManager, RandomNumberGenerator randomNumberGenerator,
-            Board board, MysteryCellEffects effects) {
-        this.mysteryCellManager = mysteryCellManager;
+            MysteryCellSchedule mysteryCellSchedule, RandomNumberGenerator randomNumberGenerator,
+            Board board, MysteryCellEffectRules effectRules) {
+        this.mysteryCellSchedule = mysteryCellSchedule;
         this.randomNumberGenerator = randomNumberGenerator;
         this.board = board;
-        this.effects = effects;
+        this.effectRules = effectRules;
     }
 
     // T-19: read-only Mystery Cell location for strategies (e.g. BlueStrategy).
     public MysteryCellLocation getMysteryCellLocation() {
-        return mysteryCellManager;
+        return mysteryCellSchedule;
     }
 
-    public Optional<Command> resolve(Player mover, Piece landedPiece) {
+    public Optional<Command> findTeleport(Player mover, Piece landedPiece) {
         if (!landsOnMysteryCell(landedPiece)) {
             return Optional.empty();
         }
@@ -48,13 +48,13 @@ public final class MysteryCellTeleportRule {
         List<Piece> teleportedGroup = findOwnPiecesAt(mover, landedPiece.getTrackPosition());
         MysteryCellDestinationType destinationType = chooseRandomDestination();
 
-        return Optional.of(new MysteryCellTeleportCommand(mover, teleportedGroup, destinationType, board, effects));
+        return Optional.of(new MysteryCellTeleportCommand(mover, teleportedGroup, destinationType, board, effectRules));
     }
 
     private boolean landsOnMysteryCell(Piece piece) {
-        return mysteryCellManager.isActive()
+        return mysteryCellSchedule.isActive()
                 && piece.isOnTrack()
-                && piece.getTrackPosition() == mysteryCellManager.getCurrentCellPosition();
+                && piece.getTrackPosition() == mysteryCellSchedule.getCurrentCellPosition();
     }
 
     // T-3: own pieces on the landing cell teleport together.

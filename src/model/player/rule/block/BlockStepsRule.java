@@ -8,10 +8,8 @@ public abstract class BlockStepsRule {
 
     private BlockStepsRule nextRule;
 
-    public final BlockStepsRule setNext(BlockStepsRule nextRule) {
+    public final void setNext(BlockStepsRule nextRule) {
         this.nextRule = nextRule;
-
-        return nextRule;
     }
 
     public final int limitSteps(List<Piece> blockPieces, int requestedSteps) {

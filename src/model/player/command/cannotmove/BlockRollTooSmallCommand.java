@@ -16,8 +16,8 @@ public final class BlockRollTooSmallCommand implements Command {
     }
 
     @Override
-    public void execute(GameMessagePublisher messages) {
-        messages.publish(GameMessage.blockRollTooSmall(piece.toString()));
+    public void execute(GameMessagePublisher messagePublisher) {
+        messagePublisher.publish(GameMessage.blockRollTooSmall(piece.toString()));
     }
 
     @Override

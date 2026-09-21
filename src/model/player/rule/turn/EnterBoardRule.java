@@ -20,7 +20,7 @@ public final class EnterBoardRule implements TurnRule {
     }
 
     @Override
-    public List<Command> resolve(
+    public List<Command> findLegalCommands(
             Player player, int rollValue, Board board, List<Player> allPlayers) {
         if (rollValue != DiceConstants.SIX_ROLL_VALUE) {
             return List.of();

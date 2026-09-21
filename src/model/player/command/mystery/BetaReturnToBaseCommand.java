@@ -2,10 +2,10 @@ package model.player.command.mystery;
 
 import config.enums.CommandType;
 import java.util.List;
-import java.util.stream.Collectors;
 import message.GameMessage;
 import message.observer.GameMessagePublisher;
 import model.piece.Piece;
+import model.piece.PieceLabels;
 import model.player.Player;
 import model.player.command.Command;
 
@@ -21,16 +21,12 @@ public final class BetaReturnToBaseCommand implements Command {
     }
 
     @Override
-    public void execute(GameMessagePublisher messages) {
+    public void execute(GameMessagePublisher messagePublisher) {
         for (Piece piece : returningPieces) {
             player.returnToBase(piece);
         }
 
-        messages.publish(GameMessage.betaRestrictionTriggered(describeLabel()));
-    }
-
-    private String describeLabel() {
-        return returningPieces.stream().map(Piece::toString).collect(Collectors.joining("+"));
+        messagePublisher.publish(GameMessage.betaRestrictionTriggered(PieceLabels.joinPieceLabels(returningPieces)));
     }
 
     @Override

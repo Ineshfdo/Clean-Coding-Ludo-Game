@@ -11,12 +11,15 @@ import model.player.command.mystery.BetaReturnToBaseCommand;
 // T-13: consecutive 3s on the first roll send a Beta piece back to Base.
 public final class BetaRestrictionRule {
 
-    public Optional<Command> resolve(Player player, int rollNumber, int rollValue) {
+    public void recordRoll(Player player, int rollNumber, int rollValue) {
         if (rollNumber != TurnConstants.FIRST_ROLL_OF_TURN) {
-            return Optional.empty();
+            return;
         }
 
         player.recordRestrictionRoll(rollValue);
+    }
+
+    public Optional<Command> findReturnToBase(Player player) {
         List<Piece> triggeredPieces = player.findPiecesTriggeredForReturnToBase();
 
         if (triggeredPieces.isEmpty()) {

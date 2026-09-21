@@ -3,13 +3,13 @@ package model.effect.rule;
 import model.effect.activation.EffectActivationRule;
 
 // T-12/T-14/T-15: bundles the Mystery Cell effect rules into one object.
-public final class MysteryCellEffects {
+public final class MysteryCellEffectRules {
 
     private final AlphaEffectRule alphaEffectRule;
     private final GammaDirectionRule gammaDirectionRule;
     private final EffectActivationRule effectActivationRule;
 
-    public MysteryCellEffects(
+    public MysteryCellEffectRules(
             AlphaEffectRule alphaEffectRule, GammaDirectionRule gammaDirectionRule,
             EffectActivationRule effectActivationRule) {
         this.alphaEffectRule = alphaEffectRule;

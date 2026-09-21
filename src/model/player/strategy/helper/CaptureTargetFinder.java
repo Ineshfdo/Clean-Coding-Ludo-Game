@@ -15,21 +15,21 @@ public final class CaptureTargetFinder {
     private CaptureTargetFinder() {
     }
 
-    public static Optional<Piece> findTarget(Command option, StrategyContext context) {
-        Optional<Integer> landingPosition = option.previewLandingPosition();
+    public static Optional<Piece> findTarget(Command command, StrategyContext context) {
+        Optional<Integer> previewedLandingPosition = command.previewLandingPosition();
 
-        if (landingPosition.isEmpty()) {
+        if (previewedLandingPosition.isEmpty()) {
             return Optional.empty();
         }
 
-        int moverBlockSize = countOwnPiecesAt(context.getPlayer(), option.getAffectedPiece().getTrackPosition());
+        int moverBlockSize = countOwnPiecesAt(context.getPlayer(), command.getAffectedPiece().getTrackPosition());
 
         for (Player opponent : context.getAllPlayers()) {
             if (opponent.getColor() == context.getPlayer().getColor()) {
                 continue;
             }
 
-            List<Piece> opponentPiecesHere = findPiecesAt(opponent, landingPosition.get());
+            List<Piece> opponentPiecesHere = findPiecesAt(opponent, previewedLandingPosition.get());
 
             if (opponentPiecesHere.isEmpty()) {
                 continue;

@@ -9,10 +9,12 @@ import model.player.rule.home.HomeStraightEntryRule;
 // T-17: previews whether a move reaches Home (used by GreenStrategy).
 final class HomeArrivalChecker {
 
+    private static final int THROWAWAY_PIECE_NUMBER = 1;
+
     private HomeArrivalChecker() {
     }
 
-    static boolean resolve(
+    static boolean reachesHome(
             Piece piece, int steps, Board board, HomeStraightEntryRule homeStraightEntryRule,
             MovementDirectionStrategy travelDirection) {
         if (piece.isOnHomeStraight()) {
@@ -24,7 +26,7 @@ final class HomeArrivalChecker {
             return false;
         }
 
-        int stepsToApproach = travelDirection.stepsToApproach(piece.getTrackPosition(), piece.getColor(), board);
+        int stepsToApproach = travelDirection.countStepsToApproach(piece.getTrackPosition(), piece.getColor(), board);
 
         if (steps <= stepsToApproach) {
             return false;
@@ -48,7 +50,7 @@ final class HomeArrivalChecker {
             return false;
         }
 
-        int stepsToApproach = travelDirection.stepsToApproach(piece.getTrackPosition(), piece.getColor(), board);
+        int stepsToApproach = travelDirection.countStepsToApproach(piece.getTrackPosition(), piece.getColor(), board);
 
         if (steps <= stepsToApproach) {
             return false;
@@ -62,9 +64,9 @@ final class HomeArrivalChecker {
 
     // Carries only what the entry rules read: color, original direction, passes and captures.
     private static Piece copyAfterCrossings(Piece piece, int crossingsCounted) {
-        Piece copy = new Piece(piece.getColor(), 1);
+        Piece copy = new Piece(piece.getColor(), THROWAWAY_PIECE_NUMBER);
 
-        copy.assignMovementDirection(piece.getOriginalMovementDirectionStrategy());
+        copy.assignMovementDirection(piece.getOriginalMovementDirection());
 
         for (int pass = 0; pass < piece.getApproachPassCount() + crossingsCounted; pass++) {
             copy.recordApproachPass();

@@ -5,6 +5,7 @@ import java.util.List;
 import message.GameMessage;
 import message.observer.GameMessagePublisher;
 import model.piece.Piece;
+import model.piece.PieceLabels;
 import model.player.command.Command;
 
 // T-3: announces an opponent blockade stops this piece or block.
@@ -19,23 +20,8 @@ public final class MoveBlockedByBlockadeCommand implements Command {
     }
 
     @Override
-    public void execute(GameMessagePublisher messages) {
-        messages.publish(GameMessage.pieceBlocked(describeLabel()));
-    }
-
-    // T-3: names the whole block (e.g. G1+G2), like MoveBlockCommand.
-    private String describeLabel() {
-        StringBuilder label = new StringBuilder();
-
-        for (Piece member : blockPieces) {
-            if (label.length() > 0) {
-                label.append('+');
-            }
-
-            label.append(member);
-        }
-
-        return label.toString();
+    public void execute(GameMessagePublisher messagePublisher) {
+        messagePublisher.publish(GameMessage.pieceBlocked(PieceLabels.joinPieceLabels(blockPieces)));
     }
 
     @Override

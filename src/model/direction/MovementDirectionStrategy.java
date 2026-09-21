@@ -8,7 +8,7 @@ public interface MovementDirectionStrategy {
 
     int nextPosition(int currentPosition, int steps, Board board);
 
-    int stepsToApproach(int currentPosition, PlayerColor color, Board board);
+    int countStepsToApproach(int currentPosition, PlayerColor color, Board board);
 
     int getRequiredApproachPassCount();
 

@@ -10,10 +10,10 @@ public final class SixSidedDice implements Dice {
     private static final SixSidedDice SHARED_INSTANCE =
         new SixSidedDice(SeededRandomNumberGenerator.getInstance());
 
-    private final RandomNumberGenerator numberGenerator;
+    private final RandomNumberGenerator randomNumberGenerator;
 
-    private SixSidedDice(RandomNumberGenerator numberGenerator) {
-        this.numberGenerator = numberGenerator;
+    private SixSidedDice(RandomNumberGenerator randomNumberGenerator) {
+        this.randomNumberGenerator = randomNumberGenerator;
     }
 
     public static SixSidedDice getInstance() {
@@ -22,6 +22,6 @@ public final class SixSidedDice implements Dice {
 
     @Override
     public int roll() {
-        return numberGenerator.nextIntInRange(DiceConstants.LOWEST_FACE_VALUE, DiceConstants.HIGHEST_FACE_VALUE);
+        return randomNumberGenerator.nextIntInRange(DiceConstants.LOWEST_FACE_VALUE, DiceConstants.HIGHEST_FACE_VALUE);
     }
 }

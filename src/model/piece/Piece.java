@@ -13,14 +13,14 @@ import model.player.PlayerColorNames;
 public final class Piece {
 
     private final PlayerColor color;
-    private final int pieceNumber;
+    private final int number;
 
     private PieceLocation location;
     private int trackPosition;
     private int homeStraightIndex;
 
-    private MovementDirectionStrategy movementDirectionStrategy;
-    private MovementDirectionStrategy originalMovementDirectionStrategy;
+    private MovementDirectionStrategy movementDirection;
+    private MovementDirectionStrategy originalMovementDirection;
     private int adoptedForBlockSize;
 
     private int approachPassCount;
@@ -32,9 +32,9 @@ public final class Piece {
 
     private PieceRestrictionState restrictionState = NoRestrictionState.getInstance();
 
-    public Piece(PlayerColor color, int pieceNumber) {
+    public Piece(PlayerColor color, int number) {
         this.color = color;
-        this.pieceNumber = pieceNumber;
+        this.number = number;
         this.location = PieceLocation.BASE;
     }
 
@@ -71,27 +71,27 @@ public final class Piece {
     }
 
     // T-1/T-5: current direction - its own, or its block's while grouped.
-    public MovementDirectionStrategy getMovementDirectionStrategy() {
-        requireDirection(movementDirectionStrategy);
+    public MovementDirectionStrategy getMovementDirection() {
+        requireDirection(movementDirection);
 
-        return movementDirectionStrategy;
+        return movementDirection;
     }
 
     // False only while the piece is at Base, before its first coin toss.
     public boolean hasMovementDirection() {
-        return movementDirectionStrategy != null;
+        return movementDirection != null;
     }
 
     // T-5: direction assigned at Base exit, unaffected by blocks.
-    public MovementDirectionStrategy getOriginalMovementDirectionStrategy() {
-        requireDirection(originalMovementDirectionStrategy);
+    public MovementDirectionStrategy getOriginalMovementDirection() {
+        requireDirection(originalMovementDirection);
 
-        return originalMovementDirectionStrategy;
+        return originalMovementDirection;
     }
 
     // T-5: true while a block's direction replaces its own.
     public boolean hasAdoptedBlockDirection() {
-        return movementDirectionStrategy != originalMovementDirectionStrategy;
+        return movementDirection != originalMovementDirection;
     }
 
     // T-1: times this piece has passed its Approach cell.
@@ -131,14 +131,14 @@ public final class Piece {
         this.approachPassCount = 0;
     }
 
-    public void assignMovementDirection(MovementDirectionStrategy movementDirectionStrategy) {
-        this.movementDirectionStrategy = movementDirectionStrategy;
-        this.originalMovementDirectionStrategy = movementDirectionStrategy;
+    public void assignMovementDirection(MovementDirectionStrategy movementDirection) {
+        this.movementDirection = movementDirection;
+        this.originalMovementDirection = movementDirection;
     }
 
     // T-4/T-5: borrows a block's direction while grouped, remembering the block size.
     public void adoptBlockDirection(MovementDirectionStrategy blockDirection, int blockSize) {
-        this.movementDirectionStrategy = blockDirection;
+        this.movementDirection = blockDirection;
         this.adoptedForBlockSize = blockSize;
     }
 
@@ -148,15 +148,15 @@ public final class Piece {
 
     // T-5: resumes the direction from Base exit.
     public void restoreOriginalDirection() {
-        this.movementDirectionStrategy = originalMovementDirectionStrategy;
+        this.movementDirection = originalMovementDirection;
     }
 
     // T-14: Gamma permanently reverses both the active and original direction.
     public void reverseDirection() {
-        MovementDirectionStrategy reversed = movementDirectionStrategy.reverse();
+        MovementDirectionStrategy reversed = movementDirection.reverse();
 
-        this.movementDirectionStrategy = reversed;
-        this.originalMovementDirectionStrategy = reversed;
+        this.movementDirection = reversed;
+        this.originalMovementDirection = reversed;
     }
 
     public void recordApproachPass() {
@@ -224,8 +224,8 @@ public final class Piece {
         this.approachPassCount = 0;
         this.captureCount = 0;
 
-        this.movementDirectionStrategy = null;
-        this.originalMovementDirectionStrategy = null;
+        this.movementDirection = null;
+        this.originalMovementDirection = null;
         this.adoptedForBlockSize = 0;
 
         this.individualEffect = MovementEffect.none();
@@ -250,6 +250,6 @@ public final class Piece {
 
     @Override
     public String toString() {
-        return PlayerColorNames.shortCodeOf(color) + pieceNumber;
+        return PlayerColorNames.shortCodeOf(color) + number;
     }
 }

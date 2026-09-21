@@ -7,10 +7,8 @@ public abstract class ExactRollRule {
 
     private ExactRollRule nextRule;
 
-    public final ExactRollRule setNext(ExactRollRule nextRule) {
+    public final void setNext(ExactRollRule nextRule) {
         this.nextRule = nextRule;
-
-        return nextRule;
     }
 
     public final boolean forbidsMove(Piece piece, int steps) {

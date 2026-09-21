@@ -5,15 +5,15 @@ import config.enums.CommandType;
 import config.enums.MysteryCellDestinationType;
 import exception.IllegalMoveException;
 import java.util.List;
-import java.util.stream.Collectors;
 import message.GameMessage;
 import message.observer.GameMessagePublisher;
 import model.board.Board;
 import model.effect.activation.MysteryCellArrival;
 import model.effect.mysterycell.MysteryCellDestinationLabels;
 import model.effect.restriction.BetaRestrictedState;
-import model.effect.rule.MysteryCellEffects;
+import model.effect.rule.MysteryCellEffectRules;
 import model.piece.Piece;
+import model.piece.PieceLabels;
 import model.player.Player;
 import model.player.command.Command;
 
@@ -25,27 +25,27 @@ public final class MysteryCellTeleportCommand implements Command {
 
     private final MysteryCellDestinationType destinationType;
     private final Board board;
-    private final MysteryCellEffects effects;
+    private final MysteryCellEffectRules effectRules;
 
     public MysteryCellTeleportCommand(
         Player player, List<Piece> teleportedPieces, MysteryCellDestinationType destinationType,
-        Board board, MysteryCellEffects effects) {
+        Board board, MysteryCellEffectRules effectRules) {
         this.player = player;
         this.teleportedPieces = teleportedPieces;
         this.destinationType = destinationType;
         this.board = board;
-        this.effects = effects;
+        this.effectRules = effectRules;
     }
 
     @Override
-    public void execute(GameMessagePublisher messages) {
+    public void execute(GameMessagePublisher messagePublisher) {
         if (destinationType == MysteryCellDestinationType.BASE) {
             for (Piece piece : teleportedPieces) {
                 player.returnToBase(piece);
             }
 
-            messages.publish(GameMessage.pieceTeleported(
-                describeLabel(), MysteryCellDestinationLabels.labelOf(destinationType),
+            messagePublisher.publish(GameMessage.pieceTeleported(
+                PieceLabels.joinPieceLabels(teleportedPieces), MysteryCellDestinationLabels.labelOf(destinationType),
                 BoardConstants.NO_TRACK_POSITION));
             return;
         }
@@ -63,12 +63,12 @@ public final class MysteryCellTeleportCommand implements Command {
             }
         }
 
-        messages.publish(GameMessage.pieceTeleported(
-            describeLabel(), MysteryCellDestinationLabels.labelOf(destinationType), targetPosition
+        messagePublisher.publish(GameMessage.pieceTeleported(
+            PieceLabels.joinPieceLabels(teleportedPieces), MysteryCellDestinationLabels.labelOf(destinationType), targetPosition
         ));
 
         // T-15: effects activate only after a genuine teleport.
-        boolean effectPermitted = effects.getEffectActivationRule()
+        boolean effectPermitted = effectRules.getEffectActivationRule()
             .permitsActivation(new MysteryCellArrival(destinationType));
 
         if (!effectPermitted) {
@@ -77,7 +77,7 @@ public final class MysteryCellTeleportCommand implements Command {
 
         // T-12: only Alpha assigns Energized/Sick.
         if (destinationType == MysteryCellDestinationType.ALPHA) {
-            effects.getAlphaEffectRule().applyTo(player, teleportedPieces, messages);
+            effectRules.getAlphaEffectRule().applyTo(player, teleportedPieces, messagePublisher);
         }
 
         // T-13: only Beta restricts movement.
@@ -88,12 +88,12 @@ public final class MysteryCellTeleportCommand implements Command {
                 player.applyRestriction(piece, restriction);
             }
 
-            messages.publish(GameMessage.betaRestrictionApplied(describeLabel()));
+            messagePublisher.publish(GameMessage.betaRestrictionApplied(PieceLabels.joinPieceLabels(teleportedPieces)));
         }
 
         // T-14: only Gamma reverses direction (or forwards to Beta).
         if (destinationType == MysteryCellDestinationType.GAMMA) {
-            effects.getGammaDirectionRule().applyTo(player, teleportedPieces, messages, effects);
+            effectRules.getGammaDirectionRule().applyTo(player, teleportedPieces, messagePublisher, effectRules);
         }
     }
 
@@ -105,12 +105,8 @@ public final class MysteryCellTeleportCommand implements Command {
             case ENTRY -> board.getEntryCellPosition(player.getColor());
             case APPROACH -> board.getApproachCellPosition(player.getColor());
             case BASE -> throw new IllegalMoveException(
-                    "Cannot resolve a track cell for " + describeLabel() + ": destination is BASE");
+                    "Cannot resolve a track cell for " + PieceLabels.joinPieceLabels(teleportedPieces) + ": destination is BASE");
         };
-    }
-
-    private String describeLabel() {
-        return teleportedPieces.stream().map(Piece::toString).collect(Collectors.joining("+"));
     }
 
     @Override

@@ -23,22 +23,22 @@ public final class BlueStrategy implements PlayerStrategy {
     private Piece consideredPieceForCurrentTurn;
 
     @Override
-    public Command choose(List<Command> legalOptions, StrategyContext context) {
+    public Command choose(List<Command> legalCommands, StrategyContext context) {
         if (context.getRollNumber() == TurnConstants.FIRST_ROLL_OF_TURN) {
-            consideredPieceForCurrentTurn = resolveConsideredPiece(context.getPlayer(), legalOptions);
+            consideredPieceForCurrentTurn = resolveConsideredPiece(context.getPlayer(), legalCommands);
         }
 
-        Command chosenCommand = chooseCommand(legalOptions, context);
+        Command chosenCommand = chooseCommand(legalCommands, context);
         lastMovedPiece = chosenCommand.getAffectedPiece();
 
         return chosenCommand;
     }
 
     // Mystery Cell rules (2)/(3) only override the rotation's own choice when needed.
-    private Command chooseCommand(List<Command> legalOptions, StrategyContext context) {
+    private Command chooseCommand(List<Command> legalCommands, StrategyContext context) {
         // Rule (1): the piece the rotation is considering this turn.
-        Command cyclicChoice = findOptionFor(legalOptions, consideredPieceForCurrentTurn)
-                .orElse(legalOptions.get(0));
+        Command cyclicChoice = findCommandFor(legalCommands, consideredPieceForCurrentTurn)
+                .orElse(legalCommands.get(0));
         boolean cyclicChoiceLandsOnMysteryCell = landsOnMysteryCell(cyclicChoice, context);
 
         if (isCounterClockwise(cyclicChoice) && cyclicChoiceLandsOnMysteryCell) {
@@ -47,26 +47,26 @@ public final class BlueStrategy implements PlayerStrategy {
         }
 
         if (isClockwise(cyclicChoice) && cyclicChoiceLandsOnMysteryCell) {
-            // Rule (3): clockwise onto the Mystery Cell: switch to an option that avoids it.
-            return findFirst(legalOptions, option -> !landsOnMysteryCell(option, context))
+            // Rule (3): clockwise onto the Mystery Cell: switch to a command that avoids it.
+            return findFirst(legalCommands, command -> !landsOnMysteryCell(command, context))
                     .orElse(cyclicChoice);
         }
 
-        // Rule (2): otherwise, look for a counter-clockwise option that lands on it.
-        return findFirst(legalOptions,
-                option -> isCounterClockwise(option) && landsOnMysteryCell(option, context))
+        // Rule (2): otherwise, look for a counter-clockwise command that lands on it.
+        return findFirst(legalCommands,
+                command -> isCounterClockwise(command) && landsOnMysteryCell(command, context))
                 .orElse(cyclicChoice);
     }
 
-    // Resumes after the last moved piece, skipping pieces with no legal option.
-    private Piece resolveConsideredPiece(Player player, List<Command> legalOptions) {
+    // Resumes after the last moved piece, skipping pieces with no legal command.
+    private Piece resolveConsideredPiece(Player player, List<Command> legalCommands) {
         List<Piece> pieces = player.getPieces();
         Iterator<Piece> rotation = new BluePieceRotationIterator(pieces, lastMovedPiece);
 
         for (int attempt = 0; attempt < pieces.size(); attempt++) {
             Piece candidate = rotation.next();
 
-            if (findOptionFor(legalOptions, candidate).isPresent()) {
+            if (findCommandFor(legalCommands, candidate).isPresent()) {
                 return candidate;
             }
         }
@@ -76,43 +76,43 @@ public final class BlueStrategy implements PlayerStrategy {
     }
 
     // Base piece has no direction yet, so it is neither clockwise nor counter-clockwise.
-    private static Optional<MovementDirectionStrategy> currentDirectionOf(Command option) {
-        Piece piece = option.getAffectedPiece();
+    private static Optional<MovementDirectionStrategy> findCurrentDirection(Command command) {
+        Piece piece = command.getAffectedPiece();
 
         if (!piece.hasMovementDirection()) {
             return Optional.empty();
         }
 
-        return Optional.of(piece.getMovementDirectionStrategy());
+        return Optional.of(piece.getMovementDirection());
     }
 
-    private static boolean isClockwise(Command option) {
-        return currentDirectionOf(option).map(MovementDirectionStrategy::isClockwise).orElse(false);
+    private static boolean isClockwise(Command command) {
+        return findCurrentDirection(command).map(MovementDirectionStrategy::isClockwise).orElse(false);
     }
 
-    private static boolean isCounterClockwise(Command option) {
-        return currentDirectionOf(option).map(direction -> !direction.isClockwise()).orElse(false);
+    private static boolean isCounterClockwise(Command command) {
+        return findCurrentDirection(command).map(direction -> !direction.isClockwise()).orElse(false);
     }
 
-    private static boolean landsOnMysteryCell(Command option, StrategyContext context) {
+    private static boolean landsOnMysteryCell(Command command, StrategyContext context) {
         MysteryCellLocation mysteryCellLocation = context.getMysteryCellLocation();
 
         if (!mysteryCellLocation.isActive()) {
             return false;
         }
 
-        return option.previewLandingPosition()
+        return command.previewLandingPosition()
                 .map(landingPosition -> landingPosition == mysteryCellLocation.getCurrentCellPosition())
                 .orElse(false);
     }
 
-    private static Optional<Command> findOptionFor(List<Command> legalOptions, Piece piece) {
-        return legalOptions.stream()
-                .filter(option -> option.getAffectedPiece() == piece)
+    private static Optional<Command> findCommandFor(List<Command> legalCommands, Piece piece) {
+        return legalCommands.stream()
+                .filter(command -> command.getAffectedPiece() == piece)
                 .findFirst();
     }
 
-    private static Optional<Command> findFirst(List<Command> legalOptions, Predicate<Command> condition) {
-        return legalOptions.stream().filter(condition).findFirst();
+    private static Optional<Command> findFirst(List<Command> legalCommands, Predicate<Command> condition) {
+        return legalCommands.stream().filter(condition).findFirst();
     }
 }

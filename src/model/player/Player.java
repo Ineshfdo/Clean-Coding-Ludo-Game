@@ -17,8 +17,6 @@ import model.player.rule.home.HomeStraightEntryRule;
 // Owns a player's four pieces; every piece change goes through here.
 public abstract class Player {
 
-    private static final int PIECES_PER_PLAYER = 4;
-
     private final PlayerColor color;
     private final List<Piece> pieces;
 
@@ -179,7 +177,7 @@ public abstract class Player {
     private void applyTrackMove(
             Piece piece, int steps, Board board, HomeStraightEntryRule homeStraightEntryRule,
             MovementDirectionStrategy travelDirection) {
-        int stepsToApproach = travelDirection.stepsToApproach(piece.getTrackPosition(), color, board);
+        int stepsToApproach = travelDirection.countStepsToApproach(piece.getTrackPosition(), color, board);
 
         if (steps < stepsToApproach) {
             piece.moveTo(travelDirection.nextPosition(piece.getTrackPosition(), steps, board));
@@ -208,7 +206,8 @@ public abstract class Player {
 
     // Reaching or passing the last HomeStraight cell sends the piece Home.
     private void applyHomeStraightMove(Piece piece, int steps) {
-        int currentIndex = piece.isOnHomeStraight() ? piece.getHomeStraightIndex() : -1;
+        int currentIndex = piece.isOnHomeStraight() ? piece.getHomeStraightIndex()
+                : BoardConstants.BEFORE_FIRST_HOME_STRAIGHT_CELL;
         int newIndex = currentIndex + steps;
 
         if (newIndex >= BoardConstants.CELLS_PER_HOME_STRAIGHT) {
@@ -233,9 +232,9 @@ public abstract class Player {
     }
 
     private static List<Piece> buildPieces(PlayerColor color) {
-        List<Piece> newPieces = new ArrayList<>(PIECES_PER_PLAYER);
+        List<Piece> newPieces = new ArrayList<>(BoardConstants.PIECES_PER_PLAYER);
 
-        for (int pieceNumber = 1; pieceNumber <= PIECES_PER_PLAYER; pieceNumber++) {
+        for (int pieceNumber = 1; pieceNumber <= BoardConstants.PIECES_PER_PLAYER; pieceNumber++) {
             newPieces.add(new Piece(color, pieceNumber));
         }
 

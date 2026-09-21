@@ -11,13 +11,11 @@ public abstract class BlockadeBreakRule {
 
     private BlockadeBreakRule nextRule;
 
-    public final BlockadeBreakRule setNext(BlockadeBreakRule nextRule) {
+    public final void setNext(BlockadeBreakRule nextRule) {
         this.nextRule = nextRule;
-
-        return nextRule;
     }
 
-    public final Optional<Command> resolve(
+    public final Optional<Command> findForcedBreak(
             Player player, int consecutiveSixCount, int rollValue, Board board, List<Player> allPlayers) {
         Optional<Command> command = identify(player, consecutiveSixCount, rollValue, board, allPlayers);
 
@@ -27,7 +25,7 @@ public abstract class BlockadeBreakRule {
 
         return nextRule == null
             ? Optional.empty()
-            : nextRule.resolve(player, consecutiveSixCount, rollValue, board, allPlayers);
+            : nextRule.findForcedBreak(player, consecutiveSixCount, rollValue, board, allPlayers);
     }
 
     protected abstract Optional<Command> identify(

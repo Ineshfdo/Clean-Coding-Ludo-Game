@@ -9,26 +9,28 @@ import model.player.rule.home.HomeGateStatus;
 // T-7 home gate: counts each color's rolls taken while every opponent is already Home.
 public final class HomeGateTracker implements HomeGateStatus {
 
-    private final int[] rollsWithAllOpponentsHome = new int[PlayerColor.values().length];
+    private final int[] rollCountByColorOrdinal = new int[PlayerColor.values().length];
 
-    // Counts this roll for the player; true only on the roll that opens the gate.
-    public boolean recordRoll(Player player, List<Player> allPlayers) {
+    public void recordRoll(Player player, List<Player> allPlayers) {
         int colorIndex = player.getColor().ordinal();
         boolean allOpponentsHome = areAllOpponentsHome(player, allPlayers);
 
         if (allOpponentsHome) {
-            rollsWithAllOpponentsHome[colorIndex]++;
+            rollCountByColorOrdinal[colorIndex]++;
         } else {
-            rollsWithAllOpponentsHome[colorIndex] = 0;
+            rollCountByColorOrdinal[colorIndex] = 0;
         }
+    }
 
-        return allOpponentsHome
-                && rollsWithAllOpponentsHome[colorIndex] == TurnConstants.CONSECUTIVE_ROLLS_TO_OPEN_HOME_GATE;
+    // True only for the roll that opens the gate, not for the rolls after it.
+    public boolean wasOpenedByLatestRoll(PlayerColor color) {
+        return rollCountByColorOrdinal[color.ordinal()]
+                == TurnConstants.CONSECUTIVE_ROLLS_TO_OPEN_HOME_GATE;
     }
 
     @Override
     public boolean isOpenFor(PlayerColor color) {
-        return rollsWithAllOpponentsHome[color.ordinal()] >= TurnConstants.CONSECUTIVE_ROLLS_TO_OPEN_HOME_GATE;
+        return rollCountByColorOrdinal[color.ordinal()] >= TurnConstants.CONSECUTIVE_ROLLS_TO_OPEN_HOME_GATE;
     }
 
     // Pieces still in Base do not count as Home.

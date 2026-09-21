@@ -1,5 +1,6 @@
 package model.player.strategy.blockdirection;
 
+import config.constant.BlockadeConstants;
 import config.enums.BlockDirectionType;
 import java.util.List;
 import java.util.Set;
@@ -10,18 +11,16 @@ import model.piece.Piece;
 // T-4/T-5: classifies a block by its pieces' original directions, and labels it.
 public final class BlockDirectionClassifier {
 
-    private static final int MIN_MIXED_BLOCK_SIZE = 2;
-
     private BlockDirectionClassifier() {
     }
 
     public static BlockDirectionType classify(List<Piece> blockPieces) {
-        if (blockPieces.size() < MIN_MIXED_BLOCK_SIZE) {
+        if (blockPieces.size() < BlockadeConstants.MINIMUM_BLOCKADE_SIZE) {
             return BlockDirectionType.SAME_DIRECTION;
         }
 
         Set<MovementDirectionStrategy> directions = blockPieces.stream()
-                .map(Piece::getOriginalMovementDirectionStrategy)
+                .map(Piece::getOriginalMovementDirection)
                 .collect(Collectors.toSet());
 
         return directions.size() > 1 ? BlockDirectionType.OPPOSITE_DIRECTION : BlockDirectionType.SAME_DIRECTION;

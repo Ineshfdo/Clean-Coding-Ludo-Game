@@ -26,13 +26,13 @@ public final class CapturePieceCommand implements Command {
     }
 
     @Override
-    public void execute(GameMessagePublisher messages) {
+    public void execute(GameMessagePublisher messagePublisher) {
         int capturePosition = capturingPiece.getTrackPosition();
 
         capturedPlayer.returnToBase(capturedPiece);
         capturingPlayer.recordCapture(capturingPiece);
 
-        messages.publish(GameMessage.pieceCaptured(
+        messagePublisher.publish(GameMessage.pieceCaptured(
                 capturingPiece.toString(), capturePosition, capturedPiece.toString(),
                 capturedPlayer.getColor(), capturedPlayer.countPiecesOnBoard(),
                 capturedPlayer.countPiecesAtBase()));

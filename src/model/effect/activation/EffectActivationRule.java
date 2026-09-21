@@ -5,19 +5,17 @@ public abstract class EffectActivationRule {
 
     private EffectActivationRule nextRule;
 
-    public final EffectActivationRule setNext(EffectActivationRule nextRule) {
+    public final void setNext(EffectActivationRule nextRule) {
         this.nextRule = nextRule;
-
-        return nextRule;
     }
 
     public final boolean permitsActivation(MysteryCellArrival arrival) {
-        if (!allowsActivation(arrival)) {
+        if (!isSatisfiedBy(arrival)) {
             return false;
         }
 
         return nextRule == null || nextRule.permitsActivation(arrival);
     }
 
-    protected abstract boolean allowsActivation(MysteryCellArrival arrival);
+    protected abstract boolean isSatisfiedBy(MysteryCellArrival arrival);
 }

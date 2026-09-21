@@ -1,6 +1,9 @@
 package view;
 
 import config.constant.BlockadeConstants;
+import config.constant.BoardConstants;
+import config.constant.EffectConstants;
+import config.constant.MysteryCellConstants;
 import config.enums.PlayerColor;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -29,8 +32,8 @@ public final class ConsoleGameObserver implements GameMessageObserver {
     private final BlockTravelDirectionStrategy blockTravelDirectionStrategy;
 
     public ConsoleGameObserver(
-            List<Player> players, Board board, BlockTravelDirectionStrategy blockTravelDirectionStrategy) {
-        this.playersInTurnOrder = players;
+            List<Player> allPlayers, Board board, BlockTravelDirectionStrategy blockTravelDirectionStrategy) {
+        this.playersInTurnOrder = allPlayers;
         this.board = board;
         this.blockTravelDirectionStrategy = blockTravelDirectionStrategy;
     }
@@ -47,24 +50,24 @@ public final class ConsoleGameObserver implements GameMessageObserver {
     private String describe(GameMessage message) {
         return switch (message.getType()) {
             case PLAYER_ROSTER_ANNOUNCED ->
-                    describePlayerRoster(message.getColor(), message.getPieceLabels());
+                    describePlayerRoster(message.getPlayerColor(), message.getPieceLabels());
             case GAME_STARTING -> "\nStarting the Ludo game!\n";
             case TOSS_STARTING -> "Rolling The Dice To Determine Who Goes First\n--------------------------------------------\n";
             case DICE_ROLLED ->
-                    message.getColor() + " Player rolls a " + message.getRollValue();
+                    message.getPlayerColor() + " Player rolls a " + message.getRollValue();
             case TOSS_TIED ->
                     "There Was A Tie For The Highest Roll (" + message.getRollValue()
                             + ")! EVERYONE REROLLS...\n";
             case TOSS_WON ->
-                    message.getColor() + " Player Won The Toss With A "
+                    message.getPlayerColor() + " Player Won The Toss With A "
                             + message.getRollValue() + " And Goes First!";
             case ROUND_STARTED ->
                     "\n\n" + message.getRoundNumber() + ". Round " + message.getRoundNumber();
-            case TURN_STARTED -> "\n- " + message.getColor() + " Player's Turn -";
+            case TURN_STARTED -> "\n- " + message.getPlayerColor() + " Player's Turn -";
             case TURN_ROLLED ->
-                    PlayerColorNames.displayNameOf(message.getColor()) + " player rolled " + message.getRollValue();
+                    PlayerColorNames.displayNameOf(message.getPlayerColor()) + " player rolled " + message.getRollValue();
             case HOME_GATE_OPENED ->
-                    "The home gate opens for the " + PlayerColorNames.displayNameOf(message.getColor())
+                    "The home gate opens for the " + PlayerColorNames.displayNameOf(message.getPlayerColor())
                             + " player: no opponent pieces remain to capture.";
             case NO_PIECE_MOVABLE -> "  -> No pieces on the board could be moved.";
             case PIECE_MOVED -> describePieceMoved(message);
@@ -99,24 +102,28 @@ public final class ConsoleGameObserver implements GameMessageObserver {
             case THIRD_SIX_VOIDED ->
                     "  -> Three sixes in a row! This roll is void - turn passes to the next player.";
             case MYSTERY_CELL_APPEARED -> describeMysteryCellBanner(
-                    "A Mystery Cell has appeared at cell " + message.getNewPosition()
-                            + " will be here and will be at that location for the next 4 rounds.");
+                    "A Mystery Cell has appeared at cell " + message.getCellPosition()
+                            + " will be here and will be at that location for the next "
+                            + MysteryCellConstants.ROUNDS_PER_LOCATION + " rounds.");
             case MYSTERY_CELL_RELOCATED -> describeMysteryCellBanner(
-                    "The Mystery Cell has relocated to cell " + message.getNewPosition()
-                            + " will be here and will be at that location for the next 4 rounds.");
+                    "The Mystery Cell has relocated to cell " + message.getCellPosition()
+                            + " will be here and will be at that location for the next "
+                            + MysteryCellConstants.ROUNDS_PER_LOCATION + " rounds.");
             case PIECE_TELEPORTED -> describePieceTeleported(message);
             case INDIVIDUAL_EFFECT_ASSIGNED ->
                     "  -> " + message.getPieceLabel() + " is now " + message.getEffectLabel()
-                            + " (individual effect, lasts 4 rounds).";
+                            + " (individual effect, lasts " + EffectConstants.EFFECT_DURATION_IN_ROUNDS + " rounds).";
             case BLOCK_EFFECT_ASSIGNED ->
                     "  -> Block " + message.getPieceLabel() + " is now " + message.getEffectLabel()
-                            + " (block effect, lasts 4 rounds, overrides individual effects).";
+                            + " (block effect, lasts " + EffectConstants.EFFECT_DURATION_IN_ROUNDS
+                            + " rounds, overrides individual effects).";
             case EFFECT_ROLL_TOO_SMALL ->
                     "  -> " + message.getPieceLabel()
                             + "'s Sick effect halved this roll to zero cells and cannot move.";
             case BETA_RESTRICTION_APPLIED ->
                     "  -> " + message.getPieceLabel()
-                            + " cannot move for the next 4 rounds (Beta restriction).";
+                            + " cannot move for the next " + EffectConstants.EFFECT_DURATION_IN_ROUNDS
+                            + " rounds (Beta restriction).";
             case BETA_RESTRICTION_TRIGGERED ->
                     "  -> " + message.getPieceLabel()
                             + " rolled a 3 two rounds in a row while Beta-restricted and is sent back to Base!";
@@ -138,7 +145,7 @@ public final class ConsoleGameObserver implements GameMessageObserver {
 
     private static String describePieceCountInWords(int pieceCount) {
         return switch (pieceCount) {
-            case 4 -> "four";
+            case BoardConstants.PIECES_PER_PLAYER -> "four";
             default -> String.valueOf(pieceCount);
         };
     }
@@ -163,9 +170,9 @@ public final class ConsoleGameObserver implements GameMessageObserver {
         banner.append(GAME_OVER_BANNER_BORDER).append('\n');
         banner.append("FINAL STANDINGS:\n");
 
-        for (int rank = 0; rank < finalStandings.size(); rank++) {
-            banner.append(placeLabels[rank]).append(" Place: ")
-                    .append(finalStandings.get(rank).name()).append('\n');
+        for (int placeIndex = 0; placeIndex < finalStandings.size(); placeIndex++) {
+            banner.append(placeLabels[placeIndex]).append(" Place: ")
+                    .append(finalStandings.get(placeIndex).name()).append('\n');
         }
 
         banner.append(GAME_OVER_BANNER_BORDER);
@@ -178,26 +185,26 @@ public final class ConsoleGameObserver implements GameMessageObserver {
         String outcome = "  -> " + message.getPieceLabel() + " landed on the Mystery Cell! Teleported to "
                 + message.getDestinationLabel();
 
-        if (message.getNewPosition() < 0) {
+        if (message.getCellPosition() < 0) {
             return outcome + ".";
         }
 
-        return outcome + " (cell " + message.getNewPosition() + ").";
+        return outcome + " (cell " + message.getCellPosition() + ").";
     }
 
     // T-4/T-13: a block move names its BlockType and BlockDirection.
     private static String describeBlockMoved(GameMessage message) {
         return "  -> Moved " + message.getPieceLabel() + " from cell "
-                + message.getFromPosition() + " to cell " + message.getNewPosition() + "."
+                + message.getFromPosition() + " to cell " + message.getCellPosition() + "."
                 + " [BlockType:" + message.getBlockTypeLabel()
                 + " BlockDirection:" + message.getMovementDirectionLabel() + "]";
     }
 
     // A solo move names the dice value and direction.
     private String describePieceMoved(GameMessage message) {
-        return "  -> " + PlayerColorNames.displayNameOf(message.getColor()) + " moves piece " + message.getPieceLabel()
+        return "  -> " + PlayerColorNames.displayNameOf(message.getPlayerColor()) + " moves piece " + message.getPieceLabel()
                 + " from location " + describeCellLabel(message.getFromPosition())
-                + " to " + describeCellLabel(message.getNewPosition())
+                + " to " + describeCellLabel(message.getCellPosition())
                 + " by " + message.getRollValue() + " units in "
                 + message.getMovementDirectionLabel() + " direction.";
     }
@@ -214,22 +221,22 @@ public final class ConsoleGameObserver implements GameMessageObserver {
     // Requirement 4: the landing square, then the captured player's new tally.
     private static String describePieceCaptured(GameMessage message) {
         String captureLine = "  -> " + message.getPieceLabel() + " piece lands on square "
-                + message.getNewPosition() + ", captures " + message.getCapturedPieceLabel()
+                + message.getCellPosition() + ", captures " + message.getCapturedPieceLabel()
                 + " and returns it to the base.";
-        String tallyLine = "  -> " + PlayerColorNames.displayNameOf(message.getColor()) + " player now has "
-                + message.getPiecesOnBoard() + "/4 pieces on the board and " + message.getPiecesAtBase()
-                + "/4 pieces on the base.";
+        String tallyLine = "  -> " + PlayerColorNames.displayNameOf(message.getPlayerColor()) + " player now has "
+                + message.getPiecesOnBoard() + "/" + BoardConstants.PIECES_PER_PLAYER + " pieces on the board and " + message.getPiecesAtBase()
+                + "/" + BoardConstants.PIECES_PER_PLAYER + " pieces on the base.";
 
         return captureLine + "\n" + tallyLine;
     }
 
     // Reports the piece leaving Base, then the player's tally (from the message counts).
     private static String describePieceEnteredBoard(GameMessage message) {
-        String colorName = PlayerColorNames.displayNameOf(message.getColor());
+        String colorName = PlayerColorNames.displayNameOf(message.getPlayerColor());
         String movedLine = "  -> " + colorName + " player moves piece " + message.getPieceLabel()
                 + " to the starting point.";
         String tallyLine = "  -> " + colorName + " player now has " + message.getPiecesOnBoard()
-                + "/4 pieces on the board and " + message.getPiecesAtBase() + "/4 pieces on the base.";
+                + "/" + BoardConstants.PIECES_PER_PLAYER + " pieces on the board and " + message.getPiecesAtBase() + "/" + BoardConstants.PIECES_PER_PLAYER + " pieces on the base.";
 
         return movedLine + "\n" + tallyLine;
     }
@@ -245,8 +252,8 @@ public final class ConsoleGameObserver implements GameMessageObserver {
 
         for (Player player : playersInTurnOrder) {
             summary.append(PlayerColorNames.displayNameOf(player.getColor())).append(" player now has ")
-                    .append(player.countPiecesOnBoard()).append("/4 pieces on the board and ")
-                    .append(player.countPiecesAtBase()).append("/4 pieces on the base.\n");
+                    .append(player.countPiecesOnBoard()).append("/" + BoardConstants.PIECES_PER_PLAYER + " pieces on the board and ")
+                    .append(player.countPiecesAtBase()).append("/" + BoardConstants.PIECES_PER_PLAYER + " pieces on the base.\n");
         }
 
         summary.append("-------------------------------\n");
@@ -368,7 +375,7 @@ public final class ConsoleGameObserver implements GameMessageObserver {
     // T-4/T-5: the member whose own direction matches the block's; its pass count is reported.
     private static Piece findNaturalMemberFor(List<Piece> blockedPieces, MovementDirectionStrategy travelDirection) {
         return blockedPieces.stream()
-                .filter(piece -> piece.getOriginalMovementDirectionStrategy() == travelDirection)
+                .filter(piece -> piece.getOriginalMovementDirection() == travelDirection)
                 .findFirst()
                 .orElse(blockedPieces.get(0));
     }
@@ -404,8 +411,8 @@ public final class ConsoleGameObserver implements GameMessageObserver {
             return "";
         }
 
-        MovementDirectionStrategy direction = piece.getMovementDirectionStrategy();
-        MovementDirectionStrategy originalDirection = piece.getOriginalMovementDirectionStrategy();
+        MovementDirectionStrategy direction = piece.getMovementDirection();
+        MovementDirectionStrategy originalDirection = piece.getOriginalMovementDirection();
 
         return ", CurrentDirection:" + direction.getLabel() + ", OriginalDirection:" + originalDirection.getLabel()
                 + ", ApproachCellPasses:" + piece.getApproachPassCount();

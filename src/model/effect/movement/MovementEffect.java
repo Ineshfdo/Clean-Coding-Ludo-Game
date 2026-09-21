@@ -1,5 +1,6 @@
 package model.effect.movement;
 
+import config.constant.EffectConstants;
 import config.enums.MovementEffectType;
 
 // T-12: an effect type plus the rounds it has left.
@@ -25,8 +26,8 @@ public final class MovementEffect {
 
     public int applyTo(int steps) {
         return switch (type) {
-            case ENERGIZED -> steps * 2;
-            case SICK -> steps / 2;
+            case ENERGIZED -> steps * EffectConstants.ENERGIZED_STEP_MULTIPLIER;
+            case SICK -> steps / EffectConstants.SICK_STEP_DIVISOR;
             case NONE -> steps;
         };
     }

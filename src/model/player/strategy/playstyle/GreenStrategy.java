@@ -14,49 +14,49 @@ import model.player.strategy.StrategyContext;
 public final class GreenStrategy implements PlayerStrategy {
 
     @Override
-    public Command choose(List<Command> legalOptions, StrategyContext context) {
+    public Command choose(List<Command> legalCommands, StrategyContext context) {
         // Rule (2): moving toward Home outranks breaking a block.
-        Optional<Command> movingHome = findFirst(legalOptions, Command::reachesHome);
+        Optional<Command> homeMove = findFirst(legalCommands, Command::reachesHome);
 
-        if (movingHome.isPresent()) {
-            return movingHome.get();
+        if (homeMove.isPresent()) {
+            return homeMove.get();
         }
 
         // Rule (1): forming a new block outranks emptying Base.
-        Optional<Command> formingBlock = findFirst(legalOptions, option -> formsNewBlock(option, context));
+        Optional<Command> blockFormingMove = findFirst(legalCommands, command -> formsNewBlock(command, context));
 
-        if (formingBlock.isPresent()) {
-            return formingBlock.get();
+        if (blockFormingMove.isPresent()) {
+            return blockFormingMove.get();
         }
 
         // Rule (2): keep moving an existing block 
-        Optional<Command> continuingBlock = findFirst(legalOptions, Command::movesExistingBlock);
+        Optional<Command> blockContinuingMove = findFirst(legalCommands, Command::movesExistingBlock);
 
-        if (continuingBlock.isPresent()) {
-            return continuingBlock.get();
+        if (blockContinuingMove.isPresent()) {
+            return blockContinuingMove.get();
         }
 
         // Rule (1): otherwise, keep Base empty.
-        Optional<Command> enteringFromBase =
-                findFirst(legalOptions, option -> option.getType() == CommandType.ENTER_BOARD);
+        Optional<Command> enterBoardMove =
+                findFirst(legalCommands, command -> command.getType() == CommandType.ENTER_BOARD);
 
-        if (enteringFromBase.isPresent()) {
-            return enteringFromBase.get();
+        if (enterBoardMove.isPresent()) {
+            return enterBoardMove.get();
         }
 
         // Rule (3): break a block only when nothing else is legal.
-        Optional<Command> avoidingBreak = findFirst(legalOptions, option -> !option.breaksExistingBlock());
+        Optional<Command> nonBreakingMove = findFirst(legalCommands, command -> !command.breaksExistingBlock());
 
-        if (avoidingBreak.isPresent()) {
-            return avoidingBreak.get();
+        if (nonBreakingMove.isPresent()) {
+            return nonBreakingMove.get();
         }
 
-        return legalOptions.get(0);
+        return legalCommands.get(0);
     }
 
     // Rule (1): landing on an own piece's cell forms a new block.
-    private static boolean formsNewBlock(Command option, StrategyContext context) {
-        return option.previewLandingPosition()
+    private static boolean formsNewBlock(Command command, StrategyContext context) {
+        return command.previewLandingPosition()
                 .map(landingPosition -> countOwnPiecesAt(context.getPlayer(), landingPosition) > 0)
                 .orElse(false);
     }
@@ -68,7 +68,7 @@ public final class GreenStrategy implements PlayerStrategy {
                 .count();
     }
 
-    private static Optional<Command> findFirst(List<Command> legalOptions, Predicate<Command> condition) {
-        return legalOptions.stream().filter(condition).findFirst();
+    private static Optional<Command> findFirst(List<Command> legalCommands, Predicate<Command> condition) {
+        return legalCommands.stream().filter(condition).findFirst();
     }
 }

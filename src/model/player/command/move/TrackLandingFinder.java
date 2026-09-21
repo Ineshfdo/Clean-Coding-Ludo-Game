@@ -12,13 +12,13 @@ final class TrackLandingFinder {
     private TrackLandingFinder() {
     }
 
-    static Optional<Integer> resolve(
+    static Optional<Integer> findLandingPosition(
             Piece piece, int steps, Board board, MovementDirectionStrategy travelDirection) {
         if (!piece.isOnTrack()) {
             return Optional.empty();
         }
 
-        int stepsToApproach = travelDirection.stepsToApproach(piece.getTrackPosition(), piece.getColor(), board);
+        int stepsToApproach = travelDirection.countStepsToApproach(piece.getTrackPosition(), piece.getColor(), board);
 
         if (steps > stepsToApproach) {
             return Optional.empty();

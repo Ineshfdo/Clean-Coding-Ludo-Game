@@ -1,5 +1,6 @@
 package model.player.strategy.playstyle;
 
+import config.constant.TurnConstants;
 import config.enums.CommandType;
 import java.util.Comparator;
 import java.util.List;
@@ -15,46 +16,44 @@ import model.player.strategy.helper.CaptureTargetFinder;
 // Yellow is winning-focused: leaves Base, captures only when needed, else nears Home.
 public final class YellowStrategy implements PlayerStrategy {
 
-    private static final int REQUIRED_CAPTURES_FOR_HOME_STRAIGHT = 1;
-
     @Override
-    public Command choose(List<Command> legalOptions, StrategyContext context) {
+    public Command choose(List<Command> legalCommands, StrategyContext context) {
         // Rule (1): keep Base empty; a six entering the board comes first.
-        Optional<Command> enteringFromBase =
-            findFirst(legalOptions, option -> option.getType() == CommandType.ENTER_BOARD);
+        Optional<Command> enterBoardMove =
+            findFirst(legalCommands, command -> command.getType() == CommandType.ENTER_BOARD);
 
-        if (enteringFromBase.isPresent()) {
-            return enteringFromBase.get();
+        if (enterBoardMove.isPresent()) {
+            return enterBoardMove.get();
         }
 
         // Rule (2): capture only for a piece that still needs one.
-        Optional<Command> neededCapture = findFirst(legalOptions, option -> capturesForAPieceThatNeedsOne(option, context));
+        Optional<Command> neededCapture = findFirst(legalCommands, command -> capturesForAPieceThatNeedsOne(command, context));
 
         if (neededCapture.isPresent()) {
             return neededCapture.get();
         }
 
         // Rule (3): otherwise advance the piece closest to Home.
-        return findClosestToHome(legalOptions, context).orElse(legalOptions.get(0));
+        return findClosestToHome(legalCommands, context).orElse(legalCommands.get(0));
     }
 
-    private static boolean capturesForAPieceThatNeedsOne(Command option, StrategyContext context) {
-        return pieceStillNeedsCapture(option.getAffectedPiece())
-                && CaptureTargetFinder.findTarget(option, context).isPresent();
+    private static boolean capturesForAPieceThatNeedsOne(Command command, StrategyContext context) {
+        return pieceStillNeedsCapture(command.getAffectedPiece())
+                && CaptureTargetFinder.findTarget(command, context).isPresent();
     }
 
     // A piece needs a capture before entering its HomeStraight.
     private static boolean pieceStillNeedsCapture(Piece piece) {
-        return piece.getCaptureCount() < REQUIRED_CAPTURES_FOR_HOME_STRAIGHT;
+        return piece.getCaptureCount() < TurnConstants.REQUIRED_CAPTURES_TO_ENTER_HOME_STRAIGHT;
     }
 
-    private static Optional<Command> findClosestToHome(List<Command> legalOptions, StrategyContext context) {
-        return legalOptions.stream()
+    private static Optional<Command> findClosestToHome(List<Command> legalCommands, StrategyContext context) {
+        return legalCommands.stream()
             .min(Comparator.comparingInt(
-                option -> RemainingHomeDistance.forPiece(option.getAffectedPiece(), context.getBoard())));
+                command -> RemainingHomeDistance.forPiece(command.getAffectedPiece(), context.getBoard())));
     }
 
-    private static Optional<Command> findFirst(List<Command> legalOptions, Predicate<Command> condition) {
-        return legalOptions.stream().filter(condition).findFirst();
+    private static Optional<Command> findFirst(List<Command> legalCommands, Predicate<Command> condition) {
+        return legalCommands.stream().filter(condition).findFirst();
     }
 }

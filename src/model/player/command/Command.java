@@ -9,7 +9,7 @@ import model.piece.Piece;
 // One action wrapped as an object, so callers run it without knowing how.
 public interface Command {
 
-    void execute(GameMessagePublisher messages);
+    void execute(GameMessagePublisher messagePublisher);
 
     CommandType getType();
 

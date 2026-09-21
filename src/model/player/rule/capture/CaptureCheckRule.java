@@ -11,13 +11,11 @@ public abstract class CaptureCheckRule {
 
     private CaptureCheckRule nextRule;
 
-    public final CaptureCheckRule setNext(CaptureCheckRule nextRule) {
+    public final void setNext(CaptureCheckRule nextRule) {
         this.nextRule = nextRule;
-
-        return nextRule;
     }
 
-    public final Optional<Command> resolve(Player mover, Piece movedPiece, List<Player> allPlayers) {
+    public final Optional<Command> findCapture(Player mover, Piece movedPiece, List<Player> allPlayers) {
         Optional<Command> command = identify(mover, movedPiece, allPlayers);
 
         if (command.isPresent()) {
@@ -26,7 +24,7 @@ public abstract class CaptureCheckRule {
 
         return nextRule == null
             ? Optional.empty()
-            : nextRule.resolve(mover, movedPiece, allPlayers);
+            : nextRule.findCapture(mover, movedPiece, allPlayers);
     }
 
     protected abstract Optional<Command> identify(

@@ -10,10 +10,10 @@ import model.player.strategy.StrategyContext;
 public final class EnterBoardFirstStrategy implements PlayerStrategy {
 
     @Override
-    public Command choose(List<Command> legalOptions, StrategyContext context) {
-        return legalOptions.stream()
-            .filter(option -> option.getType() == CommandType.ENTER_BOARD)
+    public Command choose(List<Command> legalCommands, StrategyContext context) {
+        return legalCommands.stream()
+            .filter(command -> command.getType() == CommandType.ENTER_BOARD)
             .findFirst()
-            .orElse(legalOptions.get(0));
+            .orElse(legalCommands.get(0));
     }
 }

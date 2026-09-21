@@ -8,7 +8,7 @@ public final class ApproachPassCountRule extends HomeStraightEntryRule {
     @Override
     protected boolean appliesTo(Piece piece) {
         int requiredPasses =
-                piece.getOriginalMovementDirectionStrategy().getRequiredApproachPassCount();
+                piece.getOriginalMovementDirection().getRequiredApproachPassCount();
 
         return piece.getApproachPassCount() < requiredPasses;
     }

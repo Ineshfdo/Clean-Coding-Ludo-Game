@@ -96,10 +96,10 @@ public final class LudoBoard implements Board {
     private static Map<PlayerColor, Integer> buildApproachPositions() {
         Map<PlayerColor, Integer> positionByColor = new EnumMap<>(PlayerColor.class);
 
-        positionByColor.put(PlayerColor.YELLOW, 0);
-        positionByColor.put(PlayerColor.BLUE, 13);
-        positionByColor.put(PlayerColor.RED, 26);
-        positionByColor.put(PlayerColor.GREEN, 39);
+        positionByColor.put(PlayerColor.YELLOW, BoardConstants.YELLOW_APPROACH_POSITION);
+        positionByColor.put(PlayerColor.BLUE, BoardConstants.BLUE_APPROACH_POSITION);
+        positionByColor.put(PlayerColor.RED, BoardConstants.RED_APPROACH_POSITION);
+        positionByColor.put(PlayerColor.GREEN, BoardConstants.GREEN_APPROACH_POSITION);
 
         return positionByColor;
     }
@@ -107,10 +107,10 @@ public final class LudoBoard implements Board {
     private static Map<PlayerColor, Integer> buildEntryPositions() {
         Map<PlayerColor, Integer> positionByColor = new EnumMap<>(PlayerColor.class);
 
-        positionByColor.put(PlayerColor.YELLOW, 2);
-        positionByColor.put(PlayerColor.BLUE, 15);
-        positionByColor.put(PlayerColor.RED, 28);
-        positionByColor.put(PlayerColor.GREEN, 41);
+        positionByColor.put(PlayerColor.YELLOW, BoardConstants.YELLOW_ENTRY_POSITION);
+        positionByColor.put(PlayerColor.BLUE, BoardConstants.BLUE_ENTRY_POSITION);
+        positionByColor.put(PlayerColor.RED, BoardConstants.RED_ENTRY_POSITION);
+        positionByColor.put(PlayerColor.GREEN, BoardConstants.GREEN_ENTRY_POSITION);
 
         return positionByColor;
     }

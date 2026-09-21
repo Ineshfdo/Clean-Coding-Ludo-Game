@@ -7,10 +7,8 @@ public abstract class HomeStraightEntryRule {
 
     private HomeStraightEntryRule nextRule;
 
-    public final HomeStraightEntryRule setNext(HomeStraightEntryRule nextRule) {
+    public final void setNext(HomeStraightEntryRule nextRule) {
         this.nextRule = nextRule;
-
-        return nextRule;
     }
 
     public final boolean forbidsEntry(Piece piece) {

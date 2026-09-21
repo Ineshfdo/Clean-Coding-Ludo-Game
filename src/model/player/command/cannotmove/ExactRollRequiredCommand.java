@@ -16,8 +16,8 @@ public final class ExactRollRequiredCommand implements Command {
     }
 
     @Override
-    public void execute(GameMessagePublisher messages) {
-        messages.publish(GameMessage.pieceNeedsExactRoll(piece.toString()));
+    public void execute(GameMessagePublisher messagePublisher) {
+        messagePublisher.publish(GameMessage.pieceNeedsExactRoll(piece.toString()));
     }
 
     @Override

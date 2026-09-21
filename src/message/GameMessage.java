@@ -8,12 +8,12 @@ import java.util.List;
 public final class GameMessage {
 
     private final GameMessageType type;
-    private final PlayerColor color;
+    private final PlayerColor playerColor;
 
     private final int rollValue;
     private final int roundNumber;
     private final int fromPosition;
-    private final int newPosition;
+    private final int cellPosition;
 
     private final String pieceLabel;
     private final String homeStraightCellLabel;
@@ -30,19 +30,19 @@ public final class GameMessage {
     private final int piecesOnBoard;
     private final int piecesAtBase;
 
-    private GameMessage(GameMessageType type, PlayerColor color, int rollValue,
-            int roundNumber, int fromPosition, int newPosition, String pieceLabel,
+    private GameMessage(GameMessageType type, PlayerColor playerColor, int rollValue,
+            int roundNumber, int fromPosition, int cellPosition, String pieceLabel,
             String homeStraightCellLabel, String capturedPieceLabel, String coinTossResultLabel,
             String movementDirectionLabel, String blockTypeLabel, String destinationLabel,
             String effectLabel, List<PlayerColor> finalStandings, List<String> pieceLabels,
             int piecesOnBoard, int piecesAtBase) {
         this.type = type;
-        this.color = color;
+        this.playerColor = playerColor;
 
         this.rollValue = rollValue;
         this.roundNumber = roundNumber;
         this.fromPosition = fromPosition;
-        this.newPosition = newPosition;
+        this.cellPosition = cellPosition;
 
         this.pieceLabel = pieceLabel;
         this.homeStraightCellLabel = homeStraightCellLabel;
@@ -65,15 +65,15 @@ public final class GameMessage {
                 type, null, 0, 0, 0, 0, null, null, null, null, null, null, null, null, null, null, 0, 0);
     }
 
-    public static GameMessage diceRolled(PlayerColor color, int rollValue) {
+    public static GameMessage diceRolled(PlayerColor playerColor, int rollValue) {
         return new GameMessage(
-                GameMessageType.DICE_ROLLED, color, rollValue, 0, 0, 0, null, null, null, null, null,
+                GameMessageType.DICE_ROLLED, playerColor, rollValue, 0, 0, 0, null, null, null, null, null,
                 null, null, null, null, null, 0, 0);
     }
 
-    public static GameMessage tossWon(PlayerColor color, int rollValue) {
+    public static GameMessage tossWon(PlayerColor playerColor, int rollValue) {
         return new GameMessage(
-                GameMessageType.TOSS_WON, color, rollValue, 0, 0, 0, null, null, null, null, null,
+                GameMessageType.TOSS_WON, playerColor, rollValue, 0, 0, 0, null, null, null, null, null,
                 null, null, null, null, null, 0, 0);
     }
 
@@ -89,15 +89,15 @@ public final class GameMessage {
                 null, null, null, null, null, null, 0, 0);
     }
 
-    public static GameMessage turnStarted(PlayerColor color) {
+    public static GameMessage turnStarted(PlayerColor playerColor) {
         return new GameMessage(
-                GameMessageType.TURN_STARTED, color, 0, 0, 0, 0, null, null, null, null, null,
+                GameMessageType.TURN_STARTED, playerColor, 0, 0, 0, 0, null, null, null, null, null,
                 null, null, null, null, null, 0, 0);
     }
 
-    public static GameMessage turnRolled(PlayerColor color, int rollValue) {
+    public static GameMessage turnRolled(PlayerColor playerColor, int rollValue) {
         return new GameMessage(
-                GameMessageType.TURN_ROLLED, color, rollValue, 0, 0, 0, null, null, null, null, null,
+                GameMessageType.TURN_ROLLED, playerColor, rollValue, 0, 0, 0, null, null, null, null, null,
                 null, null, null, null, null, 0, 0);
     }
 
@@ -109,10 +109,10 @@ public final class GameMessage {
 
     // Requirement 2: a solo move reports its dice value, direction and both endpoints.
     public static GameMessage pieceMoved(
-            PlayerColor color, String pieceLabel, int fromPosition, int newPosition, int diceValue,
+            PlayerColor playerColor, String pieceLabel, int fromPosition, int newPosition, int rollValue,
             String movementDirectionLabel) {
         return new GameMessage(
-                GameMessageType.PIECE_MOVED, color, diceValue, 0, fromPosition, newPosition, pieceLabel,
+                GameMessageType.PIECE_MOVED, playerColor, rollValue, 0, fromPosition, newPosition, pieceLabel,
                 null, null, null, movementDirectionLabel, null, null, null, null, null, 0, 0);
     }
 
@@ -127,9 +127,9 @@ public final class GameMessage {
 
     // Observer: reports the piece that left Base and the player's board/base tally.
     public static GameMessage pieceEnteredBoard(
-            PlayerColor color, String pieceLabel, int newPosition, int piecesOnBoard, int piecesAtBase) {
+            PlayerColor playerColor, String pieceLabel, int newPosition, int piecesOnBoard, int piecesAtBase) {
         return new GameMessage(
-                GameMessageType.PIECE_ENTERED_BOARD, color, 0, 0, 0, newPosition, pieceLabel, null,
+                GameMessageType.PIECE_ENTERED_BOARD, playerColor, 0, 0, 0, newPosition, pieceLabel, null,
                 null, null, null, null, null, null, null, null, piecesOnBoard, piecesAtBase);
     }
 
@@ -262,16 +262,16 @@ public final class GameMessage {
     }
 
     // Home gate: no opponent pieces remain, so the T-7 capture requirement is waived.
-    public static GameMessage homeGateOpened(PlayerColor color) {
+    public static GameMessage homeGateOpened(PlayerColor playerColor) {
         return new GameMessage(
-                GameMessageType.HOME_GATE_OPENED, color, 0, 0, 0, 0, null, null, null, null, null,
+                GameMessageType.HOME_GATE_OPENED, playerColor, 0, 0, 0, 0, null, null, null, null, null,
                 null, null, null, null, null, 0, 0);
     }
 
     // 3.1: announces a player's pieces before the game begins.
-    public static GameMessage playerRosterAnnounced(PlayerColor color, List<String> pieceLabels) {
+    public static GameMessage playerRosterAnnounced(PlayerColor playerColor, List<String> pieceLabels) {
         return new GameMessage(
-                GameMessageType.PLAYER_ROSTER_ANNOUNCED, color, 0, 0, 0, 0, null, null, null, null,
+                GameMessageType.PLAYER_ROSTER_ANNOUNCED, playerColor, 0, 0, 0, 0, null, null, null, null,
                 null, null, null, null, null, pieceLabels, 0, 0);
     }
 
@@ -286,8 +286,8 @@ public final class GameMessage {
         return type;
     }
 
-    public PlayerColor getColor() {
-        return color;
+    public PlayerColor getPlayerColor() {
+        return playerColor;
     }
 
     public int getRollValue() {
@@ -302,8 +302,8 @@ public final class GameMessage {
         return fromPosition;
     }
 
-    public int getNewPosition() {
-        return newPosition;
+    public int getCellPosition() {
+        return cellPosition;
     }
 
     public String getPieceLabel() {

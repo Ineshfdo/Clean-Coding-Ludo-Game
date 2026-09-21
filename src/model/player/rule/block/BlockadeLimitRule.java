@@ -11,10 +11,8 @@ public abstract class BlockadeLimitRule {
 
     private BlockadeLimitRule nextRule;
 
-    public final BlockadeLimitRule setNext(BlockadeLimitRule nextRule) {
+    public final void setNext(BlockadeLimitRule nextRule) {
         this.nextRule = nextRule;
-
-        return nextRule;
     }
 
          public final int limitSteps(

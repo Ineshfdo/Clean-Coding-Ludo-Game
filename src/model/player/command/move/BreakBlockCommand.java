@@ -24,14 +24,14 @@ public final class BreakBlockCommand implements Command {
     }
 
     @Override
-    public void execute(GameMessagePublisher messages) {
+    public void execute(GameMessagePublisher messagePublisher) {
         for (Piece piece : restoredPieces) {
             player.restoreOriginalDirection(piece);
-            messages.publish(GameMessage.pieceLeftBlock(piece.toString()));
+            messagePublisher.publish(GameMessage.pieceLeftBlock(piece.toString()));
         }
 
         for (Command releasedPieceMove : releasedPieceMoves) {
-            releasedPieceMove.execute(messages);
+            releasedPieceMove.execute(messagePublisher);
         }
     }
 

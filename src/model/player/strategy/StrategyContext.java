@@ -5,7 +5,7 @@ import model.board.Board;
 import model.effect.mysterycell.MysteryCellLocation;
 import model.player.Player;
 
-// Read-only context a PlayerStrategy needs to evaluate legal options.
+// Read-only context a PlayerStrategy needs to evaluate legal commands.
 public final class StrategyContext {
 
     private final Player player;
