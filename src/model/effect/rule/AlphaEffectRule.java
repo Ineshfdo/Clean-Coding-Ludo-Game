@@ -2,12 +2,13 @@ package model.effect.rule;
 
 import java.util.List;
 
+import message.mystery.BlockEffectAssigned;
+import message.mystery.IndividualEffectAssigned;
 import model.piece.PieceLabels;
 import utils.coin.CoinToss;
 import config.constant.BlockadeConstants;
 import config.constant.EffectConstants;
 import config.enums.CoinTossResult;
-import message.GameMessage;
 import message.observer.GameMessagePublisher;
 import config.enums.MovementEffectType;
 import model.effect.movement.MovementEffect;
@@ -29,7 +30,7 @@ public final class AlphaEffectRule {
             player.applyIndividualEffect(piece, individualEffect);
 
             messagePublisher.publish(
-                    GameMessage.individualEffectAssigned(piece.toString(), individualEffect.getLabel()));
+                    new IndividualEffectAssigned(piece.toString(), individualEffect.getLabel()));
         }
 
         if (teleportedPieces.size() < BlockadeConstants.MINIMUM_BLOCKADE_SIZE) {
@@ -44,7 +45,7 @@ public final class AlphaEffectRule {
         }
 
         messagePublisher.publish(
-                GameMessage.blockEffectAssigned(PieceLabels.joinPieceLabels(teleportedPieces), blockEffect.getLabel()));
+                new BlockEffectAssigned(PieceLabels.joinPieceLabels(teleportedPieces), blockEffect.getLabel()));
     }
 
     private MovementEffect rollEffect() {

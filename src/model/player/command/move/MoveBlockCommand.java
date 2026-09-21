@@ -4,6 +4,9 @@ import config.constant.BoardConstants;
 import java.util.List;
 import java.util.Optional;
 import message.GameMessage;
+import message.move.BlockMoved;
+import message.move.PieceEnteredHomeStraight;
+import message.move.PieceReachedHome;
 import message.observer.GameMessagePublisher;
 import model.board.Board;
 import model.direction.MovementDirectionStrategy;
@@ -56,7 +59,7 @@ public final class MoveBlockCommand implements MoveCommand {
         String blockLabel = PieceLabels.joinPieceLabels(blockPieces);
 
         if (representative.isHome()) {
-            return GameMessage.pieceReachedHome(blockLabel);
+            return new PieceReachedHome(blockLabel);
         }
 
         if (representative.isOnHomeStraight()) {
@@ -64,10 +67,10 @@ public final class MoveBlockCommand implements MoveCommand {
                     .getHomeStraightCell(representative.getColor(), representative.getHomeStraightIndex())
                     .toString();
 
-            return GameMessage.pieceEnteredHomeStraight(blockLabel, cellLabel);
+            return new PieceEnteredHomeStraight(blockLabel, cellLabel);
         }
 
-        return GameMessage.blockMoved(
+        return new BlockMoved(
                 blockLabel, fromPosition, representative.getTrackPosition(),
                 BlockDirectionClassifier.labelOf(BlockDirectionClassifier.classify(blockPieces)),
                 travelDirection.getLabel());

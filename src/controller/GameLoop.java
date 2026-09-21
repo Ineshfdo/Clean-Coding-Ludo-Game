@@ -3,7 +3,9 @@ package controller;
 import config.enums.PlayerColor;
 import java.util.ArrayList;
 import java.util.List;
-import message.GameMessage;
+import message.game.BoardStateReported;
+import message.game.GameOver;
+import message.game.RoundStarted;
 import message.observer.GameMessagePublisher;
 import model.board.Board;
 import model.player.Player;
@@ -42,11 +44,11 @@ public final class GameLoop {
             finishRound(roundNumber, allPlayers);
         }
 
-        messagePublisher.publish(GameMessage.gameOver(finalStandings));
+        messagePublisher.publish(new GameOver(finalStandings));
     }
 
     private void startRound(int roundNumber, List<Player> turnOrder, List<Player> allPlayers) {
-        messagePublisher.publish(GameMessage.roundStarted(roundNumber));
+        messagePublisher.publish(new RoundStarted(roundNumber));
         roundListener.onRoundStarted(roundNumber, allPlayers, messagePublisher);
 
         // T-12/T-13: expire this round's effects and Beta restriction first.
@@ -71,7 +73,7 @@ public final class GameLoop {
 
     private void finishRound(int roundNumber, List<Player> allPlayers) {
         roundListener.onRoundCompleted(roundNumber, allPlayers);
-        messagePublisher.publish(GameMessage.boardStateReported(roundNumber));
+        messagePublisher.publish(new BoardStateReported(roundNumber));
     }
 
     private static boolean allPlayersFinished(List<Player> allPlayers) {

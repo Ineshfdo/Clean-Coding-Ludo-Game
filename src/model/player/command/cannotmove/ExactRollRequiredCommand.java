@@ -1,6 +1,6 @@
 package model.player.command.cannotmove;
 
-import message.GameMessage;
+import message.cannotmove.PieceNeedsExactRoll;
 import message.observer.GameMessagePublisher;
 import model.piece.Piece;
 
@@ -13,6 +13,6 @@ public final class ExactRollRequiredCommand extends CannotMoveCommand {
 
     @Override
     public void execute(GameMessagePublisher messagePublisher) {
-        messagePublisher.publish(GameMessage.pieceNeedsExactRoll(getAffectedPiece().toString()));
+        messagePublisher.publish(new PieceNeedsExactRoll(getAffectedPiece().toString()));
     }
 }

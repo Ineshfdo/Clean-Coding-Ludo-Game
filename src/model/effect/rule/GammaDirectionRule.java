@@ -1,7 +1,7 @@
 package model.effect.rule;
 
 import java.util.List;
-import message.GameMessage;
+import message.mystery.PieceDirectionReversed;
 import message.observer.GameMessagePublisher;
 import model.direction.MovementDirectionStrategy;
 import model.effect.mysterycell.MysteryCellDestination;
@@ -39,7 +39,7 @@ public final class GammaDirectionRule {
         }
 
         MovementDirectionStrategy newDirection = teleportedPieces.get(0).getMovementDirection();
-        messagePublisher.publish(GameMessage.pieceDirectionReversed(
+        messagePublisher.publish(new PieceDirectionReversed(
                 PieceLabels.joinPieceLabels(teleportedPieces), newDirection.getLabel()));
     }
 }

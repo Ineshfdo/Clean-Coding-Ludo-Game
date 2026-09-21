@@ -1,7 +1,7 @@
 package model.player.command.cannotmove;
 
 import java.util.List;
-import message.GameMessage;
+import message.cannotmove.PieceBlocked;
 import message.observer.GameMessagePublisher;
 import model.piece.Piece;
 import model.piece.PieceLabels;
@@ -18,6 +18,6 @@ public final class MoveBlockedByBlockadeCommand extends CannotMoveCommand {
 
     @Override
     public void execute(GameMessagePublisher messagePublisher) {
-        messagePublisher.publish(GameMessage.pieceBlocked(PieceLabels.joinPieceLabels(blockPieces)));
+        messagePublisher.publish(new PieceBlocked(PieceLabels.joinPieceLabels(blockPieces)));
     }
 }

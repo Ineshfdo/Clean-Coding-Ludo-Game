@@ -1,14 +1,16 @@
 package controller;
 
 import config.constant.DiceConstants;
-import config.enums.GameMessageType;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import message.GameMessage;
 import message.observer.GameMessagePublisher;
+import message.turn.NoPieceMovable;
+import message.turn.ThirdSixVoided;
+import message.turn.TurnRolled;
+import message.turn.TurnStarted;
 import model.board.Board;
 import model.effect.mysterycell.MysteryCellLocation;
 import model.piece.Piece;
@@ -56,7 +58,7 @@ public final class GameEngine {
     public void playTurn(
             Player player, List<Player> allPlayers, Dice dice, Board board,
             GameMessagePublisher messagePublisher) {
-        messagePublisher.publish(GameMessage.turnStarted(player.getColor()));
+        messagePublisher.publish(new TurnStarted(player.getColor()));
 
         int rollNumber = 0;
 
@@ -69,7 +71,7 @@ public final class GameEngine {
             int rollValue = dice.roll();
             consecutiveSixCount = rollValue == DiceConstants.SIX_ROLL_VALUE ? consecutiveSixCount + 1 : 0;
 
-            messagePublisher.publish(GameMessage.turnRolled(player.getColor(), rollValue));
+            messagePublisher.publish(new TurnRolled(player.getColor(), rollValue));
 
             Optional<Command> forcedBreak =
                     blockadeBreakRule.findForcedBreak(player, consecutiveSixCount, rollValue, board, allPlayers);
@@ -80,7 +82,7 @@ public final class GameEngine {
             }
 
             if (rollValidityRule.isVoided(consecutiveSixCount, rollValue)) {
-                messagePublisher.publish(GameMessage.of(GameMessageType.THIRD_SIX_VOIDED));
+                messagePublisher.publish(new ThirdSixVoided());
                 return;
             }
 
@@ -107,7 +109,7 @@ public final class GameEngine {
         List<MoveCommand> legalCommands = collectLegalCommands(player, allPlayers, rollValue, board);
 
         if (legalCommands.isEmpty()) {
-            messagePublisher.publish(GameMessage.noPieceMovable());
+            messagePublisher.publish(new NoPieceMovable());
             return false;
         }
 

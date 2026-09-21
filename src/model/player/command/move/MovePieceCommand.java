@@ -3,6 +3,9 @@ package model.player.command.move;
 import config.constant.BoardConstants;
 import java.util.Optional;
 import message.GameMessage;
+import message.move.PieceEnteredHomeStraight;
+import message.move.PieceMoved;
+import message.move.PieceReachedHome;
 import message.observer.GameMessagePublisher;
 import model.board.Board;
 import model.direction.MovementDirectionStrategy;
@@ -45,7 +48,7 @@ public final class MovePieceCommand implements MoveCommand {
     // Outcome: track landing, HomeStraight entry, or Home.
     private GameMessage describeOutcome(int fromPosition) {
         if (piece.isHome()) {
-            return GameMessage.pieceReachedHome(piece.toString());
+            return new PieceReachedHome(piece.toString());
         }
 
         if (piece.isOnHomeStraight()) {
@@ -53,10 +56,10 @@ public final class MovePieceCommand implements MoveCommand {
                 board.getHomeStraightCell(piece.getColor(), piece.getHomeStraightIndex())
                         .toString();
 
-            return GameMessage.pieceEnteredHomeStraight(piece.toString(), cellLabel);
+            return new PieceEnteredHomeStraight(piece.toString(), cellLabel);
         }
 
-        return GameMessage.pieceMoved(
+        return new PieceMoved(
             player.getColor(), piece.toString(), fromPosition, piece.getTrackPosition(),
             effectiveSteps, travelDirection.getLabel());
     }

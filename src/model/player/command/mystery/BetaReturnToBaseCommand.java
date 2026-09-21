@@ -1,7 +1,7 @@
 package model.player.command.mystery;
 
 import java.util.List;
-import message.GameMessage;
+import message.mystery.BetaRestrictionTriggered;
 import message.observer.GameMessagePublisher;
 import model.piece.Piece;
 import model.piece.PieceLabels;
@@ -25,7 +25,7 @@ public final class BetaReturnToBaseCommand implements Command {
             player.returnToBase(piece);
         }
 
-        messagePublisher.publish(GameMessage.betaRestrictionTriggered(PieceLabels.joinPieceLabels(returningPieces)));
+        messagePublisher.publish(new BetaRestrictionTriggered(PieceLabels.joinPieceLabels(returningPieces)));
     }
 
     @Override

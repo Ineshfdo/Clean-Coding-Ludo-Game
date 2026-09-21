@@ -1,6 +1,6 @@
 package model.player.command.cannotmove;
 
-import message.GameMessage;
+import message.cannotmove.BlockRollTooSmall;
 import message.observer.GameMessagePublisher;
 import model.piece.Piece;
 
@@ -13,6 +13,6 @@ public final class BlockRollTooSmallCommand extends CannotMoveCommand {
 
     @Override
     public void execute(GameMessagePublisher messagePublisher) {
-        messagePublisher.publish(GameMessage.blockRollTooSmall(getAffectedPiece().toString()));
+        messagePublisher.publish(new BlockRollTooSmall(getAffectedPiece().toString()));
     }
 }

@@ -2,7 +2,7 @@ package model.player.command.move;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import message.GameMessage;
+import message.move.PieceLeftBlock;
 import message.observer.GameMessagePublisher;
 import model.piece.Piece;
 import model.player.Player;
@@ -26,7 +26,7 @@ public final class BreakBlockCommand implements MoveCommand {
     public void execute(GameMessagePublisher messagePublisher) {
         for (Piece piece : restoredPieces) {
             player.restoreOriginalDirection(piece);
-            messagePublisher.publish(GameMessage.pieceLeftBlock(piece.toString()));
+            messagePublisher.publish(new PieceLeftBlock(piece.toString()));
         }
 
         for (MoveCommand releasedPieceMove : releasedPieceMoves) {

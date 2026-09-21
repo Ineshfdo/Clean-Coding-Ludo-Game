@@ -1,16 +1,17 @@
 package controller;
 
-import config.enums.GameMessageType;
 import config.enums.PlayerColor;
 import exception.IllegalMoveException;
 import exception.InvalidPieceStateException;
 import exception.PieceOwnershipException;
 import exception.PlayerNotFoundException;
+import exception.UnpresentableMessageException;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import message.GameMessage;
+import message.game.GameStarting;
+import message.game.PlayerRosterAnnounced;
 import message.observer.GameMessageCenter;
 import message.observer.GameMessagePublisher;
 import message.observer.GameMessageRegistry;
@@ -89,7 +90,8 @@ public final class GameFacade {
         try {
             playGame(seed);
         } catch (IllegalMoveException | InvalidPieceStateException
-                | PieceOwnershipException | PlayerNotFoundException exception) {
+                | PieceOwnershipException | PlayerNotFoundException
+                | UnpresentableMessageException exception) {
             LOGGER.log(
                     Level.SEVERE, "Game aborted; the simulation cannot continue", exception);
         }
@@ -114,7 +116,7 @@ public final class GameFacade {
         // 3.1: announce every player's own pieces before starting.
         announcePlayerRoster(allPlayers, messagePublisher);
 
-        messagePublisher.publish(GameMessage.of(GameMessageType.GAME_STARTING));
+        messagePublisher.publish(new GameStarting());
 
         // The toss order is also clockwise, starting from Red.
         TurnOrderBuilder turnOrderBuilder = new TurnOrderBuilder(board);
@@ -138,7 +140,7 @@ public final class GameFacade {
     // Message per player, naming its pieces.
     private static void announcePlayerRoster(List<Player> allPlayers, GameMessagePublisher messagePublisher) {
         for (Player player : allPlayers) {
-            messagePublisher.publish(GameMessage.playerRosterAnnounced(player.getColor(), buildPieceLabels(player)));
+            messagePublisher.publish(new PlayerRosterAnnounced(player.getColor(), buildPieceLabels(player)));
         }
     }
 

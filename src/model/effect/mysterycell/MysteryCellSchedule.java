@@ -4,7 +4,8 @@ import config.constant.BoardConstants;
 import config.constant.MysteryCellConstants;
 import java.util.ArrayList;
 import java.util.List;
-import message.GameMessage;
+import message.mystery.MysteryCellAppeared;
+import message.mystery.MysteryCellRelocated;
 import message.observer.GameMessagePublisher;
 import model.board.Board;
 import model.piece.Piece;
@@ -81,7 +82,7 @@ public final class MysteryCellSchedule implements MysteryCellLocation, RoundList
         roundsRemainingAtCurrentCell = MysteryCellConstants.ROUNDS_PER_LOCATION;
         isActive = true;
 
-        messagePublisher.publish(GameMessage.mysteryCellAppeared(currentCellPosition));
+        messagePublisher.publish(new MysteryCellAppeared(currentCellPosition));
     }
 
     private void relocateIfDue(List<Player> allPlayers, GameMessagePublisher messagePublisher) {
@@ -95,7 +96,7 @@ public final class MysteryCellSchedule implements MysteryCellLocation, RoundList
         currentCellPosition = chooseRandomEmptyCell(allPlayers, previousCellPosition);
         roundsRemainingAtCurrentCell = MysteryCellConstants.ROUNDS_PER_LOCATION;
 
-        messagePublisher.publish(GameMessage.mysteryCellRelocated(currentCellPosition));
+        messagePublisher.publish(new MysteryCellRelocated(currentCellPosition));
     }
 
     // T-10: excludes the previous cell so it never repeats.

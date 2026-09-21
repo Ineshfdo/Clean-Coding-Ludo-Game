@@ -2,7 +2,7 @@ package model.effect.destination;
 
 import config.constant.BoardConstants;
 import java.util.List;
-import message.GameMessage;
+import message.mystery.PieceTeleported;
 import message.observer.GameMessagePublisher;
 import model.effect.mysterycell.MysteryCellDestination;
 import model.piece.Piece;
@@ -25,7 +25,7 @@ public final class BaseDestination implements MysteryCellDestination {
             player.returnToBase(piece);
         }
 
-        messagePublisher.publish(GameMessage.pieceTeleported(
+        messagePublisher.publish(new PieceTeleported(
                 PieceLabels.joinPieceLabels(teleportedPieces), getLabel(), BoardConstants.NO_TRACK_POSITION));
     }
 }

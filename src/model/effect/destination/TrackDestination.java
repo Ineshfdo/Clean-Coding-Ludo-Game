@@ -1,7 +1,7 @@
 package model.effect.destination;
 
 import java.util.List;
-import message.GameMessage;
+import message.mystery.PieceTeleported;
 import message.observer.GameMessagePublisher;
 import model.effect.activation.EffectActivationRule;
 import model.effect.activation.MysteryCellArrival;
@@ -30,7 +30,7 @@ public abstract class TrackDestination implements MysteryCellDestination {
 
         recordArrival(player, teleportedPieces);
 
-        messagePublisher.publish(GameMessage.pieceTeleported(
+        messagePublisher.publish(new PieceTeleported(
                 PieceLabels.joinPieceLabels(teleportedPieces), getLabel(), cellPosition));
 
         // T-15: effects activate only after a genuine teleport.

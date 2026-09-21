@@ -1,6 +1,7 @@
 package model.player.command.move;
 
-import message.GameMessage;
+import message.move.PieceDirectionAssigned;
+import message.move.PieceEnteredBoard;
 import message.observer.GameMessagePublisher;
 import model.board.Board;
 import model.direction.EntryDirection;
@@ -31,14 +32,14 @@ public final class EnterBoardCommand implements MoveCommand {
     public void execute(GameMessagePublisher messagePublisher) {
         player.leaveBase(piece, board);
 
-        messagePublisher.publish(GameMessage.pieceEnteredBoard(
+        messagePublisher.publish(new PieceEnteredBoard(
                 player.getColor(), piece.toString(), piece.getTrackPosition(),
                 player.countPiecesOnBoard(), player.countPiecesAtBase()));
 
         EntryDirection entryDirection = entryDirectionAssigner.assign();
         player.assignMovementDirection(piece, entryDirection.getDirection());
 
-        messagePublisher.publish(GameMessage.pieceDirectionAssigned(
+        messagePublisher.publish(new PieceDirectionAssigned(
                 piece.toString(), CoinTossLabels.labelOf(entryDirection.getTossResult()),
                 entryDirection.getDirection().getLabel()));
     }

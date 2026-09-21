@@ -1,9 +1,11 @@
 package controller;
 
-import config.enums.GameMessageType;
 import java.util.List;
-import message.GameMessage;
 import message.observer.GameMessagePublisher;
+import message.toss.DiceRolled;
+import message.toss.TossStarting;
+import message.toss.TossTied;
+import message.toss.TossWon;
 import model.player.Player;
 import utils.dice.Dice;
 
@@ -21,7 +23,7 @@ public final class FirstPlayerSelector {
     }
 
     public Player select(List<Player> tossOrder) {
-        messagePublisher.publish(GameMessage.of(GameMessageType.TOSS_STARTING));
+        messagePublisher.publish(new TossStarting());
 
         while (true) {
             Player highestRoller = tossOrder.get(0);
@@ -30,7 +32,7 @@ public final class FirstPlayerSelector {
 
             for (Player player : tossOrder) {
                 int rollValue = dice.roll();
-                messagePublisher.publish(GameMessage.diceRolled(player.getColor(), rollValue));
+                messagePublisher.publish(new DiceRolled(player.getColor(), rollValue));
 
                 if (rollValue > highestRoll) {
                     highestRoll = rollValue;
@@ -42,11 +44,11 @@ public final class FirstPlayerSelector {
             }
 
             if (highestRollerCount == 1) {
-                messagePublisher.publish(GameMessage.tossWon(highestRoller.getColor(), highestRoll));
+                messagePublisher.publish(new TossWon(highestRoller.getColor(), highestRoll));
                 return highestRoller;
             }
 
-            messagePublisher.publish(GameMessage.tossTied(highestRoll));
+            messagePublisher.publish(new TossTied(highestRoll));
         }
     }
 }

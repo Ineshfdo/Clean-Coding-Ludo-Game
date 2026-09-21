@@ -1,7 +1,7 @@
 package model.player.command.capture;
 
 import java.util.List;
-import message.GameMessage;
+import message.capture.BlockCaptured;
 import message.observer.GameMessagePublisher;
 import model.piece.Piece;
 import model.piece.PieceLabels;
@@ -36,7 +36,7 @@ public final class CaptureBlockCommand implements Command {
             capturingPlayer.recordCapture(capturingPiece);
         }
 
-        messagePublisher.publish(GameMessage.blockCaptured(PieceLabels.joinPieceLabels(capturingBlock), PieceLabels.joinPieceLabels(capturedBlock)));
+        messagePublisher.publish(new BlockCaptured(PieceLabels.joinPieceLabels(capturingBlock), PieceLabels.joinPieceLabels(capturedBlock)));
     }
 
     @Override

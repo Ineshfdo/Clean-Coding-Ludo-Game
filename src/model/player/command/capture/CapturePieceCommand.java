@@ -1,6 +1,6 @@
 package model.player.command.capture;
 
-import message.GameMessage;
+import message.capture.PieceCaptured;
 import message.observer.GameMessagePublisher;
 import model.piece.Piece;
 import model.player.Player;
@@ -31,7 +31,7 @@ public final class CapturePieceCommand implements Command {
         capturedPlayer.returnToBase(capturedPiece);
         capturingPlayer.recordCapture(capturingPiece);
 
-        messagePublisher.publish(GameMessage.pieceCaptured(
+        messagePublisher.publish(new PieceCaptured(
                 capturingPiece.toString(), capturePosition, capturedPiece.toString(),
                 capturedPlayer.getColor(), capturedPlayer.countPiecesOnBoard(),
                 capturedPlayer.countPiecesAtBase()));

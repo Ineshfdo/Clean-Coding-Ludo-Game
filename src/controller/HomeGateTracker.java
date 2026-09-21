@@ -3,8 +3,8 @@ package controller;
 import config.constant.TurnConstants;
 import config.enums.PlayerColor;
 import java.util.List;
-import message.GameMessage;
 import message.observer.GameMessagePublisher;
+import message.turn.HomeGateOpened;
 import model.player.Player;
 import model.player.rule.home.HomeGateStatus;
 import model.player.rule.roll.RollEvent;
@@ -23,7 +23,7 @@ public final class HomeGateTracker implements HomeGateStatus, RollHook {
         recordRoll(player, roll.getAllPlayers());
 
         if (wasOpenedByLatestRoll(player.getColor())) {
-            messagePublisher.publish(GameMessage.homeGateOpened(player.getColor()));
+            messagePublisher.publish(new HomeGateOpened(player.getColor()));
         }
     }
 

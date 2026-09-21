@@ -1,7 +1,7 @@
 package model.effect.destination;
 
 import java.util.List;
-import message.GameMessage;
+import message.mystery.BetaRestrictionApplied;
 import message.observer.GameMessagePublisher;
 import model.board.MysteryCellPositions;
 import model.effect.activation.EffectActivationRule;
@@ -42,6 +42,6 @@ public final class BetaDestination extends TrackDestination {
         }
 
         messagePublisher.publish(
-                GameMessage.betaRestrictionApplied(PieceLabels.joinPieceLabels(teleportedPieces)));
+                new BetaRestrictionApplied(PieceLabels.joinPieceLabels(teleportedPieces)));
     }
 }
