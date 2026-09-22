@@ -5,32 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="576ba9fa-b4ca-47ea-9061-05b3403e3226" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/config/enums/GameMessageType.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/controller/FirstPlayerSelector.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/controller/FirstPlayerSelector.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/controller/GameEngine.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/controller/GameEngine.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/controller/GameFacade.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/controller/GameFacade.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/controller/GameLoop.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/controller/GameLoop.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/controller/HomeGateTracker.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/controller/HomeGateTracker.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/message/GameMessage.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/message/GameMessage.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/model/effect/destination/BaseDestination.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/model/effect/destination/BaseDestination.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/model/effect/destination/BetaDestination.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/model/effect/destination/BetaDestination.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/model/effect/destination/TrackDestination.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/model/effect/destination/TrackDestination.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/model/effect/mysterycell/MysteryCellSchedule.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/model/effect/mysterycell/MysteryCellSchedule.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/model/effect/rule/AlphaEffectRule.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/model/effect/rule/AlphaEffectRule.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/model/effect/rule/GammaDirectionRule.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/model/effect/rule/GammaDirectionRule.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/model/player/command/cannotmove/BlockRollTooSmallCommand.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/model/player/command/cannotmove/BlockRollTooSmallCommand.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/model/player/command/cannotmove/ExactRollRequiredCommand.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/model/player/command/cannotmove/ExactRollRequiredCommand.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/model/player/command/cannotmove/MoveBlockedByBlockadeCommand.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/model/player/command/cannotmove/MoveBlockedByBlockadeCommand.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/model/player/command/cannotmove/SickRollTooSmallCommand.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/model/player/command/cannotmove/SickRollTooSmallCommand.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/model/player/command/capture/CaptureBlockCommand.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/model/player/command/capture/CaptureBlockCommand.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/model/player/command/capture/CapturePieceCommand.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/model/player/command/capture/CapturePieceCommand.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/model/player/command/move/BreakBlockCommand.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/model/player/command/move/BreakBlockCommand.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/model/player/command/move/EnterBoardCommand.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/model/player/command/move/EnterBoardCommand.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/model/player/command/move/MoveBlockCommand.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/model/player/command/move/MoveBlockCommand.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/model/player/command/move/MovePieceCommand.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/model/player/command/move/MovePieceCommand.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/model/player/command/mystery/BetaReturnToBaseCommand.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/model/player/command/mystery/BetaReturnToBaseCommand.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/view/ConsoleGameObserver.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/view/ConsoleGameObserver.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
