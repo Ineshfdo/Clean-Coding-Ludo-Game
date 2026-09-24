@@ -1,0 +1,214 @@
+REPORT STRUCTURE
+
++-----+--------------------------+--------------------+----------------------------------------------------------------+
+| No. | Section                  | Page numbers       | What it must contain (from the lecturer's notes)               |
++-----+--------------------------+--------------------+----------------------------------------------------------------+
+| PRELIMINARY PAGES                                                                                                    |
++-----+--------------------------+--------------------+----------------------------------------------------------------+
+| -   | Cover Page               | Not numbered       | Title page. The notes list it first but give no other details. |
++-----+--------------------------+--------------------+----------------------------------------------------------------+
+| -   | Abstract                 | Roman (i, ii, iii) | Short summary of the report. Its position can vary slightly,   |
+|     |                          |                    | for example before or after the contents pages. ✅✅✅           |
++-----+--------------------------+--------------------+----------------------------------------------------------------+
+| -   | Table of Contents        | Roman (i, ii, iii) | Generated automatically with Word's Table of Contents feature. |
+|     |                          |                    | Never typed by hand.                                           |
++-----+--------------------------+--------------------+----------------------------------------------------------------+
+| -   | List of Figures          | Roman (i, ii, iii) | Generated automatically from Word captions. Every diagram      |
+|     |                          |                    | needs a figure number and caption, e.g. Figure 2.1: Overall    |
+|     |                          |                    | Ludo Game Class Diagram.                                       |
++-----+--------------------------+--------------------+----------------------------------------------------------------+
+| -   | List of Tables           | Roman (i, ii, iii) | Generated automatically from Word captions. Every table needs  |
+|     |                          |                    | a number and caption, e.g. Table 3.1: Design Patterns Used in  |
+|     |                          |                    | the Ludo Game.                                                 |
++-----+--------------------------+--------------------+----------------------------------------------------------------+
+| -   | List of Acronyms         | Roman (i, ii, iii) | Every acronym used in the report, with its meaning.  ✅✅✅   |
++-----+--------------------------+--------------------+----------------------------------------------------------------+
+| MAIN REPORT (the Introduction is page 1)                                                                             |
++-----+--------------------------+--------------------+----------------------------------------------------------------+
+| 1   | Introduction             | Arabic (1, 2, 3)   | Ludo and how the game normally works; the special or modified  |
+|     |                          |                    | rules in this assignment; the purpose of the system; what the  |
+|     |                          |                    | implementation addresses. Keep it short, with no unnecessary   |
+|     |                          |                    | detail. ✅✅✅                                              |
++-----+--------------------------+--------------------+----------------------------------------------------------------+
+| 2   | System Analysis and      | Arabic (1, 2, 3)   | Explains the system before the patterns. Class diagram,        |
+|     | Design                   |                    | activity diagram and state-transition diagram, each with a     |
+|     |                          |                    | figure number and caption. Also useful: actors, important game |
+|     |                          |                    | scenarios, relationships between components, architecture,     |
+|     |                          |                    | complex scenarios, system behaviour. Flow: understand Ludo ->  |
+|     |                          |                    | identify scenarios -> model the system -> create UML -> apply  |
+|     |                          |                    | patterns.                                                      |
++-----+--------------------------+--------------------+----------------------------------------------------------------+
+| 3   | Design Patterns          | Arabic (1, 2, 3)   | For every pattern: Scenario -> Problem -> Selected pattern ->  |
+|     |                          |                    | How it is implemented -> Why it is suitable. No plain          |
+|     |                          |                    | definitions; justify each pattern with a real Ludo situation   |
+|     |                          |                    | (e.g. one shared Dice -> Singleton). Include a table of the    |
+|     |                          |                    | patterns used.                                                 |
++-----+--------------------------+--------------------+----------------------------------------------------------------+
+| 4   | Testing                  | Arabic (1, 2, 3)   | JUnit, with Mockito where needed. Report the number of test    |
+|     |                          |                    | cases and the coverage separately. Show granular tests (one    |
+|     |                          |                    | function per test, not one huge test) and good test quality.   |
+|     |                          |                    | Evidence: total, passed, failed, coverage %. The figures must  |
+|     |                          |                    | match what can be run in the viva and must never be invented.  |
++-----+--------------------------+--------------------+----------------------------------------------------------------+
+| 5   | Analysis / Discussion    | Arabic (1, 2, 3)   | The most important section. Design and architectural           |
+|     |                          |                    | decisions, SOLID, pattern decisions, trade-offs (requirement   |
+|     |                          |                    | -> pattern -> SOLID principle affected -> conflict -> decision |
+|     |                          |                    | -> justification), limitations, compromises, alternatives not  |
+|     |                          |                    | chosen, possible improvements.                                 |
++-----+--------------------------+--------------------+----------------------------------------------------------------+
+| END MATTER                                                                                                           |
++-----+--------------------------+--------------------+----------------------------------------------------------------+
+| -   | References               | Arabic, continues  | The sources cited in the report. The report finishes with this |
+|     |                          |                    | section.                                                       |
++-----+--------------------------+--------------------+----------------------------------------------------------------+
+| -   | Appendices               | Arabic, continues  | Where required: supporting information that is useful but      |
+|     |                          |                    | would make the main report too long.                           |
++-----+--------------------------+--------------------+----------------------------------------------------------------+
+
+Note: the notes list the cover page but do not say how to number it; leaving it unnumbered is the usual practice.
+
+
+2. SYSTEM ANALYSIS AND DESIGN
+
+2.1 Overview of the System
+
+LUDO-T plays one complete game without any user input. The program starts in Main, which passes a fixed seed to GameFacade. GameFacade creates the four players and the console observer, and then the players roll the dice to decide who goes first (everyone rolls again after a tie for the highest number). GameFacade then creates the rules and the strategies, and the game is played in rounds. In each round, every player who has not finished takes one turn, and a turn continues until the player stops earning extra rolls. When all four players have all their pieces home, the program prints the final standings. Every important event is published as a message, and a console observer prints it as text.
+
+2.2 Actors
+
+The system has one external actor and four internal actors.
+
+- Program runner (external): starts the program and reads the console output. This actor takes no decision during the game.
+- Computer players (internal): the Red, Yellow, Green and Blue players. Each one is represented by a Player object with four pieces, and a strategy chosen by colour decides its moves. They are the only actors that make decisions in the game.
+
+The dice, the coin and the Mystery Cell are not actors. They are parts of the system, and they all draw their values from one seeded random source.
+
+2.3 Important Game Scenarios
+
+Table 2.1 lists six scenarios. They were chosen because each one combines several rules and is difficult to get right. They are used throughout this report to show how the design works.
+
+[Insert Table 2.1: Important Game Scenarios]
+
++-----+----------------------------+------------------------------------------------------+----------------------------------------------+
+| ID  | Scenario                   | What happens                                         | Main classes                                 |
++-----+----------------------------+------------------------------------------------------+----------------------------------------------+
+| S1  | A normal turn              | The player rolls, the rules list the legal moves,    | GameEngine, TurnRule, PlayerStrategy,        |
+|     |                            | the strategy chooses one, and a capture or a six     | Command                                      |
+|     |                            | gives another roll.                                  |                                              |
++-----+----------------------------+------------------------------------------------------+----------------------------------------------+
+| S2  | The third six              | A third six in a row is voided, or it breaks a       | ConsecutiveSixVoidRule,                      |
+|     |                            | blockade if the player has one.                      | ThirdSixBlockadeBreakRule, BreakBlockCommand |
++-----+----------------------------+------------------------------------------------------+----------------------------------------------+
+| S3  | Moving a blockade          | The pieces move as one unit, the roll is divided by  | MovePiecesRule, MoveBlockCommand,            |
+|     |                            | the size of the blockade, and pieces with different  | PassingBlockadeRule,                         |
+|     |                            | directions must share one direction.                 | LongestDistanceDirectionStrategy             |
++-----+----------------------------+------------------------------------------------------+----------------------------------------------+
+| S4  | Entering the home straight | A piece needs enough Approach passes and a capture,  | ApproachPassCountRule,                       |
+|     |                            | unless the home gate is open.                        | HomeStraightEligibilityRule, HomeGateTracker |
++-----+----------------------------+------------------------------------------------------+----------------------------------------------+
+| S5  | Mystery Cell teleport      | A piece that lands on the Mystery Cell goes to a     | MysteryCellSchedule,                         |
+|     |                            | random destination, which may give it an effect.     | MysteryCellTeleportRule,                     |
+|     |                            |                                                      | MysteryCellDestination                       |
++-----+----------------------------+------------------------------------------------------+----------------------------------------------+
+| S6  | Beta restriction           | A piece frozen by Beta returns to Base if the        | BetaRestrictedState, BetaRestrictionRule     |
+|     |                            | player's first roll is a 3 on two turns in a row.    |                                              |
++-----+----------------------------+------------------------------------------------------+----------------------------------------------+
+
+2.4 System Architecture
+
+LUDO-T has seven packages and the Main class. Table 2.2 shows what each package does, and Figure 2.1 shows how they depend on each other. Apart from the shared config and exception packages, the dependencies are: Main uses controller; controller uses view, model, message and utils; view uses model, message and utils; model uses message and utils; and message and utils use nothing else. The dependencies run in one direction only and never form a cycle. Because model and message do not depend on view, the game rules can run and be tested without the console, and the way results are displayed can change without touching the rules. The engine itself is built from interfaces and abstract rule classes, and GameFacade chooses and connects the concrete rules, strategies and destinations.
+
+[Insert Figure 2.1: Layered Architecture of LUDO-T]
+
+[Insert Table 2.2: Packages of LUDO-T and Their Responsibilities]
+
++------------+----------------------------------------------------------------------+----------------------------------------------+
+| Package    | Responsibility                                                       | Depends on                                   |
++------------+----------------------------------------------------------------------+----------------------------------------------+
+| controller | Starts and runs the game: GameFacade (entry point), GameLoop         | config, exception, message, model, utils,    |
+|            | (rounds), GameEngine (one turn), FirstPlayerSelector,                | view                                         |
+|            | TurnOrderBuilder, RoundTracker and HomeGateTracker.                  |                                              |
++------------+----------------------------------------------------------------------+----------------------------------------------+
+| model      | The game itself: board, pieces, players, directions, commands,       | config, exception, message, utils            |
+|            | rules, strategies and Mystery Cell effects.                          |                                              |
++------------+----------------------------------------------------------------------+----------------------------------------------+
+| view       | Turns messages into console text: ConsoleGameObserver,               | config, exception, message, model, utils     |
+|            | PresenterCatalog and one presenter for each message type.            |                                              |
++------------+----------------------------------------------------------------------+----------------------------------------------+
+| message    | The 35 event records, GameMessageCenter, and the publisher, registry | config                                       |
+|            | and observer interfaces.                                             |                                              |
++------------+----------------------------------------------------------------------+----------------------------------------------+
+| utils      | The dice, the coin toss, the seeded random generator and the colour  | config                                       |
+|            | names.                                                               |                                              |
++------------+----------------------------------------------------------------------+----------------------------------------------+
+| config     | Constants and enums.                                                 | none                                         |
++------------+----------------------------------------------------------------------+----------------------------------------------+
+| exception  | Custom runtime exceptions for illegal moves and invalid states.      | none                                         |
++------------+----------------------------------------------------------------------+----------------------------------------------+
+
+2.5 Class Model
+
+The system has more than 200 source files, so the class model is split into one overview and four focused diagrams.
+
+Figure 2.2 shows the main classes. GameFacade builds a GameLoop and a GameEngine. GameLoop plays the rounds and calls GameEngine.playTurn for each player. A Player owns four Piece objects, and every change to a piece goes through its Player. The Board interface describes the track, the Approach and Entry cells and the home straight, and LudoBoard is its implementation.
+
+[Insert Figure 2.2: Overall Ludo Game Class Diagram]
+
+Figure 2.3 shows how a move is chosen. The engine asks each TurnRule (EnterBoardRule and MovePiecesRule) for the legal moves. Each move is a MoveCommand. The kinds are EnterBoardCommand, MovePieceCommand, MoveBlockCommand, BreakBlockCommand and four "cannot move" commands that only explain why nothing can move. The PlayerStrategy of the player's colour (RedStrategy, YellowStrategy, GreenStrategy or BlueStrategy) receives the list together with a StrategyContext and chooses one move. A default strategy, EnterBoardFirstStrategy, is registered for any colour without its own. Captures, Beta returns and teleports are also commands, but the rules create them when they are needed and they are not offered to the strategies.
+
+[Insert Figure 2.3: Class Diagram of Turn Rules, Commands and Strategies]
+
+Figure 2.4 shows the rule chains. Eight abstract rule classes extend ChainedRule, one for each kind of decision: voiding a roll, breaking a blockade, limiting steps at a blockade, dividing steps in a blockade, the exact roll needed for Home, entering the home straight, capturing, and allowing an effect after a teleport. Each has a final method that runs its own check and then, when needed, passes the request to the next rule in the chain, and an abstract method that the concrete rule fills in. There are ten concrete rules in total. Two chains have more than one rule today: capture (BlockCaptureRule, then PieceCaptureRule) and home-straight entry (ApproachPassCountRule, then HomeStraightEligibilityRule). The other six chains have one rule each, and they can take more rules without any change to the classes that use them.
+
+[Insert Figure 2.4: Class Diagram of the Rule Chains]
+
+Figure 2.5 shows how the game reports what happens. There are 35 message types. Each one is a record that implements GameMessage, and they are grouped into seven packages (cannotmove, capture, game, move, mystery, toss and turn). The game logic publishes them through GameMessagePublisher, which GameMessageCenter implements. ConsoleGameObserver implements GameMessageObserver and passes each message to MessagePresenter, which finds the EventPresenter registered for that message type. There are 35 presenters, one for each type, and PresenterCatalog lists them all.
+
+[Insert Figure 2.5: Class Diagram of Messages, Observer and Presenters]
+
+Figure 2.6 shows the Mystery Cell. MysteryCellSchedule decides when the cell appears and where it moves. MysteryCellTeleportRule chooses one of six MysteryCellDestination objects at random. Five of them (Alpha, Beta, Gamma, Entry and Approach) extend TrackDestination, which moves the pieces to a track cell and then applies the effect of that destination. BaseDestination sends the pieces back to Base. Alpha uses AlphaEffectRule to give the Energized or Sick status, Beta applies BetaRestrictedState, and Gamma uses GammaDirectionRule, which reverses the direction or forwards the group to Beta.
+
+[Insert Figure 2.6: Class Diagram of the Mystery Cell and Its Destinations]
+
+2.6 Activity Diagram: A Player's Turn
+
+Figure 2.7 shows what happens in one turn. It follows the method GameEngine.playTurn.
+
+1. The turn starts and the player rolls the dice.
+2. If this is the third six in a row and the player has a blockade, the blockade is broken, captures are checked and the turn ends.
+3. If this is the third six in a row and the player has no blockade, the roll is voided and the turn ends.
+4. Otherwise the roll is accepted, and the home gate counter and the Beta restriction are updated.
+5. The rules list the legal moves. If there are none, the program reports that no piece can move.
+6. If there are legal moves, the strategy of the player's colour chooses one, and the move is carried out.
+7. The game checks for a capture, and it checks whether a moved piece landed on the Mystery Cell. A teleport can also lead to a capture.
+8. If the roll was a six, or if any capture happened, the player rolls again. Otherwise the turn ends. A six gives another roll even when no piece could move.
+
+[Insert Figure 2.7: Activity Diagram of a Player's Turn]
+
+2.7 State Transition Diagrams
+
+2.7.1 Piece Location
+
+A piece is always in one of four states: Base, Track, HomeStraight or Home. Figure 2.8 shows the transitions. A piece starts in Base and moves to Track when the player rolls a six and the piece enters at its Entry cell. On the Track, a piece can move, or be teleported to another track cell. When the entry rules allow it, a piece moves from the Track to the HomeStraight, or straight to Home if the roll is large enough. On the HomeStraight, a piece needs an exact roll to reach Home. A piece on the Track goes back to Base when it is captured, when a Beta restriction sends it back, or when it is teleported to Base. Home is the final state: a piece that reaches it never moves again.
+
+[Insert Figure 2.8: State Transition Diagram of a Piece]
+
+2.7.2 Beta Restriction
+
+The Beta restriction is a second state model, and it is stored in each piece. A piece is normally in the no-restriction state. When it is teleported to Beta, directly or through Gamma, it enters the Beta-restricted state for four rounds, and it cannot move in this state. On the first roll of each turn, the state counts the rolls of 3 in a row: a 3 adds one, and any other value resets the count. After two 3s in a row, the piece returns to Base and becomes free. The piece also becomes free when the four rounds have passed, or when it is captured. Figure 2.9 shows these transitions.
+
+[Insert Figure 2.9: State Transition Diagram of the Beta Restriction]
+
+2.8 Complex Scenarios and How the Design Handles Them
+
+- Blockade with mixed directions: pieces in one blockade can have different original directions. The blockade moves in the direction of the member that is farthest from Home (LongestDistanceDirectionStrategy). Each member adopts this direction and remembers its own. The choice is reused while the blockade keeps the same size, and a piece that leaves the blockade returns to its own direction.
+- Third six with a blockade: the lowest-numbered piece stays, and the other pieces share the six cells equally. Each of them moves in its own original direction and stops in front of any opponent blockade, or stays where it is if it cannot move.
+- Roll reduced to zero: a roll can become zero for a blockade (the roll is divided by its size), for a Sick piece (the roll is halved), or because an opponent blockade stands next to the piece. On the HomeStraight, a piece also cannot move if the roll would go past Home. When no piece can move for one of these reasons, the rule returns a "cannot move" command that reports the reason.
+- Blockade teleported to Alpha: the pieces are teleported as a group. Each piece receives its own effect, and if there are two or more pieces, the group also receives a block effect. The block effect overrides the individual effects while the pieces stay together, and it is ignored if the size of the group changes.
+- Gamma: a clockwise group is reversed, and a counter-clockwise group is sent on to Beta. The direction of the first piece in the group decides which of the two happens.
+- Capture after a teleport: a teleport can place a piece on a cell that holds an opponent, so captures are checked again after every teleport, and a capture gives another roll.
+- Shared random source: the dice, the coin toss, the Mystery Cell position and the teleport destination all draw from one seeded source. The order of the draws therefore decides the whole game, and for this reason the list of teleport destinations has a fixed order.
+
+2.9 Summary
+
+This section described what LUDO-T does, who takes part, how it is divided into packages and classes, and how a turn and a piece behave over time. The same problems appeared several times: many rules that must be added or changed independently, many kinds of moves and events, one shared source of random values, and console output that must stay separate from the rules. Section 3 shows which design pattern was chosen for each of these problems and why.
