@@ -1,0 +1,475 @@
+ASSIGNMENT REPORT
+=================
+
+The lecturer said there is no advantage in making the report unnecessarily large.
+
+Main principle:
+Write enough to clearly explain and justify your work.
+
+A 300-page report will not automatically earn more marks than a concise 25-page report.
+
+The report should have:
+- Relevant information
+- Logical flow
+- Proper formatting
+- Clear analysis
+- Evidence
+- Justification
+
+
+1. REPORT FORMATTING
+====================
+
+Formatting is important because it affects the first impression and readability of the report.
+
+Keep the following consistent:
+- Margins
+- Fonts
+- Font sizes
+- Heading styles
+- Subheading styles
+- Alignment
+- Image sizes
+- Code formatting
+- Spacing
+
+Do not have inconsistent formatting between pages.
+
+For source code, a monospaced font such as Courier can be used.
+
+Images should also have consistent sizing and positioning.
+
+
+2. RECOMMENDED REPORT STRUCTURE
+===============================
+
+According to the lecturer, the report can approximately follow:
+
+Cover Page
+
+Abstract
+
+Table of Contents
+
+List of Figures
+
+List of Tables
+
+List of Acronyms
+
+1. Introduction
+
+2. System Analysis and Design
+
+3. Design Patterns
+
+4. Testing
+
+5. Analysis / Discussion
+
+References
+
+Appendices
+
+Some minor ordering, such as where the abstract appears, can vary.
+
+
+3. PAGE NUMBERING
+=================
+
+Preliminary Pages
+-----------------
+
+Use Roman numerals:
+
+i
+ii
+iii
+iv
+...
+
+This may include:
+- Abstract
+- Table of Contents
+- List of Figures
+- List of Tables
+- List of Acronyms
+
+Main Report
+-----------
+
+Starting from the Introduction, use ordinary numbers:
+
+1
+2
+3
+4
+...
+
+Therefore:
+
+Introduction = Page 1
+
+of the main report.
+
+
+4. TABLE OF CONTENTS
+====================
+
+Do not manually type the Table of Contents.
+
+Use Microsoft Word's automatic Table of Contents feature.
+
+Similarly, automatically generate:
+- List of Figures
+- List of Tables
+
+Use Word's Caption feature for figures and tables.
+
+
+5. INTRODUCTION
+===============
+
+For this assignment, the Introduction should primarily introduce:
+- Ludo
+- How the game normally works
+- The special or modified rules in the assignment
+- The purpose of the system
+- What the implementation addresses
+
+The lecturer specifically said an introduction to Ludo and its nuances/differences would be suitable.
+
+Do not overload the introduction with unnecessary detail.
+
+
+6. SYSTEM ANALYSIS AND DESIGN
+=============================
+
+This section should explain the system before discussing individual design patterns.
+
+Include relevant UML and architectural diagrams.
+
+The lecturer specifically mentioned:
+- Class diagrams
+- Activity diagrams
+- State transition diagrams
+
+Other useful material may include:
+- Identified actors
+- Important game scenarios
+- Relationships between components
+- Architectural structure
+- Problematic or complex scenarios
+- System behaviour
+
+A logical flow could be:
+
+Understand the Ludo system
+        ↓
+Identify important scenarios
+        ↓
+Model the system
+        ↓
+Create UML/design
+        ↓
+Apply suitable design patterns
+
+
+7. DIAGRAMS
+===========
+
+The lecturer expects diagrams.
+
+At minimum, based on the recording, pay attention to:
+
+Class Diagram
+Activity Diagram
+State Transition Diagram
+
+Every diagram should have:
+- A figure number
+- A caption
+
+Example:
+
+Figure 2.1: Overall Ludo Game Class Diagram
+
+Tables should also have numbers and captions.
+
+Example:
+
+Table 3.1: Design Patterns Used in the Ludo Game
+
+
+8. DESIGN PATTERN SECTION
+=========================
+
+Do not simply define each design pattern.
+
+For every pattern, show:
+
+Scenario
+   ↓
+Problem
+   ↓
+Selected Pattern
+   ↓
+How it is implemented
+   ↓
+Why it is suitable
+
+The lecturer's Dice/Singleton example is important.
+
+Do not write only:
+
+"Singleton ensures only one instance exists."
+
+Instead, relate it directly to the game.
+
+Example:
+
+Scenario:
+The Ludo game uses one shared dice during gameplay.
+
+Problem:
+Allowing each player to create a separate Dice instance would mean players effectively possess separate dice.
+
+Pattern:
+Singleton.
+
+Justification:
+A single shared Dice instance represents the one dice used throughout the game. Players access the same Dice rather than creating independent instances.
+
+This is the type of scenario-specific justification the lecturer wants.
+
+
+9. DO NOT JUST DESCRIBE PATTERNS
+================================
+
+Your report should not look like:
+
+Singleton definition
+Observer definition
+Strategy definition
+State definition
+Command definition
+
+The lecturer wants analysis of your own implementation.
+
+The important question is:
+
+Why did you use this pattern for this particular Ludo problem?
+
+
+10. TESTING SECTION
+===================
+
+Testing is required.
+
+The lecturer expects you to discuss:
+
+1. Number of test cases
+2. Test coverage
+
+These are different.
+
+Having many test cases does not automatically mean your code has good coverage.
+
+For example:
+
+100 tests
+
+testing the same method repeatedly is not useful if large parts of the system are never tested.
+
+Coverage measures how much of the code/functionality is actually exercised by the tests.
+
+
+11. JUNIT
+=========
+
+The lecturer expects JUnit to be used for testing.
+
+Tests should be reasonably granular.
+
+For example, if a class exposes seven important functions, you should normally test those functions separately rather than having:
+
+one huge test method
+
+that tries to test everything.
+
+The lecturer will consider:
+- Test granularity
+- Coverage
+- Quality of tests
+
+
+12. MOCKS AND STUBS
+===================
+
+Mocks and stubs may be used where required.
+
+The lecturer mentioned Mockito as a suitable option.
+
+Therefore:
+
+JUnit
++
+Mockito where necessary
+
+can be used.
+
+
+13. TEST COVERAGE EVIDENCE
+==========================
+
+Your report should provide evidence of:
+- Test cases
+- Coverage
+
+Example:
+
+Total tests: XX
+Passed: XX
+Failed: 0
+Coverage: XX%
+
+The coverage reported in your document should correspond to what can actually be demonstrated during the viva.
+
+The lecturer said you should be able to run the test suite in the viva and demonstrate coverage matching the report.
+
+Do not invent a coverage percentage.
+
+
+14. ANALYSIS / DISCUSSION
+=========================
+
+This is one of the most important sections of the report.
+
+The lecturer said he will pay particular attention to the analysis.
+
+This section should discuss:
+- Design decisions
+- Architectural decisions
+- SOLID principles
+- Design-pattern decisions
+- Trade-offs
+- Limitations
+- Compromises
+- Why alternatives were not selected
+- Areas that could be improved
+
+
+15. DISCUSS LIMITATIONS
+=======================
+
+Identifying a legitimate limitation does not automatically mean losing marks.
+
+It demonstrates that you understand your system.
+
+Example:
+
+Limitation:
+The current architecture supports four player colours because the physical Ludo board structure is designed around four player paths.
+
+Reason:
+Supporting additional players would require structural changes to the board rather than only creating another Player object.
+
+This is stronger than pretending the system has no limitations.
+
+
+16. DISCUSS SOLID / PATTERN TRADE-OFFS
+======================================
+
+This should appear in your analysis where relevant.
+
+Example structure:
+
+Design requirement
+        ↓
+Pattern considered
+        ↓
+SOLID principle affected
+        ↓
+Possible conflict
+        ↓
+Decision taken
+        ↓
+Justification
+
+The lecturer specifically said 100% compliance is not required when requirements conflict.
+
+The important part is your architectural reasoning.
+
+
+17. ANALYSIS MUST MATCH YOUR ACTUAL CODE
+========================================
+
+This is critical.
+
+Your report cannot describe an ideal architecture that is different from your actual project.
+
+For example, if you state:
+
+"Strategy Pattern separates movement behaviours."
+
+then your code should genuinely contain something equivalent to:
+
+MovementStrategy
+      ↑
+------------------
+NormalMovement
+OtherMovement
+...
+
+and those strategies should genuinely be used.
+
+Your code, UML diagrams, pattern discussion, SOLID analysis, and viva explanation should all agree.
+
+
+18. REFERENCES AND APPENDIX
+===========================
+
+The report should finish with:
+
+References
+
+and, where required:
+
+Appendices
+
+Appendices can contain supporting information that is useful but would make the main report unnecessarily long.
+
+
+MOST IMPORTANT THINGS TO REMEMBER
+=================================
+
+1. Use all five SOLID principles where reasonably appropriate.
+
+2. Do not expect 100% SOLID compliance when requirements genuinely conflict.
+
+3. Explain and justify architectural trade-offs.
+
+4. Architecture and SOLID should influence the design from the beginning.
+
+5. Your design-pattern justification must be based on actual Ludo scenarios.
+
+6. Include UML diagrams, especially:
+   - Class diagrams
+   - Activity diagrams
+   - State-transition diagrams
+
+7. Use JUnit and provide test-case and coverage evidence.
+
+8. Use Mockito, mocks, and stubs where appropriate.
+
+9. Your analysis/discussion is extremely important.
+
+10. Discuss real limitations instead of hiding them.
+
+11. Everything written in the report must match the actual code.
+
+12. Be able to explain every important line, class, and design decision during the viva.
+
+13. Quality and justification matter more than report length.
+
+14. Keep the report professionally and consistently formatted.
