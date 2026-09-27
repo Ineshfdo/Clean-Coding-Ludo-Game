@@ -2,6 +2,10 @@ package message.cannotmove;
 
 import message.GameMessage;
 
-// T-12: a Sick effect cut the roll to zero cells.
+/**
+ * A Sick effect cut the roll down to zero cells, so the piece cannot move (T-12).
+ *
+ * @param pieceLabel the name of the piece
+ */
 public record EffectRollTooSmall(String pieceLabel) implements GameMessage {
 }

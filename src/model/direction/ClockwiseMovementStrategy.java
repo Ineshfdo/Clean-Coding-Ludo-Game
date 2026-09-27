@@ -3,7 +3,11 @@ package model.direction;
 import config.enums.PlayerColor;
 import model.board.Board;
 
-// T-1: heads means clockwise; one shared instance, so directions compare equal.
+/**
+ * Clockwise movement, given by a heads coin toss (T-1). A clockwise piece must pass its Approach
+ * cell once before it enters its HomeStraight. The class is a Singleton, so all clockwise pieces
+ * share one object.
+ */
 public final class ClockwiseMovementStrategy implements MovementDirectionStrategy {
 
     private static final int REQUIRED_APPROACH_PASS_COUNT = 1;
@@ -14,6 +18,11 @@ public final class ClockwiseMovementStrategy implements MovementDirectionStrateg
     private ClockwiseMovementStrategy() {
     }
 
+    /**
+     * Gives the one shared clockwise direction.
+     *
+     * @return the shared instance
+     */
     public static ClockwiseMovementStrategy getInstance() {
         return SHARED_INSTANCE;
     }

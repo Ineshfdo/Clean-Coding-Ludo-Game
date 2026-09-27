@@ -10,11 +10,18 @@ import model.player.Player;
 import model.player.command.MoveCommand;
 import model.player.command.move.EnterBoardCommand;
 
-// Rule 2: a piece may leave Base only on a 6.
+/**
+ * A piece may leave Base only on a six (rule 2). The first piece at Base is the one that enters.
+ */
 public final class EnterBoardRule implements TurnRule {
 
     private final EntryDirectionAssigner entryDirectionAssigner;
 
+    /**
+     * Creates the rule.
+     *
+     * @param entryDirectionAssigner gives the direction of a piece that leaves Base
+     */
     public EnterBoardRule(EntryDirectionAssigner entryDirectionAssigner) {
         this.entryDirectionAssigner = entryDirectionAssigner;
     }

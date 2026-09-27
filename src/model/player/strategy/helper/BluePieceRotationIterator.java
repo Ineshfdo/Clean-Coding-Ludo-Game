@@ -5,17 +5,30 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import model.piece.Piece;
 
-// T-19: cycles endlessly through a player's pieces in fixed rotation (B1 -> B2 -> B3 -> B4).
+/**
+ * Iterator that cycles endlessly through the pieces of a player in a fixed order: B1, B2, B3, B4
+ * and then B1 again (T-19).
+ */
 public final class BluePieceRotationIterator implements Iterator<Piece> {
 
     private final List<Piece> pieces;
     private int nextPieceIndex;
 
+    /**
+     * Starts the rotation at the first piece.
+     *
+     * @param pieces the pieces to cycle through
+     */
     public BluePieceRotationIterator(List<Piece> pieces) {
         this(pieces, null);
     }
 
-    // T-19: resumes after the last moved piece; null starts at the beginning (B1).
+    /**
+     * Starts the rotation after the piece that moved last (T-19).
+     *
+     * @param pieces the pieces to cycle through
+     * @param lastMovedPiece the piece that moved last, or null to start at the first piece
+     */
     public BluePieceRotationIterator(List<Piece> pieces, Piece lastMovedPiece) {
         this.pieces = pieces;
         this.nextPieceIndex = lastMovedPiece == null

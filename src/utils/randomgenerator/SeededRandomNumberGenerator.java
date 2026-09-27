@@ -2,7 +2,10 @@ package utils.randomgenerator;
 
 import java.util.Random;
 
-// Singleton: all randomness draws from one seeded sequence, for reproducibility.
+/**
+ * The only source of randomness in the game (Singleton). All random numbers come from one seeded
+ * sequence, so the same seed always gives the same game.
+ */
 public final class SeededRandomNumberGenerator implements SeedableRandomNumberGenerator {
 
     private static final SeededRandomNumberGenerator SHARED_INSTANCE =
@@ -14,6 +17,11 @@ public final class SeededRandomNumberGenerator implements SeedableRandomNumberGe
         this.randomSource = new Random();
     }
 
+    /**
+     * Gives the one shared generator.
+     *
+     * @return the shared instance
+     */
     public static SeededRandomNumberGenerator getInstance() {
         return SHARED_INSTANCE;
     }

@@ -76,6 +76,13 @@ import utils.randomgenerator.SeedableRandomNumberGenerator;
 import utils.randomgenerator.SeededRandomNumberGenerator;
 import view.ConsoleGameObserver;
 
+/**
+ * Single entry point of the game (Facade pattern). It creates the players, the board, the console
+ * observer, the rules and the strategies, connects them, and plays one complete game.
+ *
+ * Main only calls {@link #startGame(long)}, so it does not depend on any other class of the game.
+ * This is also the only place that catches the game's own exceptions.
+ */
 public final class GameFacade {
 
     // T-4: shared so movement and display agree on block direction.
@@ -86,6 +93,13 @@ public final class GameFacade {
 
     private GameFacade() {}
 
+    /**
+     * Plays one complete game. Every event and the final standings are printed on the console. If
+     * the game throws one of its own exceptions, the exception is logged as SEVERE and the game
+     * stops.
+     *
+     * @param seed seed of the random generator; the same seed always gives the same game
+     */
     public static void startGame(long seed) {
         try {
             playGame(seed);

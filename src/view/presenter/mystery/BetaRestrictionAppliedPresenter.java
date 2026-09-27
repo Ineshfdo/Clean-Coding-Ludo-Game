@@ -4,9 +4,15 @@ import config.constant.EffectConstants;
 import message.mystery.BetaRestrictionApplied;
 import view.presenter.EventPresenter;
 
-// Wording for a Beta restriction starting.
+/**
+ * Presents {@link BetaRestrictionApplied}: it tells that a piece cannot move for four rounds
+ * because of the Beta restriction.
+ */
 public final class BetaRestrictionAppliedPresenter extends EventPresenter<BetaRestrictionApplied> {
 
+    /**
+     * Creates the presenter for {@link BetaRestrictionApplied}.
+     */
     public BetaRestrictionAppliedPresenter() {
         super(BetaRestrictionApplied.class);
     }

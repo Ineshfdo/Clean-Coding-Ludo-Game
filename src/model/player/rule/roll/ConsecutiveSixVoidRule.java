@@ -2,7 +2,9 @@ package model.player.rule.roll;
 
 import config.constant.DiceConstants;
 
-// Rule 4: a third consecutive six is voided; no move.
+/**
+ * A third six in a row is void, and the player makes no move (rule 4).
+ */
 public final class ConsecutiveSixVoidRule extends RollValidityRule {
 
     @Override

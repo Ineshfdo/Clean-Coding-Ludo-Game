@@ -4,9 +4,15 @@ import config.constant.MysteryCellConstants;
 import message.mystery.MysteryCellAppeared;
 import view.presenter.EventPresenter;
 
-// Wording for the Mystery Cell appearing.
+/**
+ * Presents {@link MysteryCellAppeared}: it announces the first appearance of the Mystery Cell in a
+ * banner.
+ */
 public final class MysteryCellAppearedPresenter extends EventPresenter<MysteryCellAppeared> {
 
+    /**
+     * Creates the presenter for {@link MysteryCellAppeared}.
+     */
     public MysteryCellAppearedPresenter() {
         super(MysteryCellAppeared.class);
     }

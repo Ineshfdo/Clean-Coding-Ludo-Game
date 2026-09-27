@@ -1,17 +1,44 @@
 package model.effect.restriction;
 
-// T-13: State pattern - a restriction carries data that changes over time.
+/**
+ * State pattern: a restriction that can stop a piece from moving (T-13). A state carries data that
+ * changes over time, so every change gives back the next state and the old object stays unchanged.
+ */
 public interface PieceRestrictionState {
 
+    /**
+     * Tells whether the piece may move.
+     *
+     * @return true while the piece cannot move
+     */
     boolean forbidsMovement();
 
+    /**
+     * Gives the time left.
+     *
+     * @return the number of rounds left; 0 for no restriction
+     */
     int getRoundsRemaining();
 
-    // T-13: called once per round; expires back to NoRestrictionState.
+    /**
+     * Called once per round. A restriction that is used up gives back the free state.
+     *
+     * @return the state after one round
+     */
     PieceRestrictionState afterRoundElapses();
 
-    // T-13: records this round's roll toward the consecutive-3 condition.
+    /**
+     * Records the first roll of a turn toward the condition of two consecutive rolls (T-13).
+     *
+     * @param rollValue the value of the roll
+     * @return the state after the roll
+     */
     PieceRestrictionState afterRollRecorded(int rollValue);
 
+    /**
+     * Tells whether the piece must go back to Base.
+     *
+     * @return true when the condition of two consecutive rolls of 3 is met
+     */
     boolean hasTriggeredReturnToBase();
 }

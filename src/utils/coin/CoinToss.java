@@ -2,8 +2,15 @@ package utils.coin;
 
 import config.enums.CoinTossResult;
 
-// T-1: decides heads or tails for a piece entering the board.
+/**
+ * Decides heads or tails, for example for the direction of a piece (T-1).
+ */
 public interface CoinToss {
 
+    /**
+     * Flips the coin.
+     *
+     * @return heads or tails
+     */
     CoinTossResult flip();
 }

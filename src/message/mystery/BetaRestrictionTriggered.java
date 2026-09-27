@@ -2,6 +2,10 @@ package message.mystery;
 
 import message.GameMessage;
 
-// T-13: consecutive 3s sent a Beta-restricted piece/block back to Base.
+/**
+ * Two rolls of 3 in a row sent a Beta-restricted piece or blockade back to Base (T-13).
+ *
+ * @param pieceLabel the name of the piece, or the joined names of the blockade
+ */
 public record BetaRestrictionTriggered(String pieceLabel) implements GameMessage {
 }

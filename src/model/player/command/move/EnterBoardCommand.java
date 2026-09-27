@@ -11,7 +11,10 @@ import model.player.Player;
 import model.player.command.MoveCommand;
 import utils.coin.CoinTossLabels;
 
-// Rule 2: Base -> Entry, then a coin toss sets direction (T-1).
+/**
+ * Brings a piece from Base to its Entry cell (rule 2). A coin toss then gives the piece its
+ * direction (T-1).
+ */
 public final class EnterBoardCommand implements MoveCommand {
 
     private final Player player;
@@ -20,6 +23,14 @@ public final class EnterBoardCommand implements MoveCommand {
     private final Board board;
     private final EntryDirectionAssigner entryDirectionAssigner;
 
+    /**
+     * Creates the command.
+     *
+     * @param player the owner of the piece
+     * @param piece the piece that leaves Base
+     * @param board gives the Entry cell
+     * @param entryDirectionAssigner gives the direction of the piece
+     */
     public EnterBoardCommand(
             Player player, Piece piece, Board board, EntryDirectionAssigner entryDirectionAssigner) {
         this.player = player;

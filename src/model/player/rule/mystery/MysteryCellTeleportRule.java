@@ -10,7 +10,10 @@ import model.player.command.Command;
 import model.player.command.mystery.MysteryCellTeleportCommand;
 import utils.randomgenerator.RandomNumberGenerator;
 
-// T-11: a piece landing on the active Mystery Cell teleports to a random destination.
+/**
+ * Teleports a piece that lands on the active Mystery Cell to a random destination (T-11). The whole
+ * group on the cell is teleported together.
+ */
 public final class MysteryCellTeleportRule implements TeleportRule {
 
     private static final int FIRST_DESTINATION_INDEX = 0;
@@ -19,6 +22,13 @@ public final class MysteryCellTeleportRule implements TeleportRule {
     private final RandomNumberGenerator randomNumberGenerator;
     private final List<MysteryCellDestination> destinations;
 
+    /**
+     * Creates the rule.
+     *
+     * @param mysteryCellLocation tells where the Mystery Cell is
+     * @param randomNumberGenerator draws the random destination
+     * @param destinations the possible destinations; their order decides the draw
+     */
     public MysteryCellTeleportRule(
             MysteryCellLocation mysteryCellLocation, RandomNumberGenerator randomNumberGenerator,
             List<MysteryCellDestination> destinations) {

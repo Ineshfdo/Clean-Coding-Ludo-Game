@@ -1,6 +1,9 @@
 package model.effect.restriction;
 
-// T-13: the default state - the piece is free to move.
+/**
+ * The free state: the piece may move (T-13). It is also the Null Object that every piece holds when
+ * nothing restricts it, so the code never has to check for null. The class is a Singleton.
+ */
 public final class NoRestrictionState implements PieceRestrictionState {
 
     private static final NoRestrictionState SHARED_INSTANCE = new NoRestrictionState();
@@ -8,6 +11,11 @@ public final class NoRestrictionState implements PieceRestrictionState {
     private NoRestrictionState() {
     }
 
+    /**
+     * Gives the one shared free state.
+     *
+     * @return the shared instance
+     */
     public static NoRestrictionState getInstance() {
         return SHARED_INSTANCE;
     }

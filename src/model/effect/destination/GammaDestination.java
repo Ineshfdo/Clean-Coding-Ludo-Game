@@ -8,7 +8,10 @@ import model.effect.rule.GammaDirectionRule;
 import model.piece.Piece;
 import model.player.Player;
 
-// T-14: Gamma reverses a Clockwise group's direction, or sends a Counter-Clockwise group on to Beta.
+/**
+ * The Gamma destination (T-14). A clockwise group reverses its direction, and a counter-clockwise
+ * group is sent on to Beta.
+ */
 public final class GammaDestination extends TrackDestination {
 
     private static final String LABEL = "Gamma";
@@ -16,6 +19,13 @@ public final class GammaDestination extends TrackDestination {
     private final MysteryCellPositions positions;
     private final GammaDirectionRule gammaDirectionRule;
 
+    /**
+     * Creates the Gamma destination.
+     *
+     * @param positions gives the Gamma cell
+     * @param effectActivationRule decides whether the effect may start
+     * @param gammaDirectionRule applies the direction rule of Gamma
+     */
     public GammaDestination(
             MysteryCellPositions positions, EffectActivationRule effectActivationRule,
             GammaDirectionRule gammaDirectionRule) {

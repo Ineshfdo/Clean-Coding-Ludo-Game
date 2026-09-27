@@ -3,9 +3,15 @@ package view.presenter.move;
 import message.move.BlockMoved;
 import view.presenter.EventPresenter;
 
-// T-4/T-13: a block move names its BlockType and BlockDirection.
+/**
+ * Presents {@link BlockMoved}: it tells the move of a blockade: its cells, its type and its
+ * direction.
+ */
 public final class BlockMovedPresenter extends EventPresenter<BlockMoved> {
 
+    /**
+     * Creates the presenter for {@link BlockMoved}.
+     */
     public BlockMovedPresenter() {
         super(BlockMoved.class);
     }

@@ -5,9 +5,15 @@ import utils.color.PlayerColorNames;
 import view.presenter.EventPresenter;
 import view.presenter.PieceCountLine;
 
-// Wording for a piece leaving Base, followed by the player's piece count.
+/**
+ * Presents {@link PieceEnteredBoard}: it tells that a piece left Base, followed by the piece count
+ * of the player.
+ */
 public final class PieceEnteredBoardPresenter extends EventPresenter<PieceEnteredBoard> {
 
+    /**
+     * Creates the presenter for {@link PieceEnteredBoard}.
+     */
     public PieceEnteredBoardPresenter() {
         super(PieceEnteredBoard.class);
     }

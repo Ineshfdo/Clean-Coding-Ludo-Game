@@ -8,13 +8,23 @@ import model.piece.Piece;
 import model.player.Player;
 import model.player.command.MoveCommand;
 
-// T-5/T-6: pieces leave the block, then each runs its own move.
+/**
+ * Pieces leave a blockade and get their own direction back, and then each released piece runs its
+ * own move (T-5, T-6).
+ */
 public final class BreakBlockCommand implements MoveCommand {
 
     private final Player player;
     private final List<Piece> restoredPieces;
     private final List<MoveCommand> releasedPieceMoves;
 
+    /**
+     * Creates the command.
+     *
+     * @param player the owner of the pieces
+     * @param restoredPieces the pieces that leave the blockade
+     * @param releasedPieceMoves the moves of the pieces that are released
+     */
     public BreakBlockCommand(
         Player player, List<Piece> restoredPieces, List<MoveCommand> releasedPieceMoves) {
         this.player = player;

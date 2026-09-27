@@ -9,7 +9,10 @@ import message.toss.TossWon;
 import model.player.Player;
 import utils.dice.Dice;
 
-// Rule 3.2: everyone rolls once to see who goes first; a tie for highest rerolls everyone.
+/**
+ * Chooses the player who goes first (rule 3.2). Every player rolls once and the highest roll wins.
+ * A tie for the highest roll makes everyone roll again.
+ */
 public final class FirstPlayerSelector {
 
     private static final int NO_ROLL_YET = 0;
@@ -17,11 +20,23 @@ public final class FirstPlayerSelector {
     private final Dice dice;
     private final GameMessagePublisher messagePublisher;
 
+    /**
+     * Creates the selector.
+     *
+     * @param dice the dice used for the toss
+     * @param messagePublisher where the toss is announced
+     */
     public FirstPlayerSelector(Dice dice, GameMessagePublisher messagePublisher) {
         this.dice = dice;
         this.messagePublisher = messagePublisher;
     }
 
+    /**
+     * Plays the toss and announces the rolls and the winner.
+     *
+     * @param tossOrder the players in the order in which they roll
+     * @return the player who won the toss
+     */
     public Player select(List<Player> tossOrder) {
         messagePublisher.publish(new TossStarting());
 

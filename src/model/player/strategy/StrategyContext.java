@@ -5,7 +5,10 @@ import model.board.Board;
 import model.effect.mysterycell.MysteryCellLocation;
 import model.player.Player;
 
-// Read-only context a PlayerStrategy needs to evaluate legal commands.
+/**
+ * The situation that a strategy needs to judge the legal commands: the player, all players, the
+ * board, the Mystery Cell and the number of the roll.
+ */
 public final class StrategyContext {
 
     private final Player player;
@@ -15,6 +18,15 @@ public final class StrategyContext {
     private final MysteryCellLocation mysteryCellLocation;
     private final int rollNumber;
 
+    /**
+     * Creates the context of one roll.
+     *
+     * @param player the player who chooses
+     * @param allPlayers all players of the game
+     * @param board the board the pieces move on
+     * @param mysteryCellLocation read-only view of the Mystery Cell
+     * @param rollNumber the place of the roll in the turn; 1 is the first roll
+     */
     public StrategyContext(
             Player player, List<Player> allPlayers, Board board,
             MysteryCellLocation mysteryCellLocation, int rollNumber) {
@@ -25,24 +37,47 @@ public final class StrategyContext {
         this.rollNumber = rollNumber;
     }
 
+    /**
+     * Gives the player who chooses.
+     *
+     * @return the player
+     */
     public Player getPlayer() {
         return player;
     }
 
+    /**
+     * Gives all players of the game.
+     *
+     * @return all players
+     */
     public List<Player> getAllPlayers() {
         return allPlayers;
     }
 
+    /**
+     * Gives the board.
+     *
+     * @return the board the pieces move on
+     */
     public Board getBoard() {
         return board;
     }
 
-    // Lets Blue preview whether a move would land on the Mystery Cell.
+    /**
+     * Gives the Mystery Cell, so that Blue can preview whether a move lands on it.
+     *
+     * @return the read-only view of the Mystery Cell
+     */
     public MysteryCellLocation getMysteryCellLocation() {
         return mysteryCellLocation;
     }
 
-    // Which roll this is in the current turn; tells a bonus roll from a new turn.
+    /**
+     * Tells which roll of the turn this is, so a bonus roll can be told from a new turn.
+     *
+     * @return 1 for the first roll of a turn, and higher for bonus rolls
+     */
     public int getRollNumber() {
         return rollNumber;
     }

@@ -8,12 +8,20 @@ import model.piece.PieceLabels;
 import model.player.Player;
 import model.player.command.Command;
 
-// T-13: consecutive 3s send a Beta-restricted piece/block back to Base.
+/**
+ * Sends a Beta-restricted piece or blockade back to Base after two rolls of 3 in a row (T-13).
+ */
 public final class BetaReturnToBaseCommand implements Command {
 
     private final Player player;
     private final List<Piece> returningPieces;
 
+    /**
+     * Creates the command.
+     *
+     * @param player the owner of the pieces
+     * @param returningPieces the pieces that return to Base
+     */
     public BetaReturnToBaseCommand(Player player, List<Piece> returningPieces) {
         this.player = player;
         this.returningPieces = returningPieces;

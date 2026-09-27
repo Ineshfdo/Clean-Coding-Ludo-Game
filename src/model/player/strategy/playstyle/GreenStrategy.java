@@ -7,7 +7,10 @@ import model.player.strategy.PlayerStrategy;
 import model.player.strategy.StrategyContext;
 import model.player.strategy.helper.CommandFinder;
 
-// Green is block-focused: forms and keeps blocks, heads Home, breaks a block last.
+/**
+ * Green is blockade-focused. It moves toward Home first, then forms a new blockade, keeps moving an
+ * existing blockade, and leaves Base. It breaks a blockade only when nothing else is legal.
+ */
 public final class GreenStrategy implements PlayerStrategy {
 
     @Override

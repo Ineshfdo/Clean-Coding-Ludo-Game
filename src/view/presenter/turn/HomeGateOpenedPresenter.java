@@ -4,9 +4,14 @@ import message.turn.HomeGateOpened;
 import utils.color.PlayerColorNames;
 import view.presenter.EventPresenter;
 
-// Wording for the home gate opening.
+/**
+ * Presents {@link HomeGateOpened}: it tells that the home gate opened for a colour.
+ */
 public final class HomeGateOpenedPresenter extends EventPresenter<HomeGateOpened> {
 
+    /**
+     * Creates the presenter for {@link HomeGateOpened}.
+     */
     public HomeGateOpenedPresenter() {
         super(HomeGateOpened.class);
     }

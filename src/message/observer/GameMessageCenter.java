@@ -4,7 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 import message.GameMessage;
 
-// Singleton: every part of the game publishes here, so all observers see it.
+/**
+ * The message centre of the game (Singleton). Every part of the game publishes here, so all
+ * registered observers see every message.
+ */
 public final class GameMessageCenter implements GameMessagePublisher, GameMessageRegistry {
 
     private static final GameMessageCenter SHARED_INSTANCE = new GameMessageCenter();
@@ -15,6 +18,11 @@ public final class GameMessageCenter implements GameMessagePublisher, GameMessag
         this.observers = new ArrayList<>();
     }
 
+    /**
+     * Gives the one shared message centre.
+     *
+     * @return the shared instance
+     */
     public static GameMessageCenter getInstance() {
         return SHARED_INSTANCE;
     }

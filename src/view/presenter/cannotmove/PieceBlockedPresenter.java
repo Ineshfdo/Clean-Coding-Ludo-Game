@@ -3,9 +3,14 @@ package view.presenter.cannotmove;
 import message.cannotmove.PieceBlocked;
 import view.presenter.EventPresenter;
 
-// Wording for an opponent's blockade stopping a piece.
+/**
+ * Presents {@link PieceBlocked}: it says that an opponent's blockade stops the piece or the block.
+ */
 public final class PieceBlockedPresenter extends EventPresenter<PieceBlocked> {
 
+    /**
+     * Creates the presenter for {@link PieceBlocked}.
+     */
     public PieceBlockedPresenter() {
         super(PieceBlocked.class);
     }

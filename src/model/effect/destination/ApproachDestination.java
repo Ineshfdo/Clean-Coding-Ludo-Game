@@ -6,13 +6,22 @@ import model.effect.activation.EffectActivationRule;
 import model.piece.Piece;
 import model.player.Player;
 
-// T-11: the player's own Approach cell.
+/**
+ * The Approach destination (T-11). The pieces go to the Approach cell of their own colour, and
+ * arriving there counts as an Approach pass (T-1).
+ */
 public final class ApproachDestination extends TrackDestination {
 
     private static final String LABEL = "Approach";
 
     private final Board board;
 
+    /**
+     * Creates the Approach destination.
+     *
+     * @param board gives the Approach cell of each colour
+     * @param effectActivationRule decides whether an effect may start
+     */
     public ApproachDestination(Board board, EffectActivationRule effectActivationRule) {
         super(effectActivationRule);
         this.board = board;

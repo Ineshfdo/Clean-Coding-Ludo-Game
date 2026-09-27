@@ -5,9 +5,15 @@ import java.util.List;
 import message.game.PlayerRosterAnnounced;
 import view.presenter.EventPresenter;
 
-// Wording for announcing a player's pieces before the game begins.
+/**
+ * Presents {@link PlayerRosterAnnounced}: it announces the pieces of a player before the game
+ * begins.
+ */
 public final class PlayerRosterAnnouncedPresenter extends EventPresenter<PlayerRosterAnnounced> {
 
+    /**
+     * Creates the presenter for {@link PlayerRosterAnnounced}.
+     */
     public PlayerRosterAnnouncedPresenter() {
         super(PlayerRosterAnnounced.class);
     }

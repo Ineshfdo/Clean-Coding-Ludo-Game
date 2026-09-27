@@ -9,7 +9,9 @@ import model.piece.Piece;
 import model.piece.PieceLabels;
 import model.player.Player;
 
-// T-11: the pieces go back to Base, so there is no track cell and no effect.
+/**
+ * The Base destination (T-11). The pieces go back to Base, so there is no track cell and no effect.
+ */
 public final class BaseDestination implements MysteryCellDestination {
 
     private static final String LABEL = "Base";

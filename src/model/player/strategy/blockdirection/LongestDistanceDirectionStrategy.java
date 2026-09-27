@@ -7,7 +7,10 @@ import model.direction.MovementDirectionStrategy;
 import model.piece.Piece;
 import model.piece.RemainingHomeDistance;
 
-// T-4: a mixed block travels via the member with the longest remaining distance.
+/**
+ * A blockade travels in the original direction of its member that is farthest from Home (T-4). The
+ * choice is reused while the blockade keeps its size, and a new size makes a new comparison.
+ */
 public final class LongestDistanceDirectionStrategy implements BlockTravelDirectionStrategy {
 
     // T-4/T-5: reused while the block's size is unchanged; a new size forces a fresh comparison.

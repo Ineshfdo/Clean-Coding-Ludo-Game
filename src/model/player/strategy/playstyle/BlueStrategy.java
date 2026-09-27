@@ -15,8 +15,12 @@ import model.player.strategy.StrategyContext;
 import model.player.strategy.helper.BluePieceRotationIterator;
 import model.player.strategy.helper.CommandFinder;
 
-// Blue rotates through its pieces (B1 -> B2 -> B3 -> B4), with Mystery Cell overrides.
-// A bonus roll in the same turn keeps considering the same piece.
+/**
+ * Blue moves its pieces in rotation: B1, B2, B3, B4 and then B1 again. A bonus roll in the same
+ * turn keeps considering the same piece. Two Mystery Cell rules can override the rotation: a
+ * counter-clockwise move onto the Mystery Cell is preferred, and a clockwise move onto it is
+ * avoided.
+ */
 public final class BlueStrategy implements PlayerStrategy {
 
     private Piece lastMovedPiece;

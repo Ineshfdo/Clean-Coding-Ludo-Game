@@ -3,9 +3,14 @@ package view.presenter.cannotmove;
 import message.cannotmove.PieceNeedsExactRoll;
 import view.presenter.EventPresenter;
 
-// Wording for needing an exact roll.
+/**
+ * Presents {@link PieceNeedsExactRoll}: it says that the piece needs an exact roll to reach Home.
+ */
 public final class PieceNeedsExactRollPresenter extends EventPresenter<PieceNeedsExactRoll> {
 
+    /**
+     * Creates the presenter for {@link PieceNeedsExactRoll}.
+     */
     public PieceNeedsExactRollPresenter() {
         super(PieceNeedsExactRoll.class);
     }

@@ -8,8 +8,10 @@ import model.player.Player;
 import model.player.command.Command;
 import model.player.command.capture.CapturePieceCommand;
 
-// Rule 7: a lone piece landing on an opponent captures it.
-// T-8: a blockade mover defers to BlockCaptureRule; a lone piece can't capture a blockade.
+/**
+ * A single piece that lands on a single opponent piece captures it (rule 7). A single piece cannot
+ * capture a blockade (T-8).
+ */
 public final class PieceCaptureRule extends CaptureCheckRule {
 
     @Override

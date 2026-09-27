@@ -6,11 +6,19 @@ import utils.color.PlayerColorNames;
 import view.presenter.CellNames;
 import view.presenter.EventPresenter;
 
-// Wording for a solo move: the dice value, the direction and both endpoints.
+/**
+ * Presents {@link PieceMoved}: it tells the move of a single piece: the number of steps, the
+ * direction and both cells.
+ */
 public final class PieceMovedPresenter extends EventPresenter<PieceMoved> {
 
     private final CellNames cellNames;
 
+    /**
+     * Creates the presenter.
+     *
+     * @param board gives the Approach cells, so that they get their own name
+     */
     public PieceMovedPresenter(Board board) {
         super(PieceMoved.class);
         this.cellNames = new CellNames(board);

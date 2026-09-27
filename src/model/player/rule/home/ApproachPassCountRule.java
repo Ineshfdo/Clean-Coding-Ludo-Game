@@ -2,7 +2,10 @@ package model.player.rule.home;
 
 import model.piece.Piece;
 
-// T-1/T-5: Approach passes needed: 2 counter-clockwise, 1 clockwise.
+/**
+ * A piece may enter its HomeStraight only after it has passed its Approach cell often enough: once
+ * if it is clockwise and twice if it is counter-clockwise (T-1, T-5).
+ */
 public final class ApproachPassCountRule extends HomeStraightEntryRule {
 
     @Override

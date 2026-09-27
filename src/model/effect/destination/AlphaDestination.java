@@ -8,7 +8,9 @@ import model.effect.rule.AlphaEffectRule;
 import model.piece.Piece;
 import model.player.Player;
 
-// T-12: Alpha gives the teleported pieces an Energized or Sick status.
+/**
+ * The Alpha destination (T-12). The teleported pieces get an Energized or Sick effect.
+ */
 public final class AlphaDestination extends TrackDestination {
 
     private static final String LABEL = "Alpha";
@@ -16,6 +18,13 @@ public final class AlphaDestination extends TrackDestination {
     private final MysteryCellPositions positions;
     private final AlphaEffectRule alphaEffectRule;
 
+    /**
+     * Creates the Alpha destination.
+     *
+     * @param positions gives the Alpha cell
+     * @param effectActivationRule decides whether the effect may start
+     * @param alphaEffectRule gives the Energized or Sick effect
+     */
     public AlphaDestination(
             MysteryCellPositions positions, EffectActivationRule effectActivationRule,
             AlphaEffectRule alphaEffectRule) {

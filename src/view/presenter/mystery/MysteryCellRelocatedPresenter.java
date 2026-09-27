@@ -4,9 +4,15 @@ import config.constant.MysteryCellConstants;
 import message.mystery.MysteryCellRelocated;
 import view.presenter.EventPresenter;
 
-// Wording for the Mystery Cell moving.
+/**
+ * Presents {@link MysteryCellRelocated}: it announces that the Mystery Cell moved to a new cell, in
+ * a banner.
+ */
 public final class MysteryCellRelocatedPresenter extends EventPresenter<MysteryCellRelocated> {
 
+    /**
+     * Creates the presenter for {@link MysteryCellRelocated}.
+     */
     public MysteryCellRelocatedPresenter() {
         super(MysteryCellRelocated.class);
     }

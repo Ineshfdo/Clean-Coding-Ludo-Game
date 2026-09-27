@@ -3,9 +3,14 @@ package view.presenter.game;
 import message.game.GameStarting;
 import view.presenter.EventPresenter;
 
-// Wording for the start of the game.
+/**
+ * Presents {@link GameStarting}: it announces the start of the game.
+ */
 public final class GameStartingPresenter extends EventPresenter<GameStarting> {
 
+    /**
+     * Creates the presenter for {@link GameStarting}.
+     */
     public GameStartingPresenter() {
         super(GameStarting.class);
     }

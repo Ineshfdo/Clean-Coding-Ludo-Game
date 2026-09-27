@@ -9,15 +9,30 @@ import model.piece.Piece;
 import model.piece.PieceLabels;
 import model.player.Player;
 
-// T-14: Clockwise groups reverse direction; Counter-Clockwise groups go on to Beta.
+/**
+ * The rule of the Gamma cell (T-14): a clockwise group reverses its direction for good, and a
+ * counter-clockwise group is sent on to Beta.
+ */
 public final class GammaDirectionRule {
 
     private final MysteryCellDestination betaDestination;
 
+    /**
+     * Creates the rule.
+     *
+     * @param betaDestination the destination to which a counter-clockwise group is sent on
+     */
     public GammaDirectionRule(MysteryCellDestination betaDestination) {
         this.betaDestination = betaDestination;
     }
 
+    /**
+     * Applies the Gamma rule to a group of pieces.
+     *
+     * @param player the owner of the pieces
+     * @param teleportedPieces the pieces that arrived on Gamma
+     * @param messagePublisher where the result is announced
+     */
     public void applyTo(
             Player player, List<Piece> teleportedPieces, GameMessagePublisher messagePublisher) {
         MovementDirectionStrategy currentDirection = teleportedPieces.get(0).getMovementDirection();

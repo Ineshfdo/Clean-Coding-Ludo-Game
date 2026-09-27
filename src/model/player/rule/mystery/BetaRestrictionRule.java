@@ -11,7 +11,10 @@ import model.player.command.mystery.BetaReturnToBaseCommand;
 import model.player.rule.roll.RollEvent;
 import model.player.rule.roll.RollHook;
 
-// T-13: consecutive 3s on the first roll send a Beta piece back to Base.
+/**
+ * Roll hook for the Beta restriction (T-13). The first roll of every turn is counted for the
+ * restricted pieces, and two rolls of 3 in a row send them back to Base.
+ */
 public final class BetaRestrictionRule implements RollHook {
 
     // T-13: forces a still-restricted Beta piece back to Base.

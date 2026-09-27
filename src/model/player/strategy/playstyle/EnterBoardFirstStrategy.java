@@ -5,7 +5,10 @@ import model.player.command.MoveCommand;
 import model.player.strategy.PlayerStrategy;
 import model.player.strategy.StrategyContext;
 
-// Default strategy: prefers bringing a new piece onto the board.
+/**
+ * The default strategy. It prefers to bring a new piece onto the board, and otherwise takes the
+ * first legal command.
+ */
 public final class EnterBoardFirstStrategy implements PlayerStrategy {
 
     @Override

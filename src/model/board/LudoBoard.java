@@ -8,7 +8,10 @@ import java.util.Map;
 import model.board.cell.HomeStraightCell;
 import model.board.cell.StandardCell;
 
-// Singleton: one board layout is shared by every player, piece, and rules.
+/**
+ * The board of the game (Singleton): the shared track, the four HomeStraights and the fixed Alpha,
+ * Beta and Gamma cells. One layout is shared by every player, piece and rule.
+ */
 public final class LudoBoard implements Board, MysteryCellPositions, TurnOrderLayout {
 
     private static final LudoBoard SHARED_INSTANCE = new LudoBoard();
@@ -27,6 +30,11 @@ public final class LudoBoard implements Board, MysteryCellPositions, TurnOrderLa
         this.nextColorClockwiseByColor = buildNextColorClockwise();
     }
 
+    /**
+     * Gives the one shared board.
+     *
+     * @return the shared instance
+     */
     public static LudoBoard getInstance() {
         return SHARED_INSTANCE;
     }

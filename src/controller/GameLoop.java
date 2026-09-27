@@ -12,7 +12,11 @@ import model.player.Player;
 import model.round.RoundListener;
 import utils.dice.Dice;
 
-// Plays whole rounds until every player has all pieces Home, then reports the standings.
+/**
+ * Plays rounds until every player has all pieces Home, and then publishes the final standings. In
+ * each round the effects expire, every player who has not finished takes a turn in turn order, and
+ * the board state is reported.
+ */
 public final class GameLoop {
 
     private final GameEngine gameEngine;
@@ -21,6 +25,15 @@ public final class GameLoop {
     private final Board board;
     private final GameMessagePublisher messagePublisher;
 
+    /**
+     * Creates the loop for one game.
+     *
+     * @param gameEngine plays the turn of one player
+     * @param roundListener told when each round starts and ends
+     * @param dice the dice used for the rolls
+     * @param board the board the pieces move on
+     * @param messagePublisher where the events of the game are announced
+     */
     public GameLoop(
             GameEngine gameEngine, RoundListener roundListener, Dice dice, Board board,
             GameMessagePublisher messagePublisher) {
@@ -31,6 +44,12 @@ public final class GameLoop {
         this.messagePublisher = messagePublisher;
     }
 
+    /**
+     * Plays the whole game and publishes the final standings when every player has finished.
+     *
+     * @param allPlayers all players of the game
+     * @param turnOrder the players in the order in which they take their turns
+     */
     public void play(List<Player> allPlayers, List<Player> turnOrder) {
         // GAME_OVER: the game ends only once every player has all pieces Home.
         List<PlayerColor> finalStandings = new ArrayList<>();

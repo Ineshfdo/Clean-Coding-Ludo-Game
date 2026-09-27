@@ -8,7 +8,9 @@ import model.player.Player;
 import model.player.command.Command;
 import model.player.command.capture.CaptureBlockCommand;
 
-// T-8: a blockade captures an equal-sized opponent blockade.
+/**
+ * A blockade captures an opponent blockade of the same size (T-8).
+ */
 public final class BlockCaptureRule extends CaptureCheckRule {
 
     @Override

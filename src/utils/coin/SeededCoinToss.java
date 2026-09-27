@@ -4,7 +4,10 @@ import config.enums.CoinTossResult;
 import utils.randomgenerator.RandomNumberGenerator;
 import utils.randomgenerator.SeededRandomNumberGenerator;
 
-// Singleton: shares the dice's seeded sequence, so results are reproducible.
+/**
+ * The coin of the game (Singleton). It draws from the same seeded sequence as the dice, so the
+ * results can be repeated.
+ */
 public final class SeededCoinToss implements CoinToss {
 
     private static final int TAILS_VALUE = 0;
@@ -19,6 +22,11 @@ public final class SeededCoinToss implements CoinToss {
         this.randomNumberGenerator = randomNumberGenerator;
     }
 
+    /**
+     * Gives the one shared coin.
+     *
+     * @return the shared instance
+     */
     public static SeededCoinToss getInstance() {
         return SHARED_INSTANCE;
     }

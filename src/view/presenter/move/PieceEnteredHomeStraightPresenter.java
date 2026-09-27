@@ -3,9 +3,15 @@ package view.presenter.move;
 import message.move.PieceEnteredHomeStraight;
 import view.presenter.EventPresenter;
 
-// Wording for entering the HomeStraight.
+/**
+ * Presents {@link PieceEnteredHomeStraight}: it tells that a piece or a blockade entered its
+ * HomeStraight.
+ */
 public final class PieceEnteredHomeStraightPresenter extends EventPresenter<PieceEnteredHomeStraight> {
 
+    /**
+     * Creates the presenter for {@link PieceEnteredHomeStraight}.
+     */
     public PieceEnteredHomeStraightPresenter() {
         super(PieceEnteredHomeStraight.class);
     }

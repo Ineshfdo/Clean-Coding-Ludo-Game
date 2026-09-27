@@ -5,9 +5,15 @@ import utils.color.PlayerColorNames;
 import view.presenter.EventPresenter;
 import view.presenter.PieceCountLine;
 
-// Wording for a capture: the landing square, then the captured player's new piece count.
+/**
+ * Presents {@link PieceCaptured}: it tells the square where the capture happened, and then the new
+ * piece count of the player who lost the piece.
+ */
 public final class PieceCapturedPresenter extends EventPresenter<PieceCaptured> {
 
+    /**
+     * Creates the presenter for {@link PieceCaptured}.
+     */
     public PieceCapturedPresenter() {
         super(PieceCaptured.class);
     }

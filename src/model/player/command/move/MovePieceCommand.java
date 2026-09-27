@@ -14,7 +14,9 @@ import model.player.HomeEntryPolicy;
 import model.player.Player;
 import model.player.command.MoveCommand;
 
-// Rule 1: moves a piece forward by the dice value.
+/**
+ * Moves one piece by a number of steps (rule 1).
+ */
 public final class MovePieceCommand implements MoveCommand {
 
     private final Player player;
@@ -25,6 +27,16 @@ public final class MovePieceCommand implements MoveCommand {
     private final HomeEntryPolicy homeEntryPolicy;
     private final MovementDirectionStrategy travelDirection;
 
+    /**
+     * Creates the command.
+     *
+     * @param player the owner of the piece
+     * @param piece the piece to move
+     * @param effectiveSteps the number of steps to move
+     * @param board the board the piece moves on
+     * @param homeEntryPolicy decides whether the piece may enter its HomeStraight
+     * @param travelDirection the direction in which the piece travels
+     */
     public MovePieceCommand(
             Player player, Piece piece, int effectiveSteps, Board board,
             HomeEntryPolicy homeEntryPolicy, MovementDirectionStrategy travelDirection) {

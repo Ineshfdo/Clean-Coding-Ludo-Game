@@ -3,9 +3,14 @@ package view.presenter.toss;
 import message.toss.TossStarting;
 import view.presenter.EventPresenter;
 
-// Wording for the start of the first-player toss.
+/**
+ * Presents {@link TossStarting}: it announces the start of the first-player toss.
+ */
 public final class TossStartingPresenter extends EventPresenter<TossStarting> {
 
+    /**
+     * Creates the presenter for {@link TossStarting}.
+     */
     public TossStartingPresenter() {
         super(TossStarting.class);
     }

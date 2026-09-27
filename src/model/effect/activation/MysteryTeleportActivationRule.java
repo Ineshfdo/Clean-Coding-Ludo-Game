@@ -1,6 +1,8 @@
 package model.effect.activation;
 
-// T-15: allows an effect only after a genuine teleport arrival.
+/**
+ * Allows an effect only after a genuine teleport arrival (T-15).
+ */
 public final class MysteryTeleportActivationRule extends EffectActivationRule {
 
     @Override

@@ -8,12 +8,22 @@ import model.player.Player;
 import model.player.command.MoveCommand;
 import model.player.strategy.StrategyContext;
 
-// T-16/T-18: finds the opponent piece a candidate move would capture (T-8: blocks need equal size).
+/**
+ * Finds the opponent piece that a candidate move would capture (T-16, T-18). A blockade can only
+ * capture an opponent blockade of the same size (T-8).
+ */
 public final class CaptureTargetFinder {
 
     private CaptureTargetFinder() {
     }
 
+    /**
+     * Previews the move and looks for a capture.
+     *
+     * @param command the candidate move
+     * @param context the situation of the player
+     * @return the piece that would be captured, or an empty result
+     */
     public static Optional<Piece> findTarget(MoveCommand command, StrategyContext context) {
         Optional<Integer> previewedLandingPosition = command.previewLandingPosition();
 

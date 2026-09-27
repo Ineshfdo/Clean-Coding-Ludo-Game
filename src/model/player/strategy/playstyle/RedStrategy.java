@@ -13,7 +13,11 @@ import model.player.strategy.StrategyContext;
 import model.player.strategy.helper.CaptureTargetFinder;
 import model.player.strategy.helper.CommandFinder;
 
-// Red is capture-focused: captures first, then leaves Base, keeps a piece on the path, and avoids forming blocks.
+/**
+ * Red is capture-focused. It captures first, and prefers the opponent piece that is closest to its
+ * own Home. Then it leaves Base, keeps at least one piece on the shared track, and avoids forming
+ * new blockades.
+ */
 public final class RedStrategy implements PlayerStrategy {
 
     @Override

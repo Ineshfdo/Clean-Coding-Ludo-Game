@@ -3,9 +3,15 @@ package view.presenter.capture;
 import message.capture.BlockCaptured;
 import view.presenter.EventPresenter;
 
-// Wording for one blockade capturing another.
+/**
+ * Presents {@link BlockCaptured}: it tells that one blockade captured another and that all its
+ * pieces return to Base.
+ */
 public final class BlockCapturedPresenter extends EventPresenter<BlockCaptured> {
 
+    /**
+     * Creates the presenter for {@link BlockCaptured}.
+     */
     public BlockCapturedPresenter() {
         super(BlockCaptured.class);
     }

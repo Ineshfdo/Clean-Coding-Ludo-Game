@@ -7,7 +7,10 @@ import model.board.Board;
 import model.direction.MovementDirectionStrategy;
 import model.player.Player;
 
-// T-3/T-8: 2+ same-color pieces block opponents, except an equal-size capture.
+/**
+ * Stops a move in front of an opponent blockade (T-3, T-8). Landing on a blockade of the same size
+ * is allowed, because that is a capture.
+ */
 public final class PassingBlockadeRule extends BlockadeLimitRule {
 
     @Override

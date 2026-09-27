@@ -17,7 +17,9 @@ import model.player.Player;
 import model.player.command.MoveCommand;
 import model.player.strategy.blockdirection.BlockDirectionClassifier;
 
-// T-3: a block moves together using one shared direction.
+/**
+ * Moves a blockade as one unit, using one shared direction (T-3).
+ */
 public final class MoveBlockCommand implements MoveCommand {
 
     private final Player player;
@@ -28,6 +30,16 @@ public final class MoveBlockCommand implements MoveCommand {
     private final HomeEntryPolicy homeEntryPolicy;
     private final MovementDirectionStrategy travelDirection;
 
+    /**
+     * Creates the command.
+     *
+     * @param player the owner of the pieces
+     * @param blockPieces the pieces of the blockade
+     * @param effectiveSteps the number of steps that every piece moves
+     * @param board the board the pieces move on
+     * @param homeEntryPolicy decides whether the pieces may enter their HomeStraight
+     * @param travelDirection the direction in which the blockade travels
+     */
     public MoveBlockCommand(Player player, List<Piece> blockPieces, int effectiveSteps,
             Board board, HomeEntryPolicy homeEntryPolicy,
             MovementDirectionStrategy travelDirection) {

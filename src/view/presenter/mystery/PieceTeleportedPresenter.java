@@ -3,9 +3,15 @@ package view.presenter.mystery;
 import message.mystery.PieceTeleported;
 import view.presenter.EventPresenter;
 
-// Wording for a teleport from the Mystery Cell.
+/**
+ * Presents {@link PieceTeleported}: it tells that a piece landed on the Mystery Cell and where it
+ * was teleported.
+ */
 public final class PieceTeleportedPresenter extends EventPresenter<PieceTeleported> {
 
+    /**
+     * Creates the presenter for {@link PieceTeleported}.
+     */
     public PieceTeleportedPresenter() {
         super(PieceTeleported.class);
     }

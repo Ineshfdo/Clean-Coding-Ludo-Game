@@ -4,9 +4,14 @@ import config.constant.EffectConstants;
 import message.mystery.BlockEffectAssigned;
 import view.presenter.EventPresenter;
 
-// Wording for a block's shared Energized/Sick effect.
+/**
+ * Presents {@link BlockEffectAssigned}: it tells the shared Energized or Sick effect of a blockade.
+ */
 public final class BlockEffectAssignedPresenter extends EventPresenter<BlockEffectAssigned> {
 
+    /**
+     * Creates the presenter for {@link BlockEffectAssigned}.
+     */
     public BlockEffectAssignedPresenter() {
         super(BlockEffectAssigned.class);
     }

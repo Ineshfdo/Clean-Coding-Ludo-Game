@@ -3,7 +3,11 @@ package model.direction;
 import config.enums.PlayerColor;
 import model.board.Board;
 
-// T-1: tails means counter-clockwise; passes Approach twice; one shared instance.
+/**
+ * Counter-clockwise movement, given by a tails coin toss (T-1). A counter-clockwise piece must pass
+ * its Approach cell twice before it enters its HomeStraight. The class is a Singleton, so all
+ * counter-clockwise pieces share one object.
+ */
 public final class CounterClockwiseMovementStrategy implements MovementDirectionStrategy {
 
     private static final int REQUIRED_APPROACH_PASS_COUNT = 2;
@@ -15,6 +19,11 @@ public final class CounterClockwiseMovementStrategy implements MovementDirection
     private CounterClockwiseMovementStrategy() {
     }
 
+    /**
+     * Gives the one shared counter-clockwise direction.
+     *
+     * @return the shared instance
+     */
     public static CounterClockwiseMovementStrategy getInstance() {
         return SHARED_INSTANCE;
     }

@@ -3,9 +3,14 @@ package view.presenter.turn;
 import message.turn.TurnStarted;
 import view.presenter.EventPresenter;
 
-// Wording for the start of a turn.
+/**
+ * Presents {@link TurnStarted}: it announces the start of the turn of a player.
+ */
 public final class TurnStartedPresenter extends EventPresenter<TurnStarted> {
 
+    /**
+     * Creates the presenter for {@link TurnStarted}.
+     */
     public TurnStartedPresenter() {
         super(TurnStarted.class);
     }

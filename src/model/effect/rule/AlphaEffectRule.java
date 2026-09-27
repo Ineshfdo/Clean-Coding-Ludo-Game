@@ -15,15 +15,31 @@ import model.effect.movement.MovementEffect;
 import model.piece.Piece;
 import model.player.Player;
 
-// T-12: coin toss picks Energized or Sick for pieces teleported to Alpha.
+/**
+ * Gives the pieces that were teleported to Alpha an Energized or Sick effect by coin toss (T-12).
+ * Every piece gets its own effect, and a group of two or more pieces also gets one shared blockade
+ * effect.
+ */
 public final class AlphaEffectRule {
 
     private final CoinToss coinToss;
 
+    /**
+     * Creates the rule.
+     *
+     * @param coinToss the coin that decides between Energized and Sick
+     */
     public AlphaEffectRule(CoinToss coinToss) {
         this.coinToss = coinToss;
     }
 
+    /**
+     * Tosses the coin and gives the effects.
+     *
+     * @param player the owner of the pieces
+     * @param teleportedPieces the pieces that arrived on Alpha
+     * @param messagePublisher where the effects are announced
+     */
     public void applyTo(Player player, List<Piece> teleportedPieces, GameMessagePublisher messagePublisher) {
         for (Piece piece : teleportedPieces) {
             MovementEffect individualEffect = rollEffect();

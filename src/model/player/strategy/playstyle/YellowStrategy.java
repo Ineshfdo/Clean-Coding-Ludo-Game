@@ -12,7 +12,10 @@ import model.player.strategy.StrategyContext;
 import model.player.strategy.helper.CaptureTargetFinder;
 import model.player.strategy.helper.CommandFinder;
 
-// Yellow is winning-focused: leaves Base, captures only when needed, else nears Home.
+/**
+ * Yellow is winning-focused. It leaves Base first, captures only for a piece that still needs a
+ * capture, and otherwise advances the piece that is closest to Home.
+ */
 public final class YellowStrategy implements PlayerStrategy {
 
     @Override
