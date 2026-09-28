@@ -1,17 +1,16 @@
 package model.board;
 
+import java.util.EnumMap;
+import java.util.Map;
+
 import config.constant.BoardConstants;
 import config.constant.MysteryCellConstants;
 import config.enums.PlayerColor;
-import java.util.EnumMap;
-import java.util.Map;
 import model.board.cell.HomeStraightCell;
 import model.board.cell.StandardCell;
 
-/**
- * The board of the game (Singleton): the shared track, the four HomeStraights and the fixed Alpha,
- * Beta and Gamma cells. One layout is shared by every player, piece and rule.
- */
+// The board of the game (Singleton)
+ 
 public final class LudoBoard implements Board, MysteryCellPositions, TurnOrderLayout {
 
     private static final LudoBoard SHARED_INSTANCE = new LudoBoard();
@@ -20,8 +19,9 @@ public final class LudoBoard implements Board, MysteryCellPositions, TurnOrderLa
     private final Map<PlayerColor, Integer> entryPositionByColor;
     private final StandardCell[] standardCells;
     private final Map<PlayerColor, HomeStraightCell[]> homeStraightCellsByColor;
-    private final Map<PlayerColor, PlayerColor> nextColorClockwiseByColor;
+    private final Map<PlayerColor, PlayerColor> nextColorClockwiseByColor; // Turn Order
 
+    // Builds the fixed board geometry once, for the single shared instance.
     private LudoBoard() {
         this.approachPositionByColor = buildApproachPositions();
         this.entryPositionByColor = buildEntryPositions();
@@ -30,11 +30,12 @@ public final class LudoBoard implements Board, MysteryCellPositions, TurnOrderLa
         this.nextColorClockwiseByColor = buildNextColorClockwise();
     }
 
-    /**
-     * Gives the one shared board.
-     *
-     * @return the shared instance
-     */
+        /**
+         * Gives the one shared board.
+        
+         * @return the shared instance
+        */
+    
     public static LudoBoard getInstance() {
         return SHARED_INSTANCE;
     }
@@ -140,6 +141,7 @@ public final class LudoBoard implements Board, MysteryCellPositions, TurnOrderLa
         return nextColorByColor;
     }
 
+    // Builds every track cell, marking each colour's Approach and Entry cell.
     private StandardCell[] buildStandardCells() {
         PlayerColor[] approachOwnerAtPosition = buildOwnerAtPosition(approachPositionByColor);
         PlayerColor[] entryOwnerAtPosition = buildOwnerAtPosition(entryPositionByColor);
@@ -154,6 +156,7 @@ public final class LudoBoard implements Board, MysteryCellPositions, TurnOrderLa
         return cells;
     }
 
+    // Builds an array mapping each position to its owning colour, so buildStandardCells can look it up by position.
     private static PlayerColor[] buildOwnerAtPosition(Map<PlayerColor, Integer> positionByColor) {
         PlayerColor[] ownerAtPosition = new PlayerColor[BoardConstants.STANDARD_CELL_COUNT];
 
@@ -164,6 +167,7 @@ public final class LudoBoard implements Board, MysteryCellPositions, TurnOrderLa
         return ownerAtPosition;
     }
 
+    // Builds each colour's own Home Straight cells, in order from the Approach.
     private static Map<PlayerColor, HomeStraightCell[]> buildHomeStraightCells() {
         Map<PlayerColor, HomeStraightCell[]> cellsByColor = new EnumMap<>(PlayerColor.class);
 

@@ -5,8 +5,15 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="576ba9fa-b4ca-47ea-9061-05b3403e3226" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/Clean-Coding-Report-Structure.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Report-Abstract.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/model/board/Board.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/model/board/Board.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/model/board/LudoBoard.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/model/board/LudoBoard.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/model/board/MysteryCellPositions.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/model/board/MysteryCellPositions.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/model/board/TurnOrderLayout.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/model/board/TurnOrderLayout.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/model/board/cell/HomeStraightCell.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/model/board/cell/HomeStraightCell.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/model/board/cell/StandardCell.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/model/board/cell/StandardCell.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/model/board/cell/package-info.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/model/board/cell/package-info.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/model/board/package-info.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/model/board/package-info.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
