@@ -1,6 +1,7 @@
 package controller;
 
 import java.util.List;
+
 import message.observer.GameMessagePublisher;
 import message.toss.DiceRolled;
 import message.toss.TossStarting;
@@ -9,10 +10,9 @@ import message.toss.TossWon;
 import model.player.Player;
 import utils.dice.Dice;
 
-/**
- * Chooses the player who goes first (rule 3.2). Every player rolls once and the highest roll wins.
- * A tie for the highest roll makes everyone roll again.
- */
+// Can use this class in other classes & Can Not sub class.
+// Only this class can use it, Set Once, Holds one dice.
+
 public final class FirstPlayerSelector {
 
     private static final int NO_ROLL_YET = 0;
@@ -26,6 +26,7 @@ public final class FirstPlayerSelector {
      * @param dice the dice used for the toss
      * @param messagePublisher where the toss is announced
      */
+
     public FirstPlayerSelector(Dice dice, GameMessagePublisher messagePublisher) {
         this.dice = dice;
         this.messagePublisher = messagePublisher;
@@ -37,6 +38,7 @@ public final class FirstPlayerSelector {
      * @param tossOrder the players in the order in which they roll
      * @return the player who won the toss
      */
+
     public Player select(List<Player> tossOrder) {
         messagePublisher.publish(new TossStarting());
 
