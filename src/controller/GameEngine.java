@@ -1,11 +1,12 @@
 package controller;
 
-import config.constant.DiceConstants;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+
+import config.constant.DiceConstants;
 import message.observer.GameMessagePublisher;
 import message.turn.NoPieceMovable;
 import message.turn.ThirdSixVoided;
