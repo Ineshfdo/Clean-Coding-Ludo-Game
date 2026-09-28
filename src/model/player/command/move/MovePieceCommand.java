@@ -15,7 +15,7 @@ import model.player.Player;
 import model.player.command.MoveCommand;
 
 /**
- * Moves one piece by a number of steps (rule 1).
+ Moves one piece by a number of steps (rule 1).
  */
 public final class MovePieceCommand implements MoveCommand {
 
@@ -28,14 +28,13 @@ public final class MovePieceCommand implements MoveCommand {
     private final MovementDirectionStrategy travelDirection;
 
     /**
-     * Creates the command.
-     *
-     * @param player the owner of the piece
-     * @param piece the piece to move
-     * @param effectiveSteps the number of steps to move
-     * @param board the board the piece moves on
-     * @param homeEntryPolicy decides whether the piece may enter its HomeStraight
-     * @param travelDirection the direction in which the piece travels
+     Creates the command.
+     @param player the owner of the piece
+     @param piece the piece to move
+     @param effectiveSteps the number of steps to move
+     @param board the board the piece moves on
+     @param homeEntryPolicy decides whether the piece may enter its HomeStraight
+     @param travelDirection the direction in which the piece travels
      */
     public MovePieceCommand(
             Player player, Piece piece, int effectiveSteps, Board board,

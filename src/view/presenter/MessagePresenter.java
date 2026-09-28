@@ -7,7 +7,7 @@ import java.util.Map;
 import message.GameMessage;
 
 /**
- * Presents any game message by finding the presenter that is registered for its type.
+ Presents any game message by finding the presenter that is registered for its type.
  */
 public final class MessagePresenter {
 
@@ -15,9 +15,8 @@ public final class MessagePresenter {
             new HashMap<>();
 
     /**
-     * Creates the presenter for all kinds of message.
-     *
-     * @param eventPresenters one presenter for each kind of message
+     Creates the presenter for all kinds of message.
+     @param eventPresenters one presenter for each kind of message
      */
     public MessagePresenter(List<EventPresenter<? extends GameMessage>> eventPresenters) {
         for (EventPresenter<? extends GameMessage> eventPresenter : eventPresenters) {
@@ -26,12 +25,10 @@ public final class MessagePresenter {
     }
 
     /**
-     * Turns a message into console text.
-     *
-     * @param message the message to present
-     * @return the console text
-     * @throws UnpresentableMessageException if no presenter is registered for the type of the
-     *     message
+     Turns a message into console text.
+     @param message the message to present
+     @return the console text
+     @throws UnpresentableMessageException if no presenter is registered for the type of the message
      */
     public String present(GameMessage message) {
         EventPresenter<? extends GameMessage> presenter = presenters.get(message.getClass());

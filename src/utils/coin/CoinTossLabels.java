@@ -3,7 +3,7 @@ package utils.coin;
 import config.enums.CoinTossResult;
 
 /**
- * Gives the display text of a coin toss result, so the enum stays free of text.
+ Gives the display text of a coin toss result, so the enum stays free of text.
  */
 public final class CoinTossLabels {
 
@@ -11,10 +11,9 @@ public final class CoinTossLabels {
     }
 
     /**
-     * Gives the text shown on the console.
-     *
-     * @param result the result of the coin toss
-     * @return Heads or Tails
+     Gives the text shown on the console.
+     @param result the result of the coin toss
+     @return Heads or Tails
      */
     public static String labelOf(CoinTossResult result) {
         return switch (result) {

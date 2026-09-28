@@ -16,8 +16,8 @@ import model.player.command.move.MovePieceCommand;
 import model.player.rule.home.HomeStraightEntryRule;
 
 /**
- * A third six in a row breaks an existing blockade instead of voiding the roll (T-6). The lowest-
- * numbered piece stays and the other pieces share the six cells.
+ A third six in a row breaks an existing blockade instead of voiding the roll (T-6).
+ The lowest-numbered piece stays and the other pieces share the six cells.
  */
 public final class ThirdSixBlockadeBreakRule extends BlockadeBreakRule {
 
@@ -28,11 +28,9 @@ public final class ThirdSixBlockadeBreakRule extends BlockadeBreakRule {
     private final BlockadeLimitRule blockadeLimitRule;
 
     /**
-     * Creates the rule.
-     *
-     * @param homeStraightEntryRule decides whether a released piece may enter its HomeStraight
-     * @param blockadeLimitRule limits the steps of a released piece in front of an opponent
-     *     blockade
+     Creates the rule.
+     @param homeStraightEntryRule decides whether a released piece may enter its HomeStraight
+     @param blockadeLimitRule limits the steps of a released piece in front of an opponent blockade
      */
     public ThirdSixBlockadeBreakRule(
             HomeStraightEntryRule homeStraightEntryRule, BlockadeLimitRule blockadeLimitRule) {

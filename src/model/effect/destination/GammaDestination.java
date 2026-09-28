@@ -9,8 +9,8 @@ import model.piece.Piece;
 import model.player.Player;
 
 /**
- * The Gamma destination (T-14). A clockwise group reverses its direction, and a counter-clockwise
- * group is sent on to Beta.
+ The Gamma destination (T-14).
+ A clockwise group reverses its direction, and a counter-clockwise group is sent on to Beta.
  */
 public final class GammaDestination extends TrackDestination {
 
@@ -20,11 +20,10 @@ public final class GammaDestination extends TrackDestination {
     private final GammaDirectionRule gammaDirectionRule;
 
     /**
-     * Creates the Gamma destination.
-     *
-     * @param positions gives the Gamma cell
-     * @param effectActivationRule decides whether the effect may start
-     * @param gammaDirectionRule applies the direction rule of Gamma
+     Creates the Gamma destination.
+     @param positions gives the Gamma cell
+     @param effectActivationRule decides whether the effect may start
+     @param gammaDirectionRule applies the direction rule of Gamma
      */
     public GammaDestination(
             MysteryCellPositions positions, EffectActivationRule effectActivationRule,

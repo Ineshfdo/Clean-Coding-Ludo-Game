@@ -9,8 +9,8 @@ import model.player.Player;
 import model.player.command.Command;
 
 /**
- * A blockade captures an opponent blockade of the same size (T-8). Every captured piece returns to
- * Base, and every capturing piece gains one capture.
+ A blockade captures an opponent blockade of the same size (T-8).
+ Every captured piece returns to Base, and every capturing piece gains one capture.
  */
 public final class CaptureBlockCommand implements Command {
 
@@ -21,12 +21,11 @@ public final class CaptureBlockCommand implements Command {
     private final List<Piece> capturedBlock;
 
     /**
-     * Creates the command.
-     *
-     * @param capturingPlayer the player who captures
-     * @param capturingBlock the pieces of the capturing blockade
-     * @param capturedPlayer the player who loses the pieces
-     * @param capturedBlock the pieces of the captured blockade
+     Creates the command.
+     @param capturingPlayer the player who captures
+     @param capturingBlock the pieces of the capturing blockade
+     @param capturedPlayer the player who loses the pieces
+     @param capturedBlock the pieces of the captured blockade
      */
     public CaptureBlockCommand(
             Player capturingPlayer, List<Piece> capturingBlock,

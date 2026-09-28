@@ -5,12 +5,12 @@ import utils.color.PlayerColorNames;
 import view.presenter.EventPresenter;
 
 /**
- * Presents {@link HomeGateOpened}: it tells that the home gate opened for a colour.
+ Presents {@link HomeGateOpened}: it tells that the home gate opened for a colour.
  */
 public final class HomeGateOpenedPresenter extends EventPresenter<HomeGateOpened> {
 
     /**
-     * Creates the presenter for {@link HomeGateOpened}.
+     Creates the presenter for {@link HomeGateOpened}.
      */
     public HomeGateOpenedPresenter() {
         super(HomeGateOpened.class);

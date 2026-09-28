@@ -4,12 +4,12 @@ import message.mystery.PieceDirectionReversed;
 import view.presenter.EventPresenter;
 
 /**
- * Presents {@link PieceDirectionReversed}: it tells that a Gamma teleport reversed a direction.
+ Presents {@link PieceDirectionReversed}: it tells that a Gamma teleport reversed a direction.
  */
 public final class PieceDirectionReversedPresenter extends EventPresenter<PieceDirectionReversed> {
 
     /**
-     * Creates the presenter for {@link PieceDirectionReversed}.
+     Creates the presenter for {@link PieceDirectionReversed}.
      */
     public PieceDirectionReversedPresenter() {
         super(PieceDirectionReversed.class);

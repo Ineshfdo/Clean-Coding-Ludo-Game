@@ -18,8 +18,7 @@ import view.presenter.EventPresenter;
 import view.presenter.PieceCountLine;
 
 /**
- * Presents {@link BoardStateReported}: it writes the report at the end of a round: the piece count
- * of every player and every piece, blockade and effect.
+ Presents {@link BoardStateReported}: it writes the report at the end of a round: the piece count of every player and every piece, blockade and effect.
  */
 public final class BoardStateReportedPresenter extends EventPresenter<BoardStateReported> {
 
@@ -32,12 +31,10 @@ public final class BoardStateReportedPresenter extends EventPresenter<BoardState
     private final CellNames cellNames;
 
     /**
-     * Creates the presenter.
-     *
-     * @param allPlayers all players of the game; the report lists them in this order until a turn
-     *     order is set
-     * @param board the board the pieces move on
-     * @param blockTravelDirectionStrategy the strategy that decides the direction of a blockade
+     Creates the presenter.
+     @param allPlayers all players of the game; the report lists them in this order until a turn order is set
+     @param board the board the pieces move on
+     @param blockTravelDirectionStrategy the strategy that decides the direction of a blockade
      */
     public BoardStateReportedPresenter(
             List<Player> allPlayers, Board board, BlockTravelDirectionStrategy blockTravelDirectionStrategy) {
@@ -49,9 +46,8 @@ public final class BoardStateReportedPresenter extends EventPresenter<BoardState
     }
 
     /**
-     * Sets the order in which the report lists the players.
-     *
-     * @param turnOrder the players in play order, starting with the winner of the toss
+     Sets the order in which the report lists the players.
+     @param turnOrder the players in play order, starting with the winner of the toss
      */
     public void setTurnOrder(List<Player> turnOrder) {
         this.playersInTurnOrder = turnOrder;

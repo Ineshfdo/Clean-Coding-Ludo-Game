@@ -14,9 +14,9 @@ import model.round.RoundListener;
 import utils.randomgenerator.RandomNumberGenerator;
 
 /**
- * Controls when the Mystery Cell appears and where it stands (T-10). It appears two rounds after
- * the first piece has entered the track, stays four rounds on one empty cell, and then moves to
- * another empty cell. It only publishes messages and never prints.
+ Controls when the Mystery Cell appears and where it stands (T-10).
+ It appears two rounds after the first piece has entered the track, stays four rounds on one empty cell, and then moves to another empty cell.
+ It only publishes messages and never prints.
  */
 public final class MysteryCellSchedule implements MysteryCellLocation, RoundListener {
 
@@ -31,10 +31,9 @@ public final class MysteryCellSchedule implements MysteryCellLocation, RoundList
     private int roundsRemainingAtCurrentCell;
 
     /**
-     * Creates the schedule of one game.
-     *
-     * @param board gives the size of the track
-     * @param randomNumberGenerator draws the random cell
+     Creates the schedule of one game.
+     @param board gives the size of the track
+     @param randomNumberGenerator draws the random cell
      */
     public MysteryCellSchedule(Board board, RandomNumberGenerator randomNumberGenerator) {
         this.board = board;

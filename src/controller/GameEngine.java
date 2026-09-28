@@ -31,13 +31,10 @@ import model.player.strategy.StrategyContext;
 import utils.dice.Dice;
 
 /**
- * Plays the turn of one player. For every roll the engine checks the forced blockade break and the
- * void third six, runs the roll hooks, collects the legal commands from the turn rules, lets the
- * strategy of the player choose one, executes it, and then checks captures and Mystery Cell
- * teleports. A six or a capture gives another roll.
- *
- * The engine depends only on abstractions, so rules and strategies can be replaced without changing
- * it.
+ Plays the turn of one player.
+ For every roll the engine checks the forced blockade break and the void third six, runs the roll hooks, collects the legal commands from the turn rules, lets the strategy of the player choose one, executes it, and then checks captures and Mystery Cell teleports.
+ A six or a capture gives another roll.
+ The engine depends only on abstractions, so rules and strategies can be replaced without changing it.
  */
 public final class GameEngine {
 
@@ -51,16 +48,15 @@ public final class GameEngine {
     private final List<RollHook> rollHooks;
 
     /**
-     * Creates an engine from the rules and strategies it needs.
-     *
-     * @param turnRules rules that list the legal commands for a roll
-     * @param strategyLookup finds the strategy of each colour
-     * @param rollValidityRule decides whether a roll is void (third six)
-     * @param captureCheckRule finds the capture caused by a move
-     * @param blockadeBreakRule finds a forced blockade break for a third six
-     * @param teleportRule finds the Mystery Cell teleport caused by a move
-     * @param mysteryCellLocation read-only view of the Mystery Cell, given to the strategies
-     * @param rollHooks hooks that run after every accepted roll, for example the home gate
+     Creates an engine from the rules and strategies it needs.
+     @param turnRules rules that list the legal commands for a roll
+     @param strategyLookup finds the strategy of each colour
+     @param rollValidityRule decides whether a roll is void (third six)
+     @param captureCheckRule finds the capture caused by a move
+     @param blockadeBreakRule finds a forced blockade break for a third six
+     @param teleportRule finds the Mystery Cell teleport caused by a move
+     @param mysteryCellLocation read-only view of the Mystery Cell, given to the strategies
+     @param rollHooks hooks that run after every accepted roll, for example the home gate
      */
     public GameEngine(
             List<TurnRule> turnRules, PlayerStrategyLookup strategyLookup,
@@ -78,13 +74,12 @@ public final class GameEngine {
     }
 
     /**
-     * Plays one complete turn of a player, including all bonus rolls.
-     *
-     * @param player the player whose turn it is
-     * @param allPlayers all players of the game
-     * @param dice the dice used for the rolls
-     * @param board the board the pieces move on
-     * @param messagePublisher where the events of the turn are announced
+     Plays one complete turn of a player, including all bonus rolls.
+     @param player the player whose turn it is
+     @param allPlayers all players of the game
+     @param dice the dice used for the rolls
+     @param board the board the pieces move on
+     @param messagePublisher where the events of the turn are announced
      */
     public void playTurn(
             Player player, List<Player> allPlayers, Dice dice, Board board,

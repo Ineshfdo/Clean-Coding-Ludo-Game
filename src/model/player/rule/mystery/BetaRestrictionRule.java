@@ -12,8 +12,8 @@ import model.player.rule.roll.RollEvent;
 import model.player.rule.roll.RollHook;
 
 /**
- * Roll hook for the Beta restriction (T-13). The first roll of every turn is counted for the
- * restricted pieces, and two rolls of 3 in a row send them back to Base.
+ Roll hook for the Beta restriction (T-13).
+ The first roll of every turn is counted for the restricted pieces, and two rolls of 3 in a row send them back to Base.
  */
 public final class BetaRestrictionRule implements RollHook {
 

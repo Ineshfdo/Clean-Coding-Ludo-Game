@@ -14,12 +14,9 @@ import model.effect.restriction.PieceRestrictionState;
 import model.piece.Piece;
 
 /**
- * Base class of the four colour players: RedPlayer, YellowPlayer, GreenPlayer and BluePlayer. A
- * player owns its four pieces, and every change of a piece goes through the player, which checks
- * that the piece belongs to it.
- *
- * Every method that takes a piece throws {@link PieceOwnershipException} when the piece belongs to
- * another player.
+ Base class of the four colour players: RedPlayer, YellowPlayer, GreenPlayer and BluePlayer.
+ A player owns its four pieces, and every change of a piece goes through the player, which checks that the piece belongs to it.
+ Every method that takes a piece throws {@link PieceOwnershipException} when the piece belongs to another player.
  */
 public abstract class Player {
 
@@ -27,9 +24,8 @@ public abstract class Player {
     private final List<Piece> pieces;
 
     /**
-     * Creates a player with four pieces at Base.
-     *
-     * @param color the colour of the player
+     Creates a player with four pieces at Base.
+     @param color the colour of the player
      */
     protected Player(PlayerColor color) {
         this.color = color;
@@ -37,28 +33,25 @@ public abstract class Player {
     }
 
     /**
-     * Gives the colour of the player.
-     *
-     * @return the colour
+     Gives the colour of the player.
+     @return the colour
      */
     public PlayerColor getColor() {
         return color;
     }
 
     /**
-     * Gives the pieces of the player.
-     *
-     * @return the four pieces; the list cannot be changed
+     Gives the pieces of the player.
+     @return the four pieces; the list cannot be changed
      */
     public List<Piece> getPieces() {
         return pieces;
     }
 
     /**
-     * Finds the pieces of this player that stand on one track cell (T-3).
-     *
-     * @param trackPosition the track position to look at
-     * @return the pieces on that cell; empty when there are none
+     Finds the pieces of this player that stand on one track cell (T-3).
+     @param trackPosition the track position to look at
+     @return the pieces on that cell; empty when there are none
      */
     public List<Piece> getPiecesAt(int trackPosition) {
         return pieces.stream()
@@ -68,45 +61,41 @@ public abstract class Player {
     }
 
     /**
-     * Counts the captures of all pieces together (T-7).
-     *
-     * @return the total number of captures
+     Counts the captures of all pieces together (T-7).
+     @return the total number of captures
      */
     public int getCaptureCount() {
         return pieces.stream().mapToInt(Piece::getCaptureCount).sum();
     }
 
     /**
-     * Tells whether the player has finished. A player finishes when all four pieces are Home.
-     *
-     * @return true when every piece is Home
+     Tells whether the player has finished.
+     A player finishes when all four pieces are Home.
+     @return true when every piece is Home
      */
     public boolean hasAllPiecesHome() {
         return pieces.stream().allMatch(Piece::isHome);
     }
 
     /**
-     * Counts the pieces that have left Base and are not yet Home.
-     *
-     * @return the number of pieces on the board
+     Counts the pieces that have left Base and are not yet Home.
+     @return the number of pieces on the board
      */
     public int countPiecesOnBoard() {
         return (int) pieces.stream().filter(piece -> !piece.isAtBase() && !piece.isHome()).count();
     }
 
     /**
-     * Counts the pieces that are still at Base.
-     *
-     * @return the number of pieces at Base
+     Counts the pieces that are still at Base.
+     @return the number of pieces at Base
      */
     public int countPiecesAtBase() {
         return (int) pieces.stream().filter(Piece::isAtBase).count();
     }
 
     /**
-     * Adds one capture to a piece.
-     *
-     * @param piece the piece that captured an opponent
+     Adds one capture to a piece.
+     @param piece the piece that captured an opponent
      */
     public void recordCapture(Piece piece) {
         requireOwnership(piece);
@@ -114,10 +103,9 @@ public abstract class Player {
     }
 
     /**
-     * Puts a piece on the Entry cell of this player.
-     *
-     * @param piece the piece that leaves Base
-     * @param board the board that gives the Entry cell
+     Puts a piece on the Entry cell of this player.
+     @param piece the piece that leaves Base
+     @param board the board that gives the Entry cell
      */
     public void leaveBase(Piece piece, Board board) {
         requireOwnership(piece);
@@ -125,9 +113,8 @@ public abstract class Player {
     }
 
     /**
-     * Sends a piece back to Base and resets its stored information (rule 7, T-9).
-     *
-     * @param piece the piece to send back
+     Sends a piece back to Base and resets its stored information (rule 7, T-9).
+     @param piece the piece to send back
      */
     public void returnToBase(Piece piece) {
         requireOwnership(piece);
@@ -135,10 +122,10 @@ public abstract class Player {
     }
 
     /**
-     * Puts a piece directly on a track cell. This is a jump and not a move (T-11).
-     *
-     * @param piece the piece to place
-     * @param trackPosition the track position to jump to
+     Puts a piece directly on a track cell.
+     This is a jump and not a move (T-11).
+     @param piece the piece to place
+     @param trackPosition the track position to jump to
      */
     public void teleportTo(Piece piece, int trackPosition) {
         requireOwnership(piece);
@@ -146,10 +133,8 @@ public abstract class Player {
     }
 
     /**
-     * Counts an arrival on the Approach cell as a pass, in the same way as landing on it by a move
-     * (T-1, T-11).
-     *
-     * @param piece the piece that arrived
+     Counts an arrival on the Approach cell as a pass, in the same way as landing on it by a move (T-1, T-11).
+     @param piece the piece that arrived
      */
     public void recordApproachPass(Piece piece) {
         requireOwnership(piece);
@@ -157,10 +142,9 @@ public abstract class Player {
     }
 
     /**
-     * Gives a piece its own Energized or Sick effect, after an Alpha teleport (T-12).
-     *
-     * @param piece the piece that gets the effect
-     * @param effect the effect to give
+     Gives a piece its own Energized or Sick effect, after an Alpha teleport (T-12).
+     @param piece the piece that gets the effect
+     @param effect the effect to give
      */
     public void applyIndividualEffect(Piece piece, MovementEffect effect) {
         requireOwnership(piece);
@@ -168,11 +152,10 @@ public abstract class Player {
     }
 
     /**
-     * Gives a piece the shared effect of its blockade, and records the size of the blockade (T-12).
-     *
-     * @param piece a piece of the blockade
-     * @param effect the effect of the blockade
-     * @param blockSize the number of pieces in the blockade
+     Gives a piece the shared effect of its blockade, and records the size of the blockade (T-12).
+     @param piece a piece of the blockade
+     @param effect the effect of the blockade
+     @param blockSize the number of pieces in the blockade
      */
     public void applyBlockEffect(Piece piece, MovementEffect effect, int blockSize) {
         requireOwnership(piece);
@@ -180,7 +163,7 @@ public abstract class Player {
     }
 
     /**
-     * Uses up one round of the movement effects of every piece (T-12).
+     Uses up one round of the movement effects of every piece (T-12).
      */
     public void tickMovementEffects() {
         for (Piece piece : pieces) {
@@ -190,10 +173,9 @@ public abstract class Player {
     }
 
     /**
-     * Puts a piece into a restriction, for example Beta (T-13).
-     *
-     * @param piece the piece to restrict
-     * @param restrictionState the restriction to apply
+     Puts a piece into a restriction, for example Beta (T-13).
+     @param piece the piece to restrict
+     @param restrictionState the restriction to apply
      */
     public void applyRestriction(Piece piece, PieceRestrictionState restrictionState) {
         requireOwnership(piece);
@@ -201,7 +183,7 @@ public abstract class Player {
     }
 
     /**
-     * Uses up one round of the restriction of every piece (T-13).
+     Uses up one round of the restriction of every piece (T-13).
      */
     public void tickRestrictions() {
         for (Piece piece : pieces) {
@@ -210,9 +192,8 @@ public abstract class Player {
     }
 
     /**
-     * Records the roll for every restricted piece (T-13).
-     *
-     * @param rollValue the value of the first roll of the turn
+     Records the roll for every restricted piece (T-13).
+     @param rollValue the value of the first roll of the turn
      */
     public void recordRestrictionRoll(int rollValue) {
         for (Piece piece : pieces) {
@@ -223,9 +204,8 @@ public abstract class Player {
     }
 
     /**
-     * Finds the pieces whose Beta restriction has triggered a return to Base (T-13).
-     *
-     * @return the triggered pieces; empty when there are none
+     Finds the pieces whose Beta restriction has triggered a return to Base (T-13).
+     @return the triggered pieces; empty when there are none
      */
     public List<Piece> findPiecesTriggeredForReturnToBase() {
         List<Piece> triggeredPieces = new ArrayList<>();
@@ -240,10 +220,9 @@ public abstract class Player {
     }
 
     /**
-     * Gives a piece that has just left Base its direction (T-1).
-     *
-     * @param piece the piece that left Base
-     * @param movementDirection the direction given by the coin toss
+     Gives a piece that has just left Base its direction (T-1).
+     @param piece the piece that left Base
+     @param movementDirection the direction given by the coin toss
      */
     public void assignMovementDirection(Piece piece, MovementDirectionStrategy movementDirection) {
         requireOwnership(piece);
@@ -251,12 +230,10 @@ public abstract class Player {
     }
 
     /**
-     * Makes a piece travel in the direction of its blockade, and records the size of the blockade
-     * (T-4, T-5).
-     *
-     * @param piece a piece of the blockade
-     * @param blockDirection the direction of the blockade
-     * @param blockSize the number of pieces in the blockade
+     Makes a piece travel in the direction of its blockade, and records the size of the blockade (T-4, T-5).
+     @param piece a piece of the blockade
+     @param blockDirection the direction of the blockade
+     @param blockSize the number of pieces in the blockade
      */
     public void adoptBlockDirection(Piece piece, MovementDirectionStrategy blockDirection, int blockSize) {
         requireOwnership(piece);
@@ -264,9 +241,8 @@ public abstract class Player {
     }
 
     /**
-     * Gives a piece that leaves its blockade its original direction back (T-5).
-     *
-     * @param piece the piece that left the blockade
+     Gives a piece that leaves its blockade its original direction back (T-5).
+     @param piece the piece that left the blockade
      */
     public void restoreOriginalDirection(Piece piece) {
         requireOwnership(piece);
@@ -274,9 +250,8 @@ public abstract class Player {
     }
 
     /**
-     * Reverses the direction of a piece for good, after a Gamma teleport (T-14).
-     *
-     * @param piece the piece to reverse
+     Reverses the direction of a piece for good, after a Gamma teleport (T-14).
+     @param piece the piece to reverse
      */
     public void reverseDirection(Piece piece) {
         requireOwnership(piece);
@@ -284,15 +259,13 @@ public abstract class Player {
     }
 
     /**
-     * Moves a piece along the track or the HomeStraight by the given steps, in the given direction
-     * (rule 1, T-1).
-     *
-     * @param piece the piece to move
-     * @param steps the number of steps to move
-     * @param board the board that gives the track
-     * @param homeEntryPolicy decides whether the piece may enter its HomeStraight
-     * @param travelDirection the direction in which the piece travels
-     * @throws IllegalMoveException if the piece is at Base or already Home
+     Moves a piece along the track or the HomeStraight by the given steps, in the given direction (rule 1, T-1).
+     @param piece the piece to move
+     @param steps the number of steps to move
+     @param board the board that gives the track
+     @param homeEntryPolicy decides whether the piece may enter its HomeStraight
+     @param travelDirection the direction in which the piece travels
+     @throws IllegalMoveException if the piece is at Base or already Home
      */
     public void moveForward(
             Piece piece, int steps, Board board, HomeEntryPolicy homeEntryPolicy,

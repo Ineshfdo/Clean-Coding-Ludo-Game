@@ -8,8 +8,8 @@ import model.piece.Piece;
 import model.piece.RemainingHomeDistance;
 
 /**
- * A blockade travels in the original direction of its member that is farthest from Home (T-4). The
- * choice is reused while the blockade keeps its size, and a new size makes a new comparison.
+ A blockade travels in the original direction of its member that is farthest from Home (T-4).
+ The choice is reused while the blockade keeps its size, and a new size makes a new comparison.
  */
 public final class LongestDistanceDirectionStrategy implements BlockTravelDirectionStrategy {
 

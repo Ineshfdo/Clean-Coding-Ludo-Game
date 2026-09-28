@@ -4,13 +4,12 @@ import message.move.PieceDirectionAssigned;
 import view.presenter.EventPresenter;
 
 /**
- * Presents {@link PieceDirectionAssigned}: it tells the direction that the coin toss gave to a
- * piece.
+ Presents {@link PieceDirectionAssigned}: it tells the direction that the coin toss gave to a piece.
  */
 public final class PieceDirectionAssignedPresenter extends EventPresenter<PieceDirectionAssigned> {
 
     /**
-     * Creates the presenter for {@link PieceDirectionAssigned}.
+     Creates the presenter for {@link PieceDirectionAssigned}.
      */
     public PieceDirectionAssignedPresenter() {
         super(PieceDirectionAssigned.class);

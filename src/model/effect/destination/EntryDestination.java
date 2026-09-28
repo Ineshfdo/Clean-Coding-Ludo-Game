@@ -5,8 +5,8 @@ import model.effect.activation.EffectActivationRule;
 import model.player.Player;
 
 /**
- * The Entry destination (T-11). The pieces go to the Entry cell of their own colour, and arriving
- * there has no further effect.
+ The Entry destination (T-11).
+ The pieces go to the Entry cell of their own colour, and arriving there has no further effect.
  */
 public final class EntryDestination extends TrackDestination {
 
@@ -15,10 +15,9 @@ public final class EntryDestination extends TrackDestination {
     private final Board board;
 
     /**
-     * Creates the Entry destination.
-     *
-     * @param board gives the Entry cell of each colour
-     * @param effectActivationRule decides whether an effect may start
+     Creates the Entry destination.
+     @param board gives the Entry cell of each colour
+     @param effectActivationRule decides whether an effect may start
      */
     public EntryDestination(Board board, EffectActivationRule effectActivationRule) {
         super(effectActivationRule);

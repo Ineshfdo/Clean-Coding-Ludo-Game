@@ -12,11 +12,10 @@ public final class StandardCell {
     private final PlayerColor entryOwner;
 
         /**
-         * Creates a track cell.
-         *
-         * @param position the position of the cell on the track
-         * @param approachOwner the colour whose Approach cell this is, or null for none
-         * @param entryOwner the colour whose Entry cell this is, or null for none
+         Creates a track cell.
+         @param position the position of the cell on the track
+         @param approachOwner the colour whose Approach cell this is, or null for none
+         @param entryOwner the colour whose Entry cell this is, or null for none
         */
       
     public StandardCell(int position, PlayerColor approachOwner, PlayerColor entryOwner) {
@@ -26,9 +25,8 @@ public final class StandardCell {
     }
 
         /**
-         * Gives the position of the cell.
-         *
-         * @return the track position
+         Gives the position of the cell.
+         @return the track position
         */
 
     public int getPosition() {
@@ -36,10 +34,9 @@ public final class StandardCell {
     }
 
         /**
-         * Tells whether this is the Approach cell of a colour.
-         *
-         * @param color the colour to check
-         * @return true when the cell is the Approach cell of that colour
+         Tells whether this is the Approach cell of a colour.
+         @param color the colour to check
+         @return true when the cell is the Approach cell of that colour
         */
 
    // Checks if this cell is that colour's Approach point.
@@ -48,10 +45,9 @@ public final class StandardCell {
     }
 
         /**
-         * Tells whether this is the Entry cell of a colour.
-         *
-         * @param color the colour to check
-         * @return true when the cell is the Entry cell of that colour
+         Tells whether this is the Entry cell of a colour.
+         @param color the colour to check
+         @return true when the cell is the Entry cell of that colour
         */
 
 

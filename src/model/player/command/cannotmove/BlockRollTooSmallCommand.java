@@ -5,14 +5,13 @@ import message.observer.GameMessagePublisher;
 import model.piece.Piece;
 
 /**
- * Announces that the roll of a block was divided down to zero cells (T-4).
+ Announces that the roll of a block was divided down to zero cells (T-4).
  */
 public final class BlockRollTooSmallCommand extends CannotMoveCommand {
 
     /**
-     * Creates the command.
-     *
-     * @param piece a piece of the block that cannot move
+     Creates the command.
+     @param piece a piece of the block that cannot move
      */
     public BlockRollTooSmallCommand(Piece piece) {
         super(piece);

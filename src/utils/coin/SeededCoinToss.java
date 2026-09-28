@@ -5,8 +5,8 @@ import utils.randomgenerator.RandomNumberGenerator;
 import utils.randomgenerator.SeededRandomNumberGenerator;
 
 /**
- * The coin of the game (Singleton). It draws from the same seeded sequence as the dice, so the
- * results can be repeated.
+ The coin of the game (Singleton).
+ It draws from the same seeded sequence as the dice, so the results can be repeated.
  */
 public final class SeededCoinToss implements CoinToss {
 
@@ -23,9 +23,8 @@ public final class SeededCoinToss implements CoinToss {
     }
 
     /**
-     * Gives the one shared coin.
-     *
-     * @return the shared instance
+     Gives the one shared coin.
+     @return the shared instance
      */
     public static SeededCoinToss getInstance() {
         return SHARED_INSTANCE;

@@ -11,9 +11,9 @@ import model.player.rule.roll.RollEvent;
 import model.player.rule.roll.RollHook;
 
 /**
- * Tracks the home gate (T-7). It counts how many rolls in a row each colour has taken while every
- * opponent is already Home. After three such rolls the gate opens for that colour, and its pieces
- * no longer need a capture to enter the HomeStraight.
+ Tracks the home gate (T-7).
+ It counts how many rolls in a row each colour has taken while every opponent is already Home.
+ After three such rolls the gate opens for that colour, and its pieces no longer need a capture to enter the HomeStraight.
  */
 public final class HomeGateTracker implements HomeGateStatus, RollHook {
 

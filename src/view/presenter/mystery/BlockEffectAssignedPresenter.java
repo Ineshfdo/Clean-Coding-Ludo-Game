@@ -5,12 +5,12 @@ import message.mystery.BlockEffectAssigned;
 import view.presenter.EventPresenter;
 
 /**
- * Presents {@link BlockEffectAssigned}: it tells the shared Energized or Sick effect of a blockade.
+ Presents {@link BlockEffectAssigned}: it tells the shared Energized or Sick effect of a blockade.
  */
 public final class BlockEffectAssignedPresenter extends EventPresenter<BlockEffectAssigned> {
 
     /**
-     * Creates the presenter for {@link BlockEffectAssigned}.
+     Creates the presenter for {@link BlockEffectAssigned}.
      */
     public BlockEffectAssignedPresenter() {
         super(BlockEffectAssigned.class);

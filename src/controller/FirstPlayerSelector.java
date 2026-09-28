@@ -21,10 +21,9 @@ public final class FirstPlayerSelector {
     private final GameMessagePublisher messagePublisher;
 
     /**
-     * Creates the selector.
-     *
-     * @param dice the dice used for the toss
-     * @param messagePublisher where the toss is announced
+     Creates the selector.
+     @param dice the dice used for the toss
+     @param messagePublisher where the toss is announced
      */
 
     public FirstPlayerSelector(Dice dice, GameMessagePublisher messagePublisher) {
@@ -33,10 +32,9 @@ public final class FirstPlayerSelector {
     }
 
     /**
-     * Plays the toss and announces the rolls and the winner.
-     *
-     * @param tossOrder the players in the order in which they roll
-     * @return the player who won the toss
+     Plays the toss and announces the rolls and the winner.
+     @param tossOrder the players in the order in which they roll
+     @return the player who won the toss
      */
 
     public Player select(List<Player> tossOrder) {

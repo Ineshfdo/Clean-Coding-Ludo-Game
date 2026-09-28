@@ -3,8 +3,8 @@ package model.effect.restriction;
 import config.constant.EffectConstants;
 
 /**
- * The state of a piece that was teleported to Beta (T-13). The piece cannot move for four rounds,
- * and two rolls of 3 in a row send it back to Base.
+ The state of a piece that was teleported to Beta (T-13).
+ The piece cannot move for four rounds, and two rolls of 3 in a row send it back to Base.
  */
 public final class BetaRestrictedState implements PieceRestrictionState {
 
@@ -12,7 +12,7 @@ public final class BetaRestrictedState implements PieceRestrictionState {
     private final int consecutiveTriggerRollCount;
 
     /**
-     * Creates a new Beta restriction with all its rounds left and no rolls of 3 counted.
+     Creates a new Beta restriction with all its rounds left and no rolls of 3 counted.
      */
     public BetaRestrictedState() {
         this(EffectConstants.EFFECT_DURATION_IN_ROUNDS, 0);

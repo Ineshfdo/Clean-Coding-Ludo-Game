@@ -1,4 +1,4 @@
 /**
- * Presenters for the toss messages.
+ Presenters for the toss messages.
  */
 package view.presenter.toss;

@@ -4,7 +4,7 @@ import java.util.List;
 import model.player.Player;
 
 /**
- * Counts the rounds of one game and keeps the turn order of the game.
+ Counts the rounds of one game and keeps the turn order of the game.
  */
 public final class RoundTracker {
 
@@ -12,9 +12,8 @@ public final class RoundTracker {
     private int roundNumber;
 
     /**
-     * Creates a tracker that stands before the first round.
-     *
-     * @param turnOrder the players in play order; the list is copied
+     Creates a tracker that stands before the first round.
+     @param turnOrder the players in play order; the list is copied
      */
     public RoundTracker(List<Player> turnOrder) {
         this.turnOrder = List.copyOf(turnOrder);
@@ -22,9 +21,8 @@ public final class RoundTracker {
     }
 
     /**
-     * Starts the next round.
-     *
-     * @return the number of the round that has just started, counted from 1
+     Starts the next round.
+     @return the number of the round that has just started, counted from 1
      */
     public int startNextRound() {
         roundNumber++;
@@ -32,18 +30,16 @@ public final class RoundTracker {
     }
 
     /**
-     * Gives the number of the latest round.
-     *
-     * @return the round number; 0 before the first round
+     Gives the number of the latest round.
+     @return the round number; 0 before the first round
      */
     public int getRoundNumber() {
         return roundNumber;
     }
 
     /**
-     * Gives the turn order of the game.
-     *
-     * @return the players in play order; the list cannot be changed
+     Gives the turn order of the game.
+     @return the players in play order; the list cannot be changed
      */
     public List<Player> getTurnOrder() {
         return turnOrder;

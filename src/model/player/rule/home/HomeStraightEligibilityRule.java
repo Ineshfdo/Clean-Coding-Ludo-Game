@@ -4,17 +4,15 @@ import config.constant.TurnConstants;
 import model.piece.Piece;
 
 /**
- * A piece needs a capture before it may enter its HomeStraight, unless the home gate is open for
- * its colour (T-7).
+ A piece needs a capture before it may enter its HomeStraight, unless the home gate is open for its colour (T-7).
  */
 public final class HomeStraightEligibilityRule extends HomeStraightEntryRule {
 
     private final HomeGateStatus homeGate;
 
     /**
-     * Creates the rule.
-     *
-     * @param homeGate tells whether the home gate is open for a colour
+     Creates the rule.
+     @param homeGate tells whether the home gate is open for a colour
      */
     public HomeStraightEligibilityRule(HomeGateStatus homeGate) {
         this.homeGate = homeGate;

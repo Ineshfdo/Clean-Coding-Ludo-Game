@@ -4,13 +4,12 @@ import message.cannotmove.EffectRollTooSmall;
 import view.presenter.EventPresenter;
 
 /**
- * Presents {@link EffectRollTooSmall}: it says that a Sick effect halved the roll down to zero
- * cells, so the piece cannot move.
+ Presents {@link EffectRollTooSmall}: it says that a Sick effect halved the roll down to zero cells, so the piece cannot move.
  */
 public final class EffectRollTooSmallPresenter extends EventPresenter<EffectRollTooSmall> {
 
     /**
-     * Creates the presenter for {@link EffectRollTooSmall}.
+     Creates the presenter for {@link EffectRollTooSmall}.
      */
     public EffectRollTooSmallPresenter() {
         super(EffectRollTooSmall.class);

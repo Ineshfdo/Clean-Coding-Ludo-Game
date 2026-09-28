@@ -6,14 +6,14 @@ import message.game.GameOver;
 import view.presenter.EventPresenter;
 
 /**
- * Presents {@link GameOver}: it writes the banner with the final standings.
+ Presents {@link GameOver}: it writes the banner with the final standings.
  */
 public final class GameOverPresenter extends EventPresenter<GameOver> {
 
     private static final String GAME_OVER_BANNER_BORDER = "=".repeat(50);
 
     /**
-     * Creates the presenter for {@link GameOver}.
+     Creates the presenter for {@link GameOver}.
      */
     public GameOverPresenter() {
         super(GameOver.class);

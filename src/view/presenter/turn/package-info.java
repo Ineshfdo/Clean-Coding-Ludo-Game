@@ -1,4 +1,4 @@
 /**
- * Presenters for the turn messages.
+ Presenters for the turn messages.
  */
 package view.presenter.turn;

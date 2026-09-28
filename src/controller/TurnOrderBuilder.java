@@ -8,28 +8,26 @@ import model.board.TurnOrderLayout;
 import model.player.Player;
 
 /**
- * Builds the clockwise turn order (rule 3) that starts with a given colour.
+ Builds the clockwise turn order (rule 3) that starts with a given colour.
  */
 public final class TurnOrderBuilder {
 
     private final TurnOrderLayout turnOrderLayout;
 
     /**
-     * Creates the builder.
-     *
-     * @param turnOrderLayout tells which colour sits next to which around the board
+     Creates the builder.
+     @param turnOrderLayout tells which colour sits next to which around the board
      */
     public TurnOrderBuilder(TurnOrderLayout turnOrderLayout) {
         this.turnOrderLayout = turnOrderLayout;
     }
 
     /**
-     * Lists all players in play order.
-     *
-     * @param startingColor colour of the first player
-     * @param allPlayers all players of the game
-     * @return the players in clockwise order, starting with the given colour
-     * @throws PlayerNotFoundException if no player has one of the colours in the order
+     Lists all players in play order.
+     @param startingColor colour of the first player
+     @param allPlayers all players of the game
+     @return the players in clockwise order, starting with the given colour
+     @throws PlayerNotFoundException if no player has one of the colours in the order
      */
     public List<Player> buildFrom(PlayerColor startingColor, List<Player> allPlayers) {
         List<Player> turnOrder = new ArrayList<>();

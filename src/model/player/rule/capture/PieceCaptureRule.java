@@ -9,8 +9,8 @@ import model.player.command.Command;
 import model.player.command.capture.CapturePieceCommand;
 
 /**
- * A single piece that lands on a single opponent piece captures it (rule 7). A single piece cannot
- * capture a blockade (T-8).
+ A single piece that lands on a single opponent piece captures it (rule 7).
+ A single piece cannot capture a blockade (T-8).
  */
 public final class PieceCaptureRule extends CaptureCheckRule {
 

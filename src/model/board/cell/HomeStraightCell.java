@@ -13,10 +13,9 @@ public final class HomeStraightCell {
     private final int indexFromApproach;
 
         /**
-         * Creates a HomeStraight cell.
-         *
-         * @param color the colour that owns the cell
-         * @param indexFromApproach the index of the cell, counted from the Approach cell
+         Creates a HomeStraight cell.
+         @param color the colour that owns the cell
+         @param indexFromApproach the index of the cell, counted from the Approach cell
         */
 
     public HomeStraightCell(PlayerColor color, int indexFromApproach) {
@@ -25,9 +24,8 @@ public final class HomeStraightCell {
     }
 
         /**
-         * Gives the owner of the cell.
-         *
-         * @return the colour that owns the cell
+         Gives the owner of the cell.
+         @return the colour that owns the cell
          */
 
     public PlayerColor getColor() {
@@ -35,9 +33,8 @@ public final class HomeStraightCell {
     }
 
         /**
-         * Gives the place of the cell on the HomeStraight.
-         *
-         * @return the index, counted from the Approach cell; 0 is the first cell
+         Gives the place of the cell on the HomeStraight.
+         @return the index, counted from the Approach cell; 0 is the first cell
          */
     
     public int getIndexFromApproach() {
@@ -45,9 +42,8 @@ public final class HomeStraightCell {
     }
 
         /**
-         * Tells whether this is the last cell before Home.
-         *
-         * @return true for the last cell of the HomeStraight
+         Tells whether this is the last cell before Home.
+         @return true for the last cell of the HomeStraight
          */
 
     public boolean isLastCellBeforeHome() {

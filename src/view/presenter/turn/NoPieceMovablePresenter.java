@@ -4,12 +4,12 @@ import message.turn.NoPieceMovable;
 import view.presenter.EventPresenter;
 
 /**
- * Presents {@link NoPieceMovable}: it tells that the roll left nothing to move.
+ Presents {@link NoPieceMovable}: it tells that the roll left nothing to move.
  */
 public final class NoPieceMovablePresenter extends EventPresenter<NoPieceMovable> {
 
     /**
-     * Creates the presenter for {@link NoPieceMovable}.
+     Creates the presenter for {@link NoPieceMovable}.
      */
     public NoPieceMovablePresenter() {
         super(NoPieceMovable.class);

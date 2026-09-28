@@ -5,12 +5,12 @@ import message.mystery.IndividualEffectAssigned;
 import view.presenter.EventPresenter;
 
 /**
- * Presents {@link IndividualEffectAssigned}: it tells the own Energized or Sick effect of a piece.
+ Presents {@link IndividualEffectAssigned}: it tells the own Energized or Sick effect of a piece.
  */
 public final class IndividualEffectAssignedPresenter extends EventPresenter<IndividualEffectAssigned> {
 
     /**
-     * Creates the presenter for {@link IndividualEffectAssigned}.
+     Creates the presenter for {@link IndividualEffectAssigned}.
      */
     public IndividualEffectAssignedPresenter() {
         super(IndividualEffectAssigned.class);

@@ -4,13 +4,12 @@ import message.move.BlockMoved;
 import view.presenter.EventPresenter;
 
 /**
- * Presents {@link BlockMoved}: it tells the move of a blockade: its cells, its type and its
- * direction.
+ Presents {@link BlockMoved}: it tells the move of a blockade: its cells, its type and its direction.
  */
 public final class BlockMovedPresenter extends EventPresenter<BlockMoved> {
 
     /**
-     * Creates the presenter for {@link BlockMoved}.
+     Creates the presenter for {@link BlockMoved}.
      */
     public BlockMovedPresenter() {
         super(BlockMoved.class);

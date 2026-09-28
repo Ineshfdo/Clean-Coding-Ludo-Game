@@ -7,10 +7,9 @@ import config.enums.PlayerColor;
 public interface TurnOrderLayout {
 
         /**
-        * Finds the colour that plays after the given colour.
-         
-        * @param color the colour to start from
-        * @return the next colour, clockwise
+        Finds the colour that plays after the given colour.
+        @param color the colour to start from
+        @return the next colour, clockwise
         */
 
     PlayerColor getNextColorClockwise(PlayerColor color);

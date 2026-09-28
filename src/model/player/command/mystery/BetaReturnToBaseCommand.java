@@ -9,7 +9,7 @@ import model.player.Player;
 import model.player.command.Command;
 
 /**
- * Sends a Beta-restricted piece or blockade back to Base after two rolls of 3 in a row (T-13).
+ Sends a Beta-restricted piece or blockade back to Base after two rolls of 3 in a row (T-13).
  */
 public final class BetaReturnToBaseCommand implements Command {
 
@@ -17,10 +17,9 @@ public final class BetaReturnToBaseCommand implements Command {
     private final List<Piece> returningPieces;
 
     /**
-     * Creates the command.
-     *
-     * @param player the owner of the pieces
-     * @param returningPieces the pieces that return to Base
+     Creates the command.
+     @param player the owner of the pieces
+     @param returningPieces the pieces that return to Base
      */
     public BetaReturnToBaseCommand(Player player, List<Piece> returningPieces) {
         this.player = player;

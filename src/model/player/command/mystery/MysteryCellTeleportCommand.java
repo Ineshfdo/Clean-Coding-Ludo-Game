@@ -8,7 +8,7 @@ import model.player.Player;
 import model.player.command.Command;
 
 /**
- * Teleports pieces from the Mystery Cell to a chosen destination (T-11).
+ Teleports pieces from the Mystery Cell to a chosen destination (T-11).
  */
 public final class MysteryCellTeleportCommand implements Command {
 
@@ -17,11 +17,10 @@ public final class MysteryCellTeleportCommand implements Command {
     private final MysteryCellDestination destination;
 
     /**
-     * Creates the command.
-     *
-     * @param player the owner of the pieces
-     * @param teleportedPieces the pieces that landed on the Mystery Cell
-     * @param destination the destination that receives the pieces
+     Creates the command.
+     @param player the owner of the pieces
+     @param teleportedPieces the pieces that landed on the Mystery Cell
+     @param destination the destination that receives the pieces
      */
     public MysteryCellTeleportCommand(
             Player player, List<Piece> teleportedPieces, MysteryCellDestination destination) {

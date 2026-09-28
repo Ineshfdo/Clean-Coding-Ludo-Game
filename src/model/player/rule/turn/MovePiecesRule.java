@@ -26,9 +26,9 @@ import model.player.rule.home.HomeStraightEntryRule;
 import model.player.strategy.blockdirection.BlockTravelDirectionStrategy;
 
 /**
- * Lists the legal moves of the pieces on the board (rule 1). It respects blockades (T-3), blockade
- * sharing (T-4), movement effects (T-12), the Beta restriction (T-13) and the exact roll needed for
- * Home (rule 10). When no piece can move, it gives a command that explains why.
+ Lists the legal moves of the pieces on the board (rule 1).
+ It respects blockades (T-3), blockade sharing (T-4), movement effects (T-12), the Beta restriction (T-13) and the exact roll needed for Home (rule 10).
+ When no piece can move, it gives a command that explains why.
  */
 public final class MovePiecesRule implements TurnRule {
 
@@ -39,13 +39,12 @@ public final class MovePiecesRule implements TurnRule {
     private final BlockTravelDirectionStrategy blockTravelDirectionStrategy;
 
     /**
-     * Creates the rule.
-     *
-     * @param blockadeLimitRule limits the steps in front of an opponent blockade
-     * @param homeStraightEntryRule decides whether a piece may enter its HomeStraight
-     * @param exactRollRule forbids a move past Home
-     * @param blockStepsRule shares the roll of a blockade between its pieces
-     * @param blockTravelDirectionStrategy chooses the direction of a blockade
+     Creates the rule.
+     @param blockadeLimitRule limits the steps in front of an opponent blockade
+     @param homeStraightEntryRule decides whether a piece may enter its HomeStraight
+     @param exactRollRule forbids a move past Home
+     @param blockStepsRule shares the roll of a blockade between its pieces
+     @param blockTravelDirectionStrategy chooses the direction of a blockade
      */
     public MovePiecesRule(
             BlockadeLimitRule blockadeLimitRule, HomeStraightEntryRule homeStraightEntryRule,

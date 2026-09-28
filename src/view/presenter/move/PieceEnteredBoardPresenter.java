@@ -6,13 +6,12 @@ import view.presenter.EventPresenter;
 import view.presenter.PieceCountLine;
 
 /**
- * Presents {@link PieceEnteredBoard}: it tells that a piece left Base, followed by the piece count
- * of the player.
+ Presents {@link PieceEnteredBoard}: it tells that a piece left Base, followed by the piece count of the player.
  */
 public final class PieceEnteredBoardPresenter extends EventPresenter<PieceEnteredBoard> {
 
     /**
-     * Creates the presenter for {@link PieceEnteredBoard}.
+     Creates the presenter for {@link PieceEnteredBoard}.
      */
     public PieceEnteredBoardPresenter() {
         super(PieceEnteredBoard.class);

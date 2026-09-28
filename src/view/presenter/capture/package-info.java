@@ -1,4 +1,4 @@
 /**
- * Presenters for the capture messages.
+ Presenters for the capture messages.
  */
 package view.presenter.capture;

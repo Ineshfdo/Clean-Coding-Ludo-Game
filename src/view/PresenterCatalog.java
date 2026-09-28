@@ -43,8 +43,8 @@ import view.presenter.turn.TurnRolledPresenter;
 import view.presenter.turn.TurnStartedPresenter;
 
 /**
- * Lists the presenter of every kind of game message in one place. Adding a new message means adding
- * its presenter here.
+ Lists the presenter of every kind of game message in one place.
+ Adding a new message means adding its presenter here.
  */
 public final class PresenterCatalog {
 
@@ -52,11 +52,10 @@ public final class PresenterCatalog {
     private final List<EventPresenter<? extends GameMessage>> presenters;
 
     /**
-     * Creates the catalogue with one presenter for each kind of message.
-     *
-     * @param allPlayers all players of the game, for the board report
-     * @param board the board the pieces move on
-     * @param blockTravelDirectionStrategy the strategy that decides the direction of a blockade
+     Creates the catalogue with one presenter for each kind of message.
+     @param allPlayers all players of the game, for the board report
+     @param board the board the pieces move on
+     @param blockTravelDirectionStrategy the strategy that decides the direction of a blockade
      */
     public PresenterCatalog(
             List<Player> allPlayers, Board board, BlockTravelDirectionStrategy blockTravelDirectionStrategy) {
@@ -108,18 +107,16 @@ public final class PresenterCatalog {
     }
 
     /**
-     * Gives all presenters.
-     *
-     * @return one presenter for each kind of message
+     Gives all presenters.
+     @return one presenter for each kind of message
      */
     public List<EventPresenter<? extends GameMessage>> getPresenters() {
         return presenters;
     }
 
     /**
-     * Sets the order in which the round reports list the players.
-     *
-     * @param turnOrder the players in play order, starting with the winner of the toss
+     Sets the order in which the round reports list the players.
+     @param turnOrder the players in play order, starting with the winner of the toss
      */
     public void setTurnOrder(List<Player> turnOrder) {
         boardStatePresenter.setTurnOrder(turnOrder);

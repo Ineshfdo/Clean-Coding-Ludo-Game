@@ -8,8 +8,8 @@ import model.direction.MovementDirectionStrategy;
 import model.player.Player;
 
 /**
- * Stops a move in front of an opponent blockade (T-3, T-8). Landing on a blockade of the same size
- * is allowed, because that is a capture.
+ Stops a move in front of an opponent blockade (T-3, T-8).
+ Landing on a blockade of the same size is allowed, because that is a capture.
  */
 public final class PassingBlockadeRule extends BlockadeLimitRule {
 

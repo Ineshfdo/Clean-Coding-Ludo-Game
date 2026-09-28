@@ -9,8 +9,7 @@ import model.direction.MovementDirectionStrategy;
 import model.piece.Piece;
 
 /**
- * Classifies a blockade by the original directions of its pieces, and gives the type a label (T-4,
- * T-5).
+ Classifies a blockade by the original directions of its pieces, and gives the type a label (T-4, T-5).
  */
 public final class BlockDirectionClassifier {
 
@@ -18,11 +17,9 @@ public final class BlockDirectionClassifier {
     }
 
     /**
-     * Finds the type of a blockade.
-     *
-     * @param blockPieces the pieces of the blockade
-     * @return the opposite-direction type when the pieces have different original directions,
-     *     otherwise the same-direction type
+     Finds the type of a blockade.
+     @param blockPieces the pieces of the blockade
+     @return the opposite-direction type when the pieces have different original directions, otherwise the same-direction type
      */
     public static BlockDirectionType classify(List<Piece> blockPieces) {
         if (blockPieces.size() < BlockadeConstants.MINIMUM_BLOCKADE_SIZE) {
@@ -37,10 +34,9 @@ public final class BlockDirectionClassifier {
     }
 
     /**
-     * Gives the text shown on the console.
-     *
-     * @param type the type of the blockade
-     * @return the label, for example Same-Direction
+     Gives the text shown on the console.
+     @param type the type of the blockade
+     @return the label, for example Same-Direction
      */
     public static String labelOf(BlockDirectionType type) {
         return switch (type) {

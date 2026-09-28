@@ -31,9 +31,8 @@ public final class LudoBoard implements Board, MysteryCellPositions, TurnOrderLa
     }
 
         /**
-         * Gives the one shared board.
-        
-         * @return the shared instance
+         Gives the one shared board.
+         @return the shared instance
         */
     
     public static LudoBoard getInstance() {

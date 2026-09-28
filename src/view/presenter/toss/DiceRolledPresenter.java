@@ -4,12 +4,12 @@ import message.toss.DiceRolled;
 import view.presenter.EventPresenter;
 
 /**
- * Presents {@link DiceRolled}: it tells one roll of the first-player toss.
+ Presents {@link DiceRolled}: it tells one roll of the first-player toss.
  */
 public final class DiceRolledPresenter extends EventPresenter<DiceRolled> {
 
     /**
-     * Creates the presenter for {@link DiceRolled}.
+     Creates the presenter for {@link DiceRolled}.
      */
     public DiceRolledPresenter() {
         super(DiceRolled.class);

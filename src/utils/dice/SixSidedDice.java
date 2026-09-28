@@ -5,9 +5,9 @@ import utils.randomgenerator.RandomNumberGenerator;
 import utils.randomgenerator.SeededRandomNumberGenerator;
 
 /**
- * The die of the game (Singleton). One die is shared by every player, in the same way as one
- * physical die is shared on a real board. Its numbers come from the seeded random generator, so a
- * game can be repeated.
+ The die of the game (Singleton).
+ One die is shared by every player, in the same way as one physical die is shared on a real board.
+ Its numbers come from the seeded random generator, so a game can be repeated.
  */
 public final class SixSidedDice implements Dice {
 
@@ -21,9 +21,8 @@ public final class SixSidedDice implements Dice {
     }
 
     /**
-     * Gives the one shared die.
-     *
-     * @return the shared instance
+     Gives the one shared die.
+     @return the shared instance
      */
     public static SixSidedDice getInstance() {
         return SHARED_INSTANCE;

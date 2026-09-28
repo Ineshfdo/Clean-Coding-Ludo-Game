@@ -7,8 +7,8 @@ import model.piece.Piece;
 import model.player.Player;
 
 /**
- * The Approach destination (T-11). The pieces go to the Approach cell of their own colour, and
- * arriving there counts as an Approach pass (T-1).
+ The Approach destination (T-11).
+ The pieces go to the Approach cell of their own colour, and arriving there counts as an Approach pass (T-1).
  */
 public final class ApproachDestination extends TrackDestination {
 
@@ -17,10 +17,9 @@ public final class ApproachDestination extends TrackDestination {
     private final Board board;
 
     /**
-     * Creates the Approach destination.
-     *
-     * @param board gives the Approach cell of each colour
-     * @param effectActivationRule decides whether an effect may start
+     Creates the Approach destination.
+     @param board gives the Approach cell of each colour
+     @param effectActivationRule decides whether an effect may start
      */
     public ApproachDestination(Board board, EffectActivationRule effectActivationRule) {
         super(effectActivationRule);

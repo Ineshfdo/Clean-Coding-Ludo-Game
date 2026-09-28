@@ -7,8 +7,8 @@ import model.player.Player;
 import model.player.command.Command;
 
 /**
- * A piece captures an opponent piece (rule 7). The captured piece returns to Base, and the
- * capturing piece gains one capture.
+ A piece captures an opponent piece (rule 7).
+ The captured piece returns to Base, and the capturing piece gains one capture.
  */
 public final class CapturePieceCommand implements Command {
 
@@ -19,12 +19,11 @@ public final class CapturePieceCommand implements Command {
     private final Piece capturedPiece;
 
     /**
-     * Creates the command.
-     *
-     * @param capturingPlayer the player who captures
-     * @param capturingPiece the piece that landed on the opponent
-     * @param capturedPlayer the player who loses the piece
-     * @param capturedPiece the piece that is captured
+     Creates the command.
+     @param capturingPlayer the player who captures
+     @param capturingPiece the piece that landed on the opponent
+     @param capturedPlayer the player who loses the piece
+     @param capturedPiece the piece that is captured
      */
     public CapturePieceCommand(
             Player capturingPlayer, Piece capturingPiece,

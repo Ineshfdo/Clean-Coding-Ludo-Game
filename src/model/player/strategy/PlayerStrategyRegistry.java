@@ -4,8 +4,8 @@ import config.enums.PlayerColor;
 import java.util.Map;
 
 /**
- * Registry of the strategy of each colour. A colour that has no strategy gets a shared default
- * strategy.
+ Registry of the strategy of each colour.
+ A colour that has no strategy gets a shared default strategy.
  */
 public final class PlayerStrategyRegistry implements PlayerStrategyLookup {
 
@@ -13,10 +13,9 @@ public final class PlayerStrategyRegistry implements PlayerStrategyLookup {
     private final PlayerStrategy defaultStrategy;
 
     /**
-     * Creates the registry.
-     *
-     * @param strategiesByColor the strategy of each colour
-     * @param defaultStrategy the strategy for a colour that is not in the map
+     Creates the registry.
+     @param strategiesByColor the strategy of each colour
+     @param defaultStrategy the strategy for a colour that is not in the map
      */
     public PlayerStrategyRegistry(
             Map<PlayerColor, PlayerStrategy> strategiesByColor, PlayerStrategy defaultStrategy) {

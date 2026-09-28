@@ -1,4 +1,4 @@
 /**
- * The die of the game.
+ The die of the game.
  */
 package utils.dice;

@@ -11,7 +11,8 @@ import model.piece.PieceLabels;
 import model.player.Player;
 
 /**
- * The Beta destination (T-13). The teleported pieces cannot move for four rounds.
+ The Beta destination (T-13).
+ The teleported pieces cannot move for four rounds.
  */
 public final class BetaDestination extends TrackDestination {
 
@@ -20,10 +21,9 @@ public final class BetaDestination extends TrackDestination {
     private final MysteryCellPositions positions;
 
     /**
-     * Creates the Beta destination.
-     *
-     * @param positions gives the Beta cell
-     * @param effectActivationRule decides whether the restriction may start
+     Creates the Beta destination.
+     @param positions gives the Beta cell
+     @param effectActivationRule decides whether the restriction may start
      */
     public BetaDestination(MysteryCellPositions positions, EffectActivationRule effectActivationRule) {
         super(effectActivationRule);

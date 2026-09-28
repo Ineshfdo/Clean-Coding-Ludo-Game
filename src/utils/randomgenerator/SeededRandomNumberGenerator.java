@@ -3,8 +3,8 @@ package utils.randomgenerator;
 import java.util.Random;
 
 /**
- * The only source of randomness in the game (Singleton). All random numbers come from one seeded
- * sequence, so the same seed always gives the same game.
+ The only source of randomness in the game (Singleton).
+ All random numbers come from one seeded sequence, so the same seed always gives the same game.
  */
 public final class SeededRandomNumberGenerator implements SeedableRandomNumberGenerator {
 
@@ -18,9 +18,8 @@ public final class SeededRandomNumberGenerator implements SeedableRandomNumberGe
     }
 
     /**
-     * Gives the one shared generator.
-     *
-     * @return the shared instance
+     Gives the one shared generator.
+     @return the shared instance
      */
     public static SeededRandomNumberGenerator getInstance() {
         return SHARED_INSTANCE;

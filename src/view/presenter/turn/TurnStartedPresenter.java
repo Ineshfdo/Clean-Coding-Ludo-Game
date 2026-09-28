@@ -4,12 +4,12 @@ import message.turn.TurnStarted;
 import view.presenter.EventPresenter;
 
 /**
- * Presents {@link TurnStarted}: it announces the start of the turn of a player.
+ Presents {@link TurnStarted}: it announces the start of the turn of a player.
  */
 public final class TurnStartedPresenter extends EventPresenter<TurnStarted> {
 
     /**
-     * Creates the presenter for {@link TurnStarted}.
+     Creates the presenter for {@link TurnStarted}.
      */
     public TurnStartedPresenter() {
         super(TurnStarted.class);

@@ -4,12 +4,12 @@ import message.turn.ThirdSixVoided;
 import view.presenter.EventPresenter;
 
 /**
- * Presents {@link ThirdSixVoided}: it tells that a third six in a row is void and the turn passes.
+ Presents {@link ThirdSixVoided}: it tells that a third six in a row is void and the turn passes.
  */
 public final class ThirdSixVoidedPresenter extends EventPresenter<ThirdSixVoided> {
 
     /**
-     * Creates the presenter for {@link ThirdSixVoided}.
+     Creates the presenter for {@link ThirdSixVoided}.
      */
     public ThirdSixVoidedPresenter() {
         super(ThirdSixVoided.class);

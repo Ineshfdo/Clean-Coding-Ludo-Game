@@ -4,8 +4,8 @@ import model.board.Board;
 import model.direction.MovementDirectionStrategy;
 
 /**
- * Counts how many cells a piece still has to travel to reach Home. The count uses the original
- * direction of the piece (T-4, T-16, T-18).
+ Counts how many cells a piece still has to travel to reach Home.
+ The count uses the original direction of the piece (T-4, T-16, T-18).
  */
 public final class RemainingHomeDistance {
 
@@ -13,11 +13,10 @@ public final class RemainingHomeDistance {
     }
 
     /**
-     * Counts the remaining cells of a piece.
-     *
-     * @param piece the piece to measure
-     * @param board the board that gives the track and the HomeStraight
-     * @return the number of cells left; 0 when the piece is already Home
+     Counts the remaining cells of a piece.
+     @param piece the piece to measure
+     @param board the board that gives the track and the HomeStraight
+     @return the number of cells left; 0 when the piece is already Home
      */
     public static int forPiece(Piece piece, Board board) {
         if (piece.isHome()) {

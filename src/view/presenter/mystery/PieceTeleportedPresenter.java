@@ -4,13 +4,12 @@ import message.mystery.PieceTeleported;
 import view.presenter.EventPresenter;
 
 /**
- * Presents {@link PieceTeleported}: it tells that a piece landed on the Mystery Cell and where it
- * was teleported.
+ Presents {@link PieceTeleported}: it tells that a piece landed on the Mystery Cell and where it was teleported.
  */
 public final class PieceTeleportedPresenter extends EventPresenter<PieceTeleported> {
 
     /**
-     * Creates the presenter for {@link PieceTeleported}.
+     Creates the presenter for {@link PieceTeleported}.
      */
     public PieceTeleportedPresenter() {
         super(PieceTeleported.class);

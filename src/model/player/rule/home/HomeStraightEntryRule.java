@@ -5,17 +5,16 @@ import model.player.HomeEntryPolicy;
 import model.rule.ChainedRule;
 
 /**
- * Chain of Responsibility that stops a piece from entering its HomeStraight too early (T-1, T-7).
- * Every rule of the chain gets its say: one refusal is enough.
+ Chain of Responsibility that stops a piece from entering its HomeStraight too early (T-1, T-7).
+ Every rule of the chain gets its say: one refusal is enough.
  */
 public abstract class HomeStraightEntryRule extends ChainedRule<HomeStraightEntryRule>
         implements HomeEntryPolicy {
 
     /**
-     * Asks this rule and then the next rules of the chain.
-     *
-     * @param piece the piece that wants to enter its HomeStraight
-     * @return true when any rule of the chain refuses the entry
+     Asks this rule and then the next rules of the chain.
+     @param piece the piece that wants to enter its HomeStraight
+     @return true when any rule of the chain refuses the entry
      */
     @Override
     public final boolean forbidsEntry(Piece piece) {
@@ -29,10 +28,9 @@ public abstract class HomeStraightEntryRule extends ChainedRule<HomeStraightEntr
     }
 
     /**
-     * Checks the condition of this rule alone.
-     *
-     * @param piece the piece that wants to enter its HomeStraight
-     * @return true when this rule refuses the entry
+     Checks the condition of this rule alone.
+     @param piece the piece that wants to enter its HomeStraight
+     @return true when this rule refuses the entry
      */
     protected abstract boolean appliesTo(Piece piece);
 }

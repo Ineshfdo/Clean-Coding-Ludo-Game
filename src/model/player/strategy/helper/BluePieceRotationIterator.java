@@ -6,8 +6,7 @@ import java.util.NoSuchElementException;
 import model.piece.Piece;
 
 /**
- * Iterator that cycles endlessly through the pieces of a player in a fixed order: B1, B2, B3, B4
- * and then B1 again (T-19).
+ Iterator that cycles endlessly through the pieces of a player in a fixed order: B1, B2, B3, B4 and then B1 again (T-19).
  */
 public final class BluePieceRotationIterator implements Iterator<Piece> {
 
@@ -15,19 +14,17 @@ public final class BluePieceRotationIterator implements Iterator<Piece> {
     private int nextPieceIndex;
 
     /**
-     * Starts the rotation at the first piece.
-     *
-     * @param pieces the pieces to cycle through
+     Starts the rotation at the first piece.
+     @param pieces the pieces to cycle through
      */
     public BluePieceRotationIterator(List<Piece> pieces) {
         this(pieces, null);
     }
 
     /**
-     * Starts the rotation after the piece that moved last (T-19).
-     *
-     * @param pieces the pieces to cycle through
-     * @param lastMovedPiece the piece that moved last, or null to start at the first piece
+     Starts the rotation after the piece that moved last (T-19).
+     @param pieces the pieces to cycle through
+     @param lastMovedPiece the piece that moved last, or null to start at the first piece
      */
     public BluePieceRotationIterator(List<Piece> pieces, Piece lastMovedPiece) {
         this.pieces = pieces;
