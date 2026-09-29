@@ -4,16 +4,17 @@ import config.constant.DiceConstants;
 import utils.randomgenerator.RandomNumberGenerator;
 import utils.randomgenerator.SeededRandomNumberGenerator;
 
-/**
- The die of the game (Singleton).
- One die is shared by every player, in the same way as one physical die is shared on a real board.
- Its numbers come from the seeded random generator, so a game can be repeated.
- */
+// The die of the game (Singleton).
+// One die is shared by every player.
+// Its numbers come from the seeded random generator.
+
 public final class SixSidedDice implements Dice {
 
+    // The single die instance, created once and shared by the whole game.
     private static final SixSidedDice SHARED_INSTANCE =
         new SixSidedDice(SeededRandomNumberGenerator.getInstance());
 
+    // Shared RNG this die draws from.
     private final RandomNumberGenerator randomNumberGenerator;
 
     private SixSidedDice(RandomNumberGenerator randomNumberGenerator) {

@@ -1,8 +1,7 @@
 package utils.dice;
 
-/**
- A die that the players roll.
- */
+// A dice that the players roll.
+ 
 public interface Dice {
 
     /**
