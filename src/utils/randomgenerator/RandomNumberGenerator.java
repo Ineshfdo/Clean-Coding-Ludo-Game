@@ -1,9 +1,7 @@
 package utils.randomgenerator;
 
-/**
- A source of random numbers.
- Users only need to draw a number, so this interface has no seed (ISP).
- */
+// A source of random numbers.
+
 public interface RandomNumberGenerator {
 
     /**

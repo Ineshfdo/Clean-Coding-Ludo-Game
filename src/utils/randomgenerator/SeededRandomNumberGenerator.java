@@ -2,15 +2,15 @@ package utils.randomgenerator;
 
 import java.util.Random;
 
-/**
- The only source of randomness in the game (Singleton).
- All random numbers come from one seeded sequence, so the same seed always gives the same game.
- */
+// The only source of randomness in the game (Singleton).
+
 public final class SeededRandomNumberGenerator implements SeedableRandomNumberGenerator {
 
+    // The single instance, created once and shared by the whole game.
     private static final SeededRandomNumberGenerator SHARED_INSTANCE =
-            new SeededRandomNumberGenerator();
+        new SeededRandomNumberGenerator();
 
+    // Java's built-in random generator.
     private final Random randomSource;
 
     private SeededRandomNumberGenerator() {
@@ -34,6 +34,7 @@ public final class SeededRandomNumberGenerator implements SeedableRandomNumberGe
     public int nextIntInRange(int minInclusive, int maxInclusive) {
         int rangeSize = maxInclusive - minInclusive + 1;
 
+        // nextInt returns 0-based. add minInclusive to shift into range.
         return minInclusive + randomSource.nextInt(rangeSize);
     }
 }
