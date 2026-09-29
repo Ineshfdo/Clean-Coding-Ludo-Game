@@ -2,10 +2,9 @@ package message.observer;
 
 import message.GameMessage;
 
-/**
-Subject side of the Observer pattern.
-Game classes publish messages through this interface and never talk to the observers directly.
-*/
+// Game classes publish messages through this interface and never talk to the observers directly.
+
+
 public interface GameMessagePublisher {
 
     /**

@@ -9,6 +9,7 @@ import message.GameMessage;
 The message centre of the game (Singleton).
 Every part of the game publishes here, so all registered observers see every message.
 */
+
 public final class GameMessageCenter implements GameMessagePublisher, GameMessageRegistry {
 
     private static final GameMessageCenter SHARED_INSTANCE = new GameMessageCenter();
