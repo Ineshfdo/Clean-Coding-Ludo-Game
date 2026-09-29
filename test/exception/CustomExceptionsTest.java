@@ -1,9 +1,9 @@
 package exception;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.NoSuchElementException;
 import java.util.function.BiFunction;
@@ -11,7 +11,6 @@ import java.util.function.Function;
 import java.util.stream.Stream;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
 // Each custom exception extends the closest JDK RuntimeException, so callers can still catch that type.
@@ -31,6 +30,8 @@ class CustomExceptionsTest {
         }
     }
 
+    // Used by name in the @MethodSource annotations below, so the IDE cannot see the calls.
+    @SuppressWarnings("unused")
     static Stream<ExceptionSpec> everyCustomException() {
         return Stream.of(
                 new ExceptionSpec("IllegalMoveException", IllegalMoveException::new,
@@ -75,6 +76,6 @@ class CustomExceptionsTest {
     void extendsTheClosestJdkRuntimeException(ExceptionSpec spec) {
         RuntimeException exception = spec.withMessage().apply(MESSAGE);
 
-        assertInstanceOf(spec.jdkParent(), exception);
+        assertTrue(spec.jdkParent().isInstance(exception));
     }
 }

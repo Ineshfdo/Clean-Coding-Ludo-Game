@@ -6,60 +6,7 @@
   <component name="ChangeListManager">
     <list default="true" id="576ba9fa-b4ca-47ea-9061-05b3403e3226" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/exception/IllegalMoveException.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/exception/IllegalMoveException.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/exception/InvalidPieceStateException.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/exception/InvalidPieceStateException.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/exception/PieceOwnershipException.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/exception/PieceOwnershipException.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/exception/PlayerNotFoundException.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/exception/PlayerNotFoundException.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/exception/UnpresentableMessageException.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/exception/UnpresentableMessageException.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/message/GameMessage.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/message/GameMessage.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/message/cannotmove/BlockRollTooSmall.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/message/cannotmove/BlockRollTooSmall.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/message/cannotmove/EffectRollTooSmall.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/message/cannotmove/EffectRollTooSmall.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/message/cannotmove/PieceBlocked.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/message/cannotmove/PieceBlocked.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/message/cannotmove/PieceNeedsExactRoll.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/message/cannotmove/PieceNeedsExactRoll.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/message/cannotmove/package-info.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/message/cannotmove/package-info.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/message/capture/BlockCaptured.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/message/capture/BlockCaptured.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/message/capture/PieceCaptured.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/message/capture/PieceCaptured.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/message/capture/package-info.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/message/capture/package-info.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/message/game/BoardStateReported.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/message/game/BoardStateReported.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/message/game/GameOver.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/message/game/GameOver.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/message/game/GameStarting.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/message/game/GameStarting.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/message/game/PlayerRosterAnnounced.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/message/game/PlayerRosterAnnounced.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/message/game/RoundStarted.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/message/game/RoundStarted.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/message/game/package-info.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/message/game/package-info.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/message/move/BlockMoved.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/message/move/BlockMoved.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/message/move/PieceDirectionAssigned.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/message/move/PieceDirectionAssigned.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/message/move/PieceEnteredBoard.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/message/move/PieceEnteredBoard.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/message/move/PieceEnteredHomeStraight.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/message/move/PieceEnteredHomeStraight.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/message/move/PieceLeftBlock.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/message/move/PieceLeftBlock.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/message/move/PieceMoved.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/message/move/PieceMoved.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/message/move/PieceReachedHome.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/message/move/PieceReachedHome.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/message/move/package-info.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/message/move/package-info.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/message/mystery/BetaRestrictionApplied.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/message/mystery/BetaRestrictionApplied.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/message/mystery/BetaRestrictionTriggered.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/message/mystery/BetaRestrictionTriggered.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/message/mystery/BlockEffectAssigned.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/message/mystery/BlockEffectAssigned.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/message/mystery/IndividualEffectAssigned.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/message/mystery/IndividualEffectAssigned.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/message/mystery/MysteryCellAppeared.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/message/mystery/MysteryCellAppeared.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/message/mystery/MysteryCellRelocated.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/message/mystery/MysteryCellRelocated.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/message/mystery/PieceDirectionReversed.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/message/mystery/PieceDirectionReversed.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/message/mystery/PieceTeleported.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/message/mystery/PieceTeleported.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/message/mystery/package-info.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/message/mystery/package-info.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/message/observer/GameMessageCenter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/message/observer/GameMessageCenter.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/message/observer/GameMessageObserver.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/message/observer/GameMessageObserver.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/message/observer/GameMessagePublisher.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/message/observer/GameMessagePublisher.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/message/observer/GameMessageRegistry.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/message/observer/GameMessageRegistry.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/message/observer/package-info.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/message/observer/package-info.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/message/package-info.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/message/package-info.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/message/toss/DiceRolled.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/message/toss/DiceRolled.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/message/toss/TossStarting.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/message/toss/TossStarting.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/message/toss/TossTied.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/message/toss/TossTied.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/message/toss/TossWon.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/message/toss/TossWon.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/message/toss/package-info.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/message/toss/package-info.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/message/turn/HomeGateOpened.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/message/turn/HomeGateOpened.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/message/turn/NoPieceMovable.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/message/turn/NoPieceMovable.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/message/turn/ThirdSixVoided.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/message/turn/ThirdSixVoided.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/message/turn/TurnRolled.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/message/turn/TurnRolled.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/message/turn/TurnStarted.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/message/turn/TurnStarted.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/message/turn/package-info.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/message/turn/package-info.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/exception/CustomExceptionsTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/test/exception/CustomExceptionsTest.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -86,6 +33,7 @@
     "JUnit.CustomExceptionsTest.executor": "Run",
     "JUnit.GameEngineTest.executor": "Run",
     "JUnit.ListRecordsTest.executor": "Run",
+    "JUnit.SixSidedDiceTest.executor": "Run",
     "ModuleVcsDetector.initialDetectionPerformed": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
