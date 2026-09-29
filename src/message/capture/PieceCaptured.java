@@ -13,7 +13,4 @@ import message.GameMessage;
  @param piecesOnBoard the number of pieces of that player that are now on the board
  @param piecesAtBase the number of pieces of that player that are now at Base
  */
-public record PieceCaptured(
-        String capturingPieceLabel, int capturePosition, String capturedPieceLabel,
-        PlayerColor capturedPlayerColor, int piecesOnBoard, int piecesAtBase) implements GameMessage {
-}
+public record PieceCaptured(String capturingPieceLabel, int capturePosition, String capturedPieceLabel,PlayerColor capturedPlayerColor, int piecesOnBoard, int piecesAtBase) implements GameMessage {}

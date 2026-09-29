@@ -13,4 +13,13 @@ public class InvalidPieceStateException extends IllegalStateException {
     public InvalidPieceStateException(String message) {
         super(message);
     }
+
+    /**
+    Creates the exception with a message and the cause behind it.
+    @param message what went wrong
+    @param cause the exception that led to this one
+    */
+    public InvalidPieceStateException(String message, Throwable cause) {
+        super(message, cause);
+    }
 }

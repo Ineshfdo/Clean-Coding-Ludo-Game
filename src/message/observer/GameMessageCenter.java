@@ -2,12 +2,13 @@ package message.observer;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import message.GameMessage;
 
 /**
- The message centre of the game (Singleton).
- Every part of the game publishes here, so all registered observers see every message.
- */
+The message centre of the game (Singleton).
+Every part of the game publishes here, so all registered observers see every message.
+*/
 public final class GameMessageCenter implements GameMessagePublisher, GameMessageRegistry {
 
     private static final GameMessageCenter SHARED_INSTANCE = new GameMessageCenter();
@@ -19,9 +20,9 @@ public final class GameMessageCenter implements GameMessagePublisher, GameMessag
     }
 
     /**
-     Gives the one shared message centre.
-     @return the shared instance
-     */
+    Gives the one shared message centre.
+    @return the shared instance
+    */
     public static GameMessageCenter getInstance() {
         return SHARED_INSTANCE;
     }

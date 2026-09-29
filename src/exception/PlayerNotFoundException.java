@@ -13,4 +13,13 @@ public class PlayerNotFoundException extends NoSuchElementException {
     public PlayerNotFoundException(String message) {
         super(message);
     }
+
+    /**
+    Creates the exception with a message and the cause behind it.
+    @param message what went wrong
+    @param cause the exception that led to this one
+    */
+    public PlayerNotFoundException(String message, Throwable cause) {
+        super(message, cause);
+    }
 }
