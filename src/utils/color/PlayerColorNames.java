@@ -2,20 +2,18 @@ package utils.color;
 
 import config.enums.PlayerColor;
 
-/**
- Gives the display text of a colour: the full name, such as Red, and the short code, such as R.
- The text is kept out of the enum.
- */
+// Display text for a colour: full name (Red) and short code (R).
+ 
 public final class PlayerColorNames {
 
     private PlayerColorNames() {
     }
 
     /**
-     Gives the full name.
-     @param color the colour
-     @return the name with a capital first letter, for example Red
-     */
+    Gives the full name.
+    @param color the colour
+    @return the name with a capital first letter, for example Red
+    */
     public static String displayNameOf(PlayerColor color) {
         String lowerCaseName = color.name().toLowerCase();
 
