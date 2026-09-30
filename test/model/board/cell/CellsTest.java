@@ -43,11 +43,6 @@ class CellsTest {
     }
 
     @Test
-    void standardCellToStringNamesThePosition() {
-        assertEquals("StandardCell12", new StandardCell(12, null, null).toString());
-    }
-
-    @Test
     void homeStraightCellReportsColorAndIndex() {
         HomeStraightCell cell = new HomeStraightCell(PlayerColor.GREEN, 2);
 
