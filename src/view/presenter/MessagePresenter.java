@@ -39,7 +39,7 @@ public final class MessagePresenter {
         // No presenter registered: fail loudly instead of printing nothing.
         if (presenter == null) {
             throw new UnpresentableMessageException(
-                    "No presenter is registered for " + message.getClass().getSimpleName());
+                "No presenter is registered for " + message.getClass().getSimpleName());
         }
 
         return presentWith(presenter, message);
