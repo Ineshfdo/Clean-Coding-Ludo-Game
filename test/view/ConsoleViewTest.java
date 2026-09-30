@@ -18,7 +18,6 @@ import message.game.GameStarting;
 import message.toss.TossWon;
 import model.board.LudoBoard;
 import model.player.Player;
-import model.player.strategy.blockdirection.LongestDistanceDirectionStrategy;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -54,7 +53,7 @@ class ConsoleViewTest {
     }
 
     private ConsoleGameObserver newObserver() {
-        return new ConsoleGameObserver(everyone, LudoBoard.getInstance(), new LongestDistanceDirectionStrategy());
+        return new ConsoleGameObserver(everyone, LudoBoard.getInstance());
     }
 
     @Nested
@@ -88,20 +87,20 @@ class ConsoleViewTest {
         }
 
         @Test
-        void theBoardReportListsPlayersInTheOrderTheyWereGiven() {
+        void theRoundReportListsPlayersInTheOrderTheyWereGiven() {
             newObserver().onGameMessage(new BoardStateReported(1));
 
-            assertTrue(printed().indexOf("RED:") < printed().indexOf("GREEN:"));
+            assertTrue(printed().indexOf("Red player") < printed().indexOf("Green player"));
         }
 
         @Test
-        void setTurnOrderChangesTheOrderOfTheBoardReport() {
+        void setTurnOrderChangesTheOrderOfTheRoundReport() {
             ConsoleGameObserver observer = newObserver();
 
             observer.setTurnOrder(List.of(green, red));
             observer.onGameMessage(new BoardStateReported(1));
 
-            assertTrue(printed().indexOf("GREEN:") < printed().indexOf("RED:"));
+            assertTrue(printed().indexOf("Green player") < printed().indexOf("Red player"));
         }
     }
 
@@ -109,8 +108,7 @@ class ConsoleViewTest {
     @DisplayName("PresenterCatalog")
     class Catalog {
 
-        private final PresenterCatalog catalog =
-                new PresenterCatalog(everyone, LudoBoard.getInstance(), new LongestDistanceDirectionStrategy());
+        private final PresenterCatalog catalog = new PresenterCatalog(everyone, LudoBoard.getInstance());
 
         @Test
         void listsOnePresenterForEachOfTheThirtyFiveEvents() {
@@ -136,7 +134,7 @@ class ConsoleViewTest {
                     .orElseThrow();
             String text = presentWith(boardState);
 
-            assertTrue(text.indexOf("GREEN:") < text.indexOf("RED:"));
+            assertTrue(text.indexOf("Green player") < text.indexOf("Red player"));
         }
 
         @SuppressWarnings("unchecked")

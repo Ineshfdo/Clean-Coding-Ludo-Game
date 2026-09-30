@@ -8,6 +8,9 @@ import message.GameMessage;
  */
 public abstract class EventPresenter<M extends GameMessage> {
 
+    // abstract: template only; each message type has its own child.
+    // M must be a GameMessage, so children need no casting.
+    // Remembers the message type handled; generics vanish at runtime.
     private final Class<M> eventType;
 
     /**
@@ -15,6 +18,7 @@ public abstract class EventPresenter<M extends GameMessage> {
      @param eventType the class of the message that this presenter handles
      */
     protected EventPresenter(Class<M> eventType) {
+        // protected: only child presenters call this, through super().
         this.eventType = eventType;
     }
 
@@ -23,6 +27,7 @@ public abstract class EventPresenter<M extends GameMessage> {
      @return the class of the message
      */
     public final Class<M> getEventType() {
+        // final: children cannot change which message they handle.
         return eventType;
     }
 

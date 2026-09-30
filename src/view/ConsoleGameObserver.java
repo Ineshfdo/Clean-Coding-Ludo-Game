@@ -5,7 +5,6 @@ import message.GameMessage;
 import message.observer.GameMessageObserver;
 import model.board.Board;
 import model.player.Player;
-import model.player.strategy.blockdirection.BlockTravelDirectionStrategy;
 import view.presenter.MessagePresenter;
 
 /**
@@ -14,18 +13,19 @@ import view.presenter.MessagePresenter;
  */
 public final class ConsoleGameObserver implements GameMessageObserver {
 
+    // Holds one presenter for every message type.
     private final PresenterCatalog presenterCatalog;
+    // Finds the right presenter for each incoming message.
     private final MessagePresenter messagePresenter;
 
     /**
      Creates the console observer.
-     @param allPlayers all players of the game, for the board report
+     @param allPlayers all players of the game, for the round report
      @param board the board the pieces move on
-     @param blockTravelDirectionStrategy the strategy that decides the direction of a blockade
      */
-    public ConsoleGameObserver(
-            List<Player> allPlayers, Board board, BlockTravelDirectionStrategy blockTravelDirectionStrategy) {
-        this.presenterCatalog = new PresenterCatalog(allPlayers, board, blockTravelDirectionStrategy);
+    public ConsoleGameObserver(List<Player> allPlayers, Board board) {
+        // Catalog builds the presenters; MessagePresenter uses them for lookup.
+        this.presenterCatalog = new PresenterCatalog(allPlayers, board);
         this.messagePresenter = new MessagePresenter(presenterCatalog.getPresenters());
     }
 
@@ -34,11 +34,13 @@ public final class ConsoleGameObserver implements GameMessageObserver {
      @param turnOrder the players in play order, starting with the winner of the toss
      */
     public void setTurnOrder(List<Player> turnOrder) {
+        // Passes the toss winner's play order on to the report.
         presenterCatalog.setTurnOrder(turnOrder);
     }
 
     @Override
     public void onGameMessage(GameMessage message) {
+        // Observer pattern: called for every published message; prints it.
         System.out.println(messagePresenter.present(message));
     }
 }

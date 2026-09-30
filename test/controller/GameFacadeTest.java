@@ -133,11 +133,11 @@ class GameFacadeTest {
     }
 
     @Test
-    void everyRoundIsReportedWithTheBoardState() {
+    void everyRoundIsReportedWithThePieceCounts() {
         String output = play(FINISHING_SEED);
 
         assertTrue(output.contains("1. Round 1"));
-        assertTrue(output.contains("Round 1 Current Board State"));
+        assertTrue(output.contains("pieces on the board and"));
     }
 
     @Test

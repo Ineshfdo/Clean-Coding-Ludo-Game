@@ -116,8 +116,7 @@ public final class GameFacade {
         GameMessageRegistry messageRegistry = GameMessageCenter.getInstance();
         messageRegistry.clearObservers();
         GameMessagePublisher messagePublisher = GameMessageCenter.getInstance();
-        ConsoleGameObserver consoleObserver =
-            new ConsoleGameObserver(allPlayers, board, BLOCK_TRAVEL_DIRECTION_STRATEGY);
+        ConsoleGameObserver consoleObserver = new ConsoleGameObserver(allPlayers, board);
         messageRegistry.addObserver(consoleObserver);
 
         SeedableRandomNumberGenerator randomNumberGenerator = SeededRandomNumberGenerator.getInstance();

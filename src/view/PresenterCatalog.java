@@ -1,10 +1,10 @@
 package view;
 
 import java.util.List;
+
 import message.GameMessage;
 import model.board.Board;
 import model.player.Player;
-import model.player.strategy.blockdirection.BlockTravelDirectionStrategy;
 import view.presenter.EventPresenter;
 import view.presenter.cannotmove.BlockRollTooSmallPresenter;
 import view.presenter.cannotmove.EffectRollTooSmallPresenter;
@@ -48,62 +48,63 @@ import view.presenter.turn.TurnStartedPresenter;
  */
 public final class PresenterCatalog {
 
+    // Kept separately, because its player order changes later.
     private final BoardStateReportedPresenter boardStatePresenter;
+    // List: holds one presenter per message type, in one place.
+    // ? extends GameMessage: lets different presenters share one list.
     private final List<EventPresenter<? extends GameMessage>> presenters;
 
     /**
      Creates the catalogue with one presenter for each kind of message.
-     @param allPlayers all players of the game, for the board report
+     @param allPlayers all players of the game, for the round report
      @param board the board the pieces move on
-     @param blockTravelDirectionStrategy the strategy that decides the direction of a blockade
      */
-    public PresenterCatalog(
-            List<Player> allPlayers, Board board, BlockTravelDirectionStrategy blockTravelDirectionStrategy) {
-        this.boardStatePresenter =
-                new BoardStateReportedPresenter(allPlayers, board, blockTravelDirectionStrategy);
+    public PresenterCatalog(List<Player> allPlayers, Board board) {
+        this.boardStatePresenter = new BoardStateReportedPresenter(allPlayers);
+        // List.of: fixed list; nothing can be added later.
         this.presenters = List.of(
-                // game
-                new GameStartingPresenter(),
-                new RoundStartedPresenter(),
-                new PlayerRosterAnnouncedPresenter(),
-                boardStatePresenter,
-                new GameOverPresenter(),
-                // toss
-                new TossStartingPresenter(),
-                new DiceRolledPresenter(),
-                new TossTiedPresenter(),
-                new TossWonPresenter(),
-                // turn
-                new TurnStartedPresenter(),
-                new TurnRolledPresenter(),
-                new NoPieceMovablePresenter(),
-                new ThirdSixVoidedPresenter(),
-                new HomeGateOpenedPresenter(),
-                // move
-                new PieceMovedPresenter(board),
-                new BlockMovedPresenter(),
-                new PieceEnteredBoardPresenter(),
-                new PieceDirectionAssignedPresenter(),
-                new PieceEnteredHomeStraightPresenter(),
-                new PieceReachedHomePresenter(),
-                new PieceLeftBlockPresenter(),
-                // cannotmove
-                new PieceBlockedPresenter(),
-                new PieceNeedsExactRollPresenter(),
-                new BlockRollTooSmallPresenter(),
-                new EffectRollTooSmallPresenter(),
-                // capture
-                new PieceCapturedPresenter(),
-                new BlockCapturedPresenter(),
-                // mystery
-                new MysteryCellAppearedPresenter(),
-                new MysteryCellRelocatedPresenter(),
-                new PieceTeleportedPresenter(),
-                new IndividualEffectAssignedPresenter(),
-                new BlockEffectAssignedPresenter(),
-                new BetaRestrictionAppliedPresenter(),
-                new BetaRestrictionTriggeredPresenter(),
-                new PieceDirectionReversedPresenter());
+        // game
+        new GameStartingPresenter(),
+        new RoundStartedPresenter(),
+        new PlayerRosterAnnouncedPresenter(),
+        boardStatePresenter,
+        new GameOverPresenter(),
+        // toss
+        new TossStartingPresenter(),
+        new DiceRolledPresenter(),
+        new TossTiedPresenter(),
+        new TossWonPresenter(),
+        // turn
+        new TurnStartedPresenter(),
+        new TurnRolledPresenter(),
+        new NoPieceMovablePresenter(),
+        new ThirdSixVoidedPresenter(),
+        new HomeGateOpenedPresenter(),
+        // move
+        new PieceMovedPresenter(board),
+        new BlockMovedPresenter(),
+        new PieceEnteredBoardPresenter(),
+        new PieceDirectionAssignedPresenter(),
+        new PieceEnteredHomeStraightPresenter(),
+        new PieceReachedHomePresenter(),
+        new PieceLeftBlockPresenter(),
+        // cannotmove
+        new PieceBlockedPresenter(),
+        new PieceNeedsExactRollPresenter(),
+        new BlockRollTooSmallPresenter(),
+        new EffectRollTooSmallPresenter(),
+        // capture
+        new PieceCapturedPresenter(),
+        new BlockCapturedPresenter(),
+        // mystery
+        new MysteryCellAppearedPresenter(),
+        new MysteryCellRelocatedPresenter(),
+        new PieceTeleportedPresenter(),
+        new IndividualEffectAssignedPresenter(),
+        new BlockEffectAssignedPresenter(),
+        new BetaRestrictionAppliedPresenter(),
+        new BetaRestrictionTriggeredPresenter(),
+        new PieceDirectionReversedPresenter());
     }
 
     /**
@@ -111,6 +112,7 @@ public final class PresenterCatalog {
      @return one presenter for each kind of message
      */
     public List<EventPresenter<? extends GameMessage>> getPresenters() {
+        // MessagePresenter uses this list to find the right presenter.
         return presenters;
     }
 
@@ -119,6 +121,7 @@ public final class PresenterCatalog {
      @param turnOrder the players in play order, starting with the winner of the toss
      */
     public void setTurnOrder(List<Player> turnOrder) {
+        // Only the round report needs the play order.
         boardStatePresenter.setTurnOrder(turnOrder);
     }
 }

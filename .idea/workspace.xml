@@ -6,7 +6,7 @@
   <component name="ChangeListManager">
     <list default="true" id="576ba9fa-b4ca-47ea-9061-05b3403e3226" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/exception/CustomExceptionsTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/test/exception/CustomExceptionsTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/view/PresenterCatalog.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/view/PresenterCatalog.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -30,9 +30,12 @@
     "Application.Main.executor": "Run",
     "Application.main.executor": "Run",
     "JUnit.BoardConstantsTest.executor": "Run",
+    "JUnit.CoinTossLabelsTest.executor": "Run",
     "JUnit.CustomExceptionsTest.executor": "Run",
     "JUnit.GameEngineTest.executor": "Run",
     "JUnit.ListRecordsTest.executor": "Run",
+    "JUnit.PlayerColorNamesTest.executor": "Run",
+    "JUnit.SeededCoinTossTest.executor": "Run",
     "JUnit.SixSidedDiceTest.executor": "Run",
     "ModuleVcsDetector.initialDetectionPerformed": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
@@ -46,7 +49,8 @@
     "node.js.detected.package.eslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
     "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm"
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "preferences.keymap"
   }
 }]]></component>
   <component name="TaskManager">
